@@ -448,48 +448,21 @@ async function loadWeather(city) {
   }
 }
 
-// Placeholder event data (replace with real API calls when keys are ready)
-const MOCK_TICKETMASTER = {
-  'new-york':    [{name:'NYC Jazz Festival',date:'Apr 12',venue:'Lincoln Center'},{name:'Knicks vs Celtics',date:'Apr 15',venue:'Madison Square Garden'},{name:'Broadway: Hamilton',date:'Apr 18',venue:'Richard Rodgers Theatre'}],
-  'los-angeles': [{name:'Lakers vs Warriors',date:'Apr 11',venue:'Crypto.com Arena'},{name:'Coachella Valley Music Festival',date:'Apr 13',venue:'Indio, CA'},{name:'Hollywood Bowl Opening Night',date:'Apr 20',venue:'Hollywood Bowl'}],
-  'london':      [{name:'West End: Les Misérables',date:'Apr 12',venue:'Sondheim Theatre'},{name:'Chelsea vs Arsenal',date:'Apr 14',venue:'Stamford Bridge'},{name:'Royal Philharmonic Orchestra',date:'Apr 19',venue:'Royal Albert Hall'}],
-  'tokyo':       [{name:'Sumo Spring Tournament',date:'Apr 13',venue:'Ryogoku Kokugikan'},{name:'Tokyo Jazz Festival',date:'Apr 16',venue:'Tokyo Dome'},{name:'J-League: FC Tokyo',date:'Apr 20',venue:'Ajinomoto Stadium'}],
-  'paris':       [{name:'Roland Garros French Open',date:'May 26',venue:'Stade Roland Garros'},{name:'Paris Saint-Germain FC',date:'Apr 13',venue:'Parc des Princes'},{name:'Opéra de Paris',date:'Apr 18',venue:'Palais Garnier'}],
-  'dubai':       [{name:'Dubai World Cup Racing',date:'Apr 13',venue:'Meydan Racecourse'},{name:'Dubai Jazz Festival',date:'Apr 15',venue:'Dubai Media City'},{name:'Global Village Closing Night',date:'Apr 27',venue:'Global Village'}],
-  'sydney':      [{name:'NRL: Roosters vs Rabbitohs',date:'Apr 12',venue:'Allianz Stadium'},{name:'Vivid Sydney Festival',date:'May 23',venue:'Sydney CBD'},{name:'Sydney Symphony Orchestra',date:'Apr 18',venue:'Sydney Opera House'}],
-  'singapore':   [{name:'Formula 1 Singapore GP',date:'Sep 20',venue:'Marina Bay Street Circuit'},{name:'Singapore International Festival',date:'Apr 15',venue:'Esplanade'},{name:'Lions vs Tampines',date:'Apr 13',venue:'Jalan Besar Stadium'}],
-};
-
-const MOCK_EVENTBRITE = {
-  'new-york':    [{name:'NYC Food & Wine Festival',date:'Apr 13',venue:'Pier 84'},{name:'Brooklyn Art Walk',date:'Apr 19',venue:'DUMBO, Brooklyn'},{name:'Tech Startup Mixer',date:'Apr 16',venue:'WeWork Midtown'}],
-  'los-angeles': [{name:'LA Farmers Market Festival',date:'Apr 12',venue:'Grand Park'},{name:'Silver Lake Flea Market',date:'Apr 20',venue:'Silver Lake'},{name:'AI & Tech Summit LA',date:'Apr 17',venue:'Convention Center'}],
-  'london':      [{name:'Borough Market Food Festival',date:'Apr 13',venue:'Borough Market'},{name:'Portobello Road Market',date:'Apr 12',venue:'Notting Hill'},{name:'London Startup Week',date:'Apr 15',venue:'Shoreditch'}],
-  'tokyo':       [{name:'Hanami Cherry Blossom Party',date:'Apr 11',venue:'Ueno Park'},{name:'Tokyo Ramen Festival',date:'Apr 14',venue:'Hibiya Park'},{name:'Akihabara Tech Expo',date:'Apr 18',venue:'Tokyo Big Sight'}],
-  'paris':       [{name:'Marché des Enfants Rouges',date:'Apr 12',venue:'Le Marais'},{name:'Paris Food Market',date:'Apr 13',venue:'Canal Saint-Martin'},{name:'French Startup Summit',date:'Apr 16',venue:'Station F'}],
-  'dubai':       [{name:'Dubai Food Festival',date:'Apr 13',venue:'JBR Beach'},{name:'Art Dubai Fair',date:'Apr 18',venue:'Madinat Jumeirah'},{name:'Dubai Fitness Challenge',date:'Apr 20',venue:'Zabeel Park'}],
-  'sydney':      [{name:'Bondi Farmers Market',date:'Apr 12',venue:'Bondi Beach'},{name:'Sydney Craft Beer Festival',date:'Apr 19',venue:'Darling Harbour'},{name:'Tech Sydney Meetup',date:'Apr 16',venue:'Fishburners'}],
-  'singapore':   [{name:'Gardens by the Bay Event',date:'Apr 13',venue:'Gardens by the Bay'},{name:'Singapore Food Festival',date:'Apr 20',venue:'Clarke Quay'},{name:'Startup Weekend SG',date:'Apr 18',venue:'JTC LaunchPad'}],
-};
-
-// Default fallback events for cities not in mock data
-function getDefaultEvents(cityName, type) {
-  if (type === 'tm') return [
-    {name:`Live Music in ${cityName}`,date:'This Weekend',venue:'City Concert Hall'},
-    {name:`${cityName} Sports Championship`,date:'Next Week',venue:'Main Stadium'},
-    {name:`${cityName} Cultural Festival`,date:'This Month',venue:'City Center'},
-  ];
-  return [
-    {name:`${cityName} Street Food Festival`,date:'This Weekend',venue:'City Market'},
-    {name:`Local Art Exhibition`,date:'Ongoing',venue:'City Gallery'},
-    {name:`${cityName} Community Fair`,date:'Next Weekend',venue:'Central Park'},
-  ];
-}
+// --- API Keys ---
+const TICKETMASTER_KEY = 'oU45aN6HSWpgHLNGHJNJe7tz0870uGGj';
+const EVENTBRITE_KEY   = 'SBQORL5REUVO342LNKQ5';
+const VIATOR_PID       = 'P00295924';
+const VIATOR_MCID      = '42383';
 
 function renderEventItems(events, containerId, linkBase) {
   const el = document.getElementById(containerId);
   if (!el) return;
+  if (!events.length) {
+    el.innerHTML = `<div class="discover-item"><div class="discover-item-text"><small>No upcoming events found for this city.</small></div></div>`;
+    return;
+  }
   el.innerHTML = events.map(ev => `
-    <a href="${linkBase}" target="_blank" rel="noopener" class="event-item">
+    <a href="${ev.url || linkBase}" target="_blank" rel="noopener" class="event-item">
       <div class="event-item-name">${ev.name}</div>
       <div class="event-item-meta">
         <span class="event-item-date">📅 ${ev.date}</span>
@@ -499,27 +472,94 @@ function renderEventItems(events, containerId, linkBase) {
   `).join('');
 }
 
+async function loadTicketmasterEvents(city) {
+  try {
+    const url = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${TICKETMASTER_KEY}&city=${encodeURIComponent(city.name)}&size=3&sort=date,asc`;
+    const res  = await fetch(url);
+    const data = await res.json();
+    const events = (data._embedded?.events || []).map(e => ({
+      name:  e.name,
+      date:  e.dates?.start?.localDate || 'Upcoming',
+      venue: e._embedded?.venues?.[0]?.name || city.name,
+      url:   e.url
+    }));
+    return events;
+  } catch(e) {
+    return [];
+  }
+}
+
+async function loadEventbriteEvents(city) {
+  try {
+    const url = `https://www.eventbriteapi.com/v3/events/search/?location.address=${encodeURIComponent(city.name)}&expand=venue&page_size=3&sort_by=date&token=${EVENTBRITE_KEY}`;
+    const res  = await fetch(url);
+    const data = await res.json();
+    const events = (data.events || []).map(e => ({
+      name:  e.name?.text || 'Local Event',
+      date:  e.start?.local ? new Date(e.start.local).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : 'Upcoming',
+      venue: e.venue?.name || city.name,
+      url:   e.url
+    }));
+    return events;
+  } catch(e) {
+    return [];
+  }
+}
+
 async function loadDiscoverContent(city) {
-  // Update section heading
-  const titleEl = document.getElementById('discover-title');
-  const subEl   = document.getElementById('discover-sub');
+  const titleEl  = document.getElementById('discover-title');
+  const subEl    = document.getElementById('discover-sub');
   const viatorEl = document.getElementById('viator-city-name');
+  const viatorBtn = document.getElementById('viator-btn');
+
   if (titleEl) titleEl.textContent = `Discover ${city.name}`;
   if (subEl)   subEl.textContent   = `Things to do, places to eat, and upcoming events in ${city.name}`;
   if (viatorEl) viatorEl.textContent = `Experiences in ${city.name}`;
 
-  // ── Load Ticketmaster events (mock) ──
-  const tmEvents = MOCK_TICKETMASTER[city.id] || getDefaultEvents(city.name, 'tm');
-  renderEventItems(tmEvents, 'ticketmaster-body', 'https://www.ticketmaster.com/search?q=' + encodeURIComponent(city.name));
+  // ── Wire Viator affiliate link with city search ──
+  const viatorUrl = `https://www.viator.com/search/${encodeURIComponent(city.name)}?pid=${VIATOR_PID}&mcid=${VIATOR_MCID}&medium=link&medium_version=selector`;
+  if (viatorBtn) {
+    viatorBtn.href = viatorUrl;
+    viatorBtn.textContent = `Browse Experiences in ${city.name} →`;
+  }
 
-  // ── Load Eventbrite events (mock) ──
-  const ebEvents = MOCK_EVENTBRITE[city.id] || getDefaultEvents(city.name, 'eb');
-  renderEventItems(ebEvents, 'eventbrite-body', 'https://www.eventbrite.com/d/' + encodeURIComponent(city.name) + '/events/');
+  // Update Viator placeholder content
+  const viatorWrap = document.getElementById('viator-widget');
+  if (viatorWrap) {
+    viatorWrap.innerHTML = `
+      <div class="widget-placeholder">
+        <p class="widget-placeholder-icon">🎟️</p>
+        <p class="widget-placeholder-title" id="viator-city-name">Experiences in ${city.name}</p>
+        <p class="widget-placeholder-sub">Browse top-rated tours, activities and experiences. Every booking earns affiliate commission.</p>
+        <a href="${viatorUrl}" target="_blank" rel="noopener" class="btn" style="display:inline-block; margin-top:16px; padding: 12px 28px; background: linear-gradient(135deg,#c8860a,#f0a830); color:#050810; font-weight:700; border-radius:50px; text-decoration:none; font-size:0.85rem; letter-spacing:0.05em;">
+          Browse Experiences in ${city.name} →
+        </a>
+      </div>`;
+  }
 
-  // ── Load AI content via Claude API ──
+  // ── Load real Ticketmaster events ──
+  const tmEl = document.getElementById('ticketmaster-body');
+  if (tmEl) tmEl.innerHTML = `<div class="discover-loading"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>`;
+  const tmEvents = await loadTicketmasterEvents(city);
+  renderEventItems(
+    tmEvents.length ? tmEvents : [{name:`Live events in ${city.name}`,date:'See all dates',venue:city.name,url:`https://www.ticketmaster.com/search?q=${encodeURIComponent(city.name)}`}],
+    'ticketmaster-body',
+    `https://www.ticketmaster.com/search?q=${encodeURIComponent(city.name)}`
+  );
+
+  // ── Load real Eventbrite events ──
+  const ebEl = document.getElementById('eventbrite-body');
+  if (ebEl) ebEl.innerHTML = `<div class="discover-loading"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>`;
+  const ebEvents = await loadEventbriteEvents(city);
+  renderEventItems(
+    ebEvents.length ? ebEvents : [{name:`Local events in ${city.name}`,date:'See all',venue:city.name,url:`https://www.eventbrite.com/d/${encodeURIComponent(city.name)}/events/`}],
+    'eventbrite-body',
+    `https://www.eventbrite.com/d/${encodeURIComponent(city.name)}/events/`
+  );
+
+  // ── Load AI content ──
   await loadAIContent(city);
 }
-
 async function loadAIContent(city) {
   const todoEl  = document.getElementById('todo-body');
   const restEl  = document.getElementById('restaurant-body');
