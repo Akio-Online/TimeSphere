@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — The Time Sphere</title>
+  <meta name="description" content="Contact The Time Sphere team — advertising, partnerships, or general inquiries." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="aurora-bg">
+
+  <header>
+    <div class="container">
+      <nav>
+        <a href="index.html" class="logo">The <span>Time</span> Sphere</a>
+        <ul>
+          <li><a href="index.html">World Clock</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="ad-slot ad-top">Advertisement</div>
+  </div>
+
+  <section class="page-hero container">
+    <h1>Get In <span class="text-cyan">Touch</span></h1>
+    <p>Advertising inquiries, partnerships, or general questions — we'd love to hear from you.</p>
+  </section>
+
+  <div class="container">
+    <div class="content-block" style="max-width: 600px; margin: 0 auto 60px;">
+
+      <!--
+        FORMSPREE SETUP INSTRUCTIONS (for Claude Code in VS Code):
+        1. Go to formspree.io and create a free account
+        2. Create a new form — you'll get a form ID like "xyzabcde"
+        3. Replace YOUR_FORMSPREE_ID below with your actual form ID
+        4. The action URL will look like: https://formspree.io/f/xyzabcde
+      -->
+      <form
+        class="contact-form"
+        action="https://formspree.io/f/mgopzepw"
+        method="POST"
+      >
+        <input
+          type="text"
+          name="name"
+          placeholder="Your Name"
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Your Email"
+          required
+        />
+        <input
+          type="text"
+          name="subject"
+          placeholder="Subject (e.g. Advertising Inquiry)"
+        />
+        <textarea
+          name="message"
+          placeholder="Your message…"
+          required
+        ></textarea>
+
+        <!-- Formspree honeypot spam filter -->
+        <input type="text" name="_gotcha" style="display:none" />
+
+        <button type="submit" class="btn">Send Message</button>
+      </form>
+
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="ad-slot ad-bottom">Advertisement</div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="index.html">World Clock</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+      <p>© 2026 The Time Sphere · thetimesphere.com · All rights reserved.</p>
+      <p style="margin-top: 6px; font-size: 0.72rem; opacity: 0.5;">The Time Sphere · A Division of Online Marketing Dynamics LLC · 732 S 6th St #6971, Las Vegas, NV 89101</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

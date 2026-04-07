@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Time Sphere — Current Time Around the World</title>
+  <meta name="description" content="Find the current local time anywhere in the world. Live clocks, time zones, UTC offsets, and DST status for every major city." />
+  <meta name="keywords" content="current time, world clock, time zones, what time is it, time in Tokyo, time in London" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container">
+      <nav>
+        <a href="index.html" class="logo">The <span>Time</span> Sphere</a>
+        <ul>
+          <li><a href="index.html">World Clock</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- AD SLOT 1: Top Leaderboard -->
+  <div class="container" style="position: relative; z-index: 10;">
+    <div class="ad-slot ad-top">Advertisement</div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="container">
+      <p class="eyebrow">Your Source for Time Globally</p>
+      <h1>The World's Time<br><em>At a Glance</em></h1>
+      <p>Live local times, time zones, and UTC offsets for every major city on Earth. Updated every second.</p>
+
+      <!-- SEARCH -->
+      <div class="search-wrap">
+        <input
+          type="text"
+          id="city-search"
+          placeholder="Search a city — New York, Tokyo, Dubai…"
+          autocomplete="off"
+        />
+        <button id="search-btn">Find</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CITY GRID -->
+  <section class="grid-section">
+    <div class="container">
+      <div class="grid-header">
+        <div class="grid-divider"></div>
+        <p class="section-title">Live World Clocks</p>
+        <p class="section-sub">Click any city for full time zone details, UTC offset &amp; conversions</p>
+      </div>
+      <div class="region-tabs">
+        <button class="region-tab active" data-region="all">All Cities</button>
+        <button class="region-tab" data-region="americas">Americas</button>
+        <button class="region-tab" data-region="europe">Europe</button>
+        <button class="region-tab" data-region="asia">Asia &amp; Pacific</button>
+        <button class="region-tab" data-region="africa">Africa &amp; Middle East</button>
+      </div>
+      <div class="city-grid" id="city-grid"></div>
+    </div>
+  </section>
+
+  <!-- AD SLOT 2 -->
+  <div class="container">
+    <div class="ad-slot ad-top" style="margin-bottom: 56px;">Advertisement</div>
+  </div>
+
+  <!-- ABOUT STRIP -->
+  <section class="container" style="margin-bottom: 72px;">
+    <div class="about-grid">
+      <div class="about-text">
+        <p class="section-title">What Is The Time Sphere?</p>
+        <h2>Global Time &amp; Travel<br><em>Intelligence Platform</em></h2>
+        <p class="about-body">Whether you need the current time in London for a business call, Tokyo for trading, or Dubai for travel — we give you the answer instantly with full time zone context: UTC offset, DST status, and live conversions.</p>
+        <a href="about.html" class="btn" style="margin-top: 28px; display: inline-block;">Learn More</a>
+      </div>
+      <div class="about-stats">
+        <div class="stat-card"><div class="stat-num">20+</div><div class="stat-label">Major Cities</div></div>
+        <div class="stat-card"><div class="stat-num">24/7</div><div class="stat-label">Live Updates</div></div>
+        <div class="stat-card"><div class="stat-num">1s</div><div class="stat-label">Refresh Rate</div></div>
+        <div class="stat-card"><div class="stat-num">Free</div><div class="stat-label">Always</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AD SLOT 3: Bottom Banner -->
+  <div class="container">
+    <div class="ad-slot ad-bottom">Advertisement</div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="index.html">World Clock</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+      <p>© 2026 The Time Sphere · thetimesphere.com · All rights reserved.</p>
+      <p style="margin-top: 6px; font-size: 0.72rem; opacity: 0.5;">
+        The Time Sphere · A Division of Online Marketing Dynamics LLC · 732 S 6th St #6971, Las Vegas, NV 89101
+      </p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script src="hero-canvas.js"></script>
+</body>
+</html>

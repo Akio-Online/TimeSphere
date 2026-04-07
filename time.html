@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Current Time — The Time Sphere</title>
+  <meta name="description" content="Live local time, time zone, UTC offset and DST status." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container">
+      <nav>
+        <a href="index.html" class="logo">The <span>Time</span> Sphere</a>
+        <ul>
+          <li><a href="index.html">World Clock</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- AD SLOT 1: Top Leaderboard -->
+  <div class="container">
+    <div class="ad-slot ad-top">Advertisement</div>
+  </div>
+
+  <!-- CITY HERO BANNER -->
+  <section class="city-banner">
+    <div class="city-banner-overlay"></div>
+    <div class="container city-banner-content">
+      <a href="index.html" class="back-link">← Back to World Clock</a>
+      <p class="city-label" id="city-label">Loading…</p>
+      <h1 id="city-page-title">—</h1>
+      <div class="live-clock" id="live-clock">--:--:--</div>
+      <div class="live-date" id="live-date">—</div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <div class="city-main container">
+
+    <!-- TOP ROW: TZ Badges | Weather | Day/Night -->
+    <div class="city-top-row">
+      <div class="tz-details">
+        <div class="tz-badge">
+          <strong id="utc-offset">—</strong>
+          UTC Offset
+        </div>
+        <div class="tz-badge" id="dst-badge">
+          <strong id="dst-status">—</strong>
+          Daylight Saving
+        </div>
+        <div class="tz-badge">
+          <strong id="tz-name">—</strong>
+          IANA Time Zone
+        </div>
+      </div>
+
+      <!-- Weather Card -->
+      <div class="daynight-card" id="weather-card">
+        <div class="weather-icon">⏳</div>
+        <div class="weather-info">
+          <div class="weather-label">Loading weather…</div>
+        </div>
+      </div>
+
+      <div class="daynight-card" id="daynight-card">
+        <div class="daynight-icon" id="daynight-icon">🌍</div>
+        <div class="daynight-info">
+          <div class="daynight-label" id="daynight-label">Loading…</div>
+          <div class="daynight-sub" id="daynight-sub">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW: Conversions (left) + Travel + Related (right) -->
+    <div class="city-bottom-row">
+
+      <div class="city-left">
+        <div class="conversions">
+          <h3>Live Conversions — Major Cities</h3>
+          <div id="conversions-body"></div>
+        </div>
+      </div>
+
+      <div class="city-right">
+        <div class="travel-card">
+          <p class="section-title" style="margin-bottom: 16px;">Planning a Trip?</p>
+          <h3 class="travel-heading" id="travel-heading">Explore This City</h3>
+          <p class="travel-sub">Find the best flights, hotels, and experiences.</p>
+          <div class="travel-links">
+            <a href="#" class="travel-btn" id="flights-link">
+              <span class="travel-icon">✈️</span>
+              <span class="travel-text">
+                <strong>Find Flights</strong>
+                <small>Save up to 30%</small>
+              </span>
+              <span class="travel-arrow">→</span>
+            </a>
+            <a href="#" class="travel-btn" id="hotels-link">
+              <span class="travel-icon">🏨</span>
+              <span class="travel-text">
+                <strong>Book Hotels</strong>
+                <small>Best price guarantee</small>
+              </span>
+              <span class="travel-arrow">→</span>
+            </a>
+            <a href="#" class="travel-btn" id="tours-link">
+              <span class="travel-icon">🎟️</span>
+              <span class="travel-text">
+                <strong>Tours &amp; Experiences</strong>
+                <small>Top-rated activities</small>
+              </span>
+              <span class="travel-arrow">→</span>
+            </a>
+          </div>
+        </div>
+        <div class="related-cities">
+          <p class="section-title" style="margin-bottom: 16px;">Related Cities</p>
+          <div class="related-grid" id="related-grid"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AD SLOT 2: Mid Leaderboard — full width, below grid -->
+  <div class="container" style="padding-top: 8px;">
+    <div class="ad-slot ad-top" style="margin-bottom: 0;">Advertisement</div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       DISCOVER SECTION
+  ══════════════════════════════════════ -->
+  <section class="discover-section container">
+
+    <div class="discover-header">
+      <div class="grid-divider"></div>
+      <p class="section-title" id="discover-title">Discover This City</p>
+      <p class="section-sub" id="discover-sub">Things to do, places to eat, and upcoming events</p>
+    </div>
+
+    <!-- ROW 1: AI Content — Things To Do + Restaurants -->
+    <div class="discover-grid">
+
+      <!-- Things To Do -->
+      <div class="discover-card" id="todo-card">
+        <div class="discover-card-header">
+          <span class="discover-icon">🗺️</span>
+          <h3 class="discover-card-title">Top Things To Do</h3>
+        </div>
+        <div class="discover-card-body" id="todo-body">
+          <div class="discover-loading">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Restaurants -->
+      <div class="discover-card" id="restaurant-card">
+        <div class="discover-card-header">
+          <span class="discover-icon">🍽️</span>
+          <h3 class="discover-card-title">Top Restaurants</h3>
+        </div>
+        <div class="discover-card-body" id="restaurant-body">
+          <div class="discover-loading">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROW 2: Viator Experiences Widget -->
+    <div class="discover-full">
+      <div class="discover-card-header" style="margin-bottom: 20px;">
+        <span class="discover-icon">🎟️</span>
+        <h3 class="discover-card-title">Book Experiences</h3>
+        <span class="discover-badge">via Viator</span>
+      </div>
+      <!-- Viator Partner Widget — replace VIATOR_PARTNER_ID with your real ID -->
+      <div id="viator-widget" class="viator-wrap">
+        <div class="widget-placeholder">
+          <p class="widget-placeholder-icon">✈️</p>
+          <p class="widget-placeholder-title" id="viator-city-name">Experiences in This City</p>
+          <p class="widget-placeholder-sub">Connect your Viator Partner ID to show real bookable tours and activities here. Each booking earns you affiliate commission.</p>
+          <a href="https://partner.viator.com" target="_blank" class="btn" style="display:inline-block; margin-top:16px; font-size:0.72rem;">Get Viator Partner ID →</a>
+        </div>
+        <!--
+          VIATOR SETUP (when you have your Partner ID):
+          Replace the placeholder above with:
+          <script src="https://www.viator.com/orion/partner/widget.js"
+            data-viator-partnerid="YOUR_VIATOR_PARTNER_ID"
+            data-viator-language="en"
+            data-viator-currency="USD"
+            data-viator-query="CITY_NAME"
+          ></script>
+        -->
+      </div>
+    </div>
+
+    <!-- ROW 3: Events — Ticketmaster + Eventbrite side by side -->
+    <div class="discover-grid">
+
+      <!-- Ticketmaster Events -->
+      <div class="discover-card">
+        <div class="discover-card-header">
+          <span class="discover-icon">🎵</span>
+          <h3 class="discover-card-title">Concerts &amp; Sports</h3>
+          <span class="discover-badge">Ticketmaster</span>
+        </div>
+        <div class="discover-card-body" id="ticketmaster-body">
+          <div class="discover-loading">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Eventbrite Events -->
+      <div class="discover-card">
+        <div class="discover-card-header">
+          <span class="discover-icon">📅</span>
+          <h3 class="discover-card-title">Local Events</h3>
+          <span class="discover-badge">Eventbrite</span>
+        </div>
+        <div class="discover-card-body" id="eventbrite-body">
+          <div class="discover-loading">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- AD SLOT 3: Bottom Banner -->
+  <div class="container" style="padding-bottom: 48px;">
+    <div class="ad-slot ad-bottom">Advertisement</div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="index.html">World Clock</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+      <p>© 2026 The Time Sphere · thetimesphere.com · All rights reserved.</p>
+      <p style="margin-top: 6px; font-size: 0.72rem; opacity: 0.5;">The Time Sphere · A Division of Online Marketing Dynamics LLC · 732 S 6th St #6971, Las Vegas, NV 89101</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
