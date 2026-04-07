@@ -462,11 +462,15 @@ function renderEventItems(events, containerId, linkBase) {
     return;
   }
   el.innerHTML = events.map(ev => `
-    <a href="${ev.url || linkBase}" target="_blank" rel="noopener" class="event-item">
-      <div class="event-item-name">${ev.name}</div>
-      <div class="event-item-meta">
-        <span class="event-item-date">📅 ${ev.date}</span>
-        <span>📍 ${ev.venue}</span>
+    <a href="${ev.url || linkBase}" target="_blank" rel="noopener" class="event-item ${ev.image ? 'event-item-has-image' : ''}">
+      ${ev.image ? `<div class="event-item-img"><img src="${ev.image}" alt="${ev.name}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ''}
+      <div class="event-item-content">
+        <div class="event-item-name">${ev.name}</div>
+        <div class="event-item-meta">
+          <span class="event-item-date">📅 ${ev.date}</span>
+          <span>📍 ${ev.venue}</span>
+          ${ev.genre ? `<span class="event-item-genre">${ev.genre}</span>` : ''}
+        </div>
       </div>
     </a>
   `).join('');
@@ -481,7 +485,9 @@ async function loadTicketmasterEvents(city) {
       name:  e.name,
       date:  e.dates?.start?.localDate || 'Upcoming',
       venue: e._embedded?.venues?.[0]?.name || city.name,
-      url:   e.url
+      url:   e.url,
+      image: e.images?.find(i => i.ratio === '16_9' && i.width > 300)?.url || e.images?.[0]?.url || null,
+      genre: e.classifications?.[0]?.genre?.name || ''
     }));
     return events;
   } catch(e) {
@@ -491,14 +497,16 @@ async function loadTicketmasterEvents(city) {
 
 async function loadEventbriteEvents(city) {
   try {
-    const url = `https://www.eventbriteapi.com/v3/events/search/?location.address=${encodeURIComponent(city.name)}&expand=venue&page_size=3&sort_by=date&token=${EVENTBRITE_KEY}`;
+    const url = `https://www.eventbriteapi.com/v3/events/search/?location.address=${encodeURIComponent(city.name)}&expand=venue,logo&page_size=3&sort_by=date&token=${EVENTBRITE_KEY}`;
     const res  = await fetch(url);
     const data = await res.json();
     const events = (data.events || []).map(e => ({
       name:  e.name?.text || 'Local Event',
       date:  e.start?.local ? new Date(e.start.local).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : 'Upcoming',
       venue: e.venue?.name || city.name,
-      url:   e.url
+      url:   e.url,
+      image: e.logo?.url || null,
+      genre: 'Local Event'
     }));
     return events;
   } catch(e) {

@@ -1142,7 +1142,7 @@ footer a:hover { color: var(--gold); }
   line-height: 1.5;
 }
 
-/* Event items */
+/* Event items with images */
 .event-item {
   padding: 12px;
   background: var(--bg);
@@ -1152,11 +1152,38 @@ footer a:hover { color: var(--gold); }
   color: inherit;
   display: block;
   transition: border-color var(--transition), transform var(--transition);
+  overflow: hidden;
+}
+
+.event-item-has-image {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-item-img {
+  width: 100%;
+  height: 120px;
+  overflow: hidden;
+  border-radius: 8px 8px 0 0;
+}
+
+.event-item-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.event-item:hover .event-item-img img { transform: scale(1.05); }
+
+.event-item-content {
+  padding: 12px;
 }
 
 .event-item:hover {
   border-color: rgba(240,168,48,0.3);
-  transform: translateX(3px);
+  transform: translateY(-2px);
   color: inherit;
 }
 
@@ -1164,17 +1191,30 @@ footer a:hover { color: var(--gold); }
   font-size: 0.86rem;
   font-weight: 600;
   color: var(--text);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .event-item-meta {
   font-size: 0.72rem;
   color: var(--text-dim);
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
 }
 
 .event-item-date { color: var(--gold); }
+
+.event-item-genre {
+  background: rgba(240,168,48,0.1);
+  border: 1px solid rgba(240,168,48,0.2);
+  border-radius: 50px;
+  padding: 2px 8px;
+  font-size: 0.65rem;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
 
 /* Loading animation */
 .discover-loading {
