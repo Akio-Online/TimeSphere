@@ -478,17 +478,26 @@ function renderEventItems(events, containerId, linkBase) {
 
 async function loadTicketmasterEvents(city) {
   try {
-    const url = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${TICKETMASTER_KEY}&city=${encodeURIComponent(city.name)}&size=3&sort=date,asc`;
+    const url = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${TICKETMASTER_KEY}&city=${encodeURIComponent(city.name)}&size=9&sort=date,asc`;
     const res  = await fetch(url);
     const data = await res.json();
-    const events = (data._embedded?.events || []).map(e => ({
-      name:  e.name,
-      date:  e.dates?.start?.localDate || 'Upcoming',
-      venue: e._embedded?.venues?.[0]?.name || city.name,
-      url:   e.url,
-      image: e.images?.find(i => i.ratio === '16_9' && i.width > 300)?.url || e.images?.[0]?.url || null,
-      genre: e.classifications?.[0]?.genre?.name || ''
-    }));
+    const seen = new Set();
+    const events = (data._embedded?.events || [])
+      .filter(e => {
+        const key = e.name.toLowerCase().trim();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, 3)
+      .map(e => ({
+        name:  e.name,
+        date:  e.dates?.start?.localDate || 'Upcoming',
+        venue: e._embedded?.venues?.[0]?.name || city.name,
+        url:   e.url,
+        image: e.images?.find(i => i.ratio === '16_9' && i.width > 300)?.url || e.images?.[0]?.url || null,
+        genre: e.classifications?.[0]?.genre?.name || ''
+      }));
     return events;
   } catch(e) {
     return [];
@@ -555,15 +564,55 @@ async function loadDiscoverContent(city) {
     `https://www.ticketmaster.com/search?q=${encodeURIComponent(city.name)}`
   );
 
-  // ── Load real Eventbrite events ──
+  // ── Eventbrite — show branded city card (CORS blocks direct API) ──
   const ebEl = document.getElementById('eventbrite-body');
-  if (ebEl) ebEl.innerHTML = `<div class="discover-loading"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>`;
-  const ebEvents = await loadEventbriteEvents(city);
-  renderEventItems(
-    ebEvents.length ? ebEvents : [{name:`Local events in ${city.name}`,date:'See all',venue:city.name,url:`https://www.eventbrite.com/d/${encodeURIComponent(city.name)}/events/`}],
-    'eventbrite-body',
-    `https://www.eventbrite.com/d/${encodeURIComponent(city.name)}/events/`
-  );
+  if (ebEl) {
+    const ebUrl = `https://www.eventbrite.com/d/${encodeURIComponent(city.name.toLowerCase().replace(/ /g,'-'))}--${encodeURIComponent(city.country.toLowerCase().replace(/ /g,'-'))/events/`;
+    ebEl.innerHTML = `
+      <a href="https://www.eventbrite.com/d/${encodeURIComponent(city.name)}/events/" target="_blank" rel="noopener" class="event-item event-item-has-image">
+        <div class="event-item-img" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;">
+          <div style="font-size:2.5rem;">📅</div>
+          <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#fff; font-weight:700; text-align:center; padding:0 20px;">Local Events in ${city.name}</div>
+          <div style="font-size:0.75rem; color:rgba(255,255,255,0.6); text-align:center; padding:0 20px;">Festivals, meetups, markets &amp; more</div>
+        </div>
+        <div class="event-item-content">
+          <div class="event-item-name">Browse All Local Events →</div>
+          <div class="event-item-meta">
+            <span class="event-item-date">📍 ${city.name}, ${city.country}</span>
+            <span class="event-item-genre" style="background:rgba(255,105,65,0.15); border-color:rgba(255,105,65,0.3); color:#ff6941;">Eventbrite</span>
+          </div>
+        </div>
+      </a>
+      <a href="https://www.eventbrite.com/d/${encodeURIComponent(city.name)}/food-and-drink--events/" target="_blank" rel="noopener" class="event-item event-item-has-image">
+        <div class="event-item-img" style="background: linear-gradient(135deg, #1a0a00 0%, #3d1a00 50%, #6b2f00 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;">
+          <div style="font-size:2.5rem;">🍽️</div>
+          <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#fff; font-weight:700; text-align:center; padding:0 20px;">Food &amp; Drink Events</div>
+          <div style="font-size:0.75rem; color:rgba(255,255,255,0.6); text-align:center; padding:0 20px;">Tastings, markets &amp; culinary experiences</div>
+        </div>
+        <div class="event-item-content">
+          <div class="event-item-name">Browse Food Events in ${city.name} →</div>
+          <div class="event-item-meta">
+            <span class="event-item-date">📍 ${city.name}</span>
+            <span class="event-item-genre" style="background:rgba(255,105,65,0.15); border-color:rgba(255,105,65,0.3); color:#ff6941;">Eventbrite</span>
+          </div>
+        </div>
+      </a>
+      <a href="https://www.eventbrite.com/d/${encodeURIComponent(city.name)}/music--events/" target="_blank" rel="noopener" class="event-item event-item-has-image">
+        <div class="event-item-img" style="background: linear-gradient(135deg, #0a001a 0%, #1a0a3d 50%, #2f006b 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;">
+          <div style="font-size:2.5rem;">🎵</div>
+          <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#fff; font-weight:700; text-align:center; padding:0 20px;">Music Events</div>
+          <div style="font-size:0.75rem; color:rgba(255,255,255,0.6); text-align:center; padding:0 20px;">Live music, concerts &amp; performances</div>
+        </div>
+        <div class="event-item-content">
+          <div class="event-item-name">Browse Music Events in ${city.name} →</div>
+          <div class="event-item-meta">
+            <span class="event-item-date">📍 ${city.name}</span>
+            <span class="event-item-genre" style="background:rgba(255,105,65,0.15); border-color:rgba(255,105,65,0.3); color:#ff6941;">Eventbrite</span>
+          </div>
+        </div>
+      </a>
+    `;
+  }
 
   // ── Load AI content ──
   await loadAIContent(city);
