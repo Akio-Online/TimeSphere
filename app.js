@@ -296,6 +296,28 @@ function renderCityPage() {
   const travelHeading = document.getElementById('travel-heading');
   if (travelHeading) travelHeading.textContent = `Explore ${city.name}`;
 
+  // Dynamic city-specific affiliate links
+  const aid = '8058275';
+  const sid = '304813083';
+  const sub3 = 'D15250377';
+  const cityEncoded = encodeURIComponent(city.name);
+  const baseParams = `Allianceid=${aid}&SID=${sid}&trip_sub1=&trip_sub3=${sub3}`;
+
+  const flightsLink = document.getElementById('flights-link');
+  if (flightsLink) flightsLink.href = `https://www.trip.com/flights/?dcity=${cityEncoded}&${baseParams}`;
+
+  const hotelsLink = document.getElementById('hotels-link');
+  if (hotelsLink) hotelsLink.href = `https://www.trip.com/hotels/list?searchKey=${cityEncoded}&${baseParams}`;
+
+  const carsLink = document.getElementById('cars-link');
+  if (carsLink) carsLink.href = `https://www.trip.com/carhire/${cityEncoded}/?${baseParams}`;
+
+  const trainsLink = document.getElementById('trains-link');
+  if (trainsLink) trainsLink.href = `https://www.trip.com/trains/?${baseParams}`;
+
+  const toursLink = document.getElementById('tours-link');
+  if (toursLink) toursLink.href = `https://www.viator.com/search/${cityEncoded}?pid=P00295924&mcid=42383&medium=link&medium_version=selector`;
+
   // Conversions
   if (convsEl) {
     const others = CITIES.filter(c => c.id !== city.id).slice(0, 12);
