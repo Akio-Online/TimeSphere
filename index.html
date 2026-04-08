@@ -86,7 +86,7 @@
         <a href="about.html" class="btn" style="margin-top: 28px; display: inline-block;">Learn More</a>
       </div>
       <div class="about-stats">
-        <div class="stat-card"><div class="stat-num">20+</div><div class="stat-label">Major Cities</div></div>
+        <div class="stat-card"><div class="stat-num" id="city-count">115+</div><div class="stat-label">Major Cities</div></div>
         <div class="stat-card"><div class="stat-num">24/7</div><div class="stat-label">Live Updates</div></div>
         <div class="stat-card"><div class="stat-num">1s</div><div class="stat-label">Refresh Rate</div></div>
         <div class="stat-card"><div class="stat-num">Free</div><div class="stat-label">Always</div></div>
@@ -117,5 +117,14 @@
 
   <script src="app.js"></script>
   <script src="hero-canvas.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const countEl = document.getElementById('city-count');
+      if (countEl && typeof CITIES !== 'undefined') {
+        const count = CITIES.length;
+        countEl.textContent = count + '+';
+      }
+    });
+  </script>
 </body>
 </html>
