@@ -309,6 +309,12 @@ function renderCityPage() {
   const hotelsLink = document.getElementById('hotels-link');
   if (hotelsLink) hotelsLink.href = `https://www.trip.com/hotels/list?searchWord=${cityEncoded}&${baseParams}`;
 
+  const hotelsExpediaLink = document.getElementById('hotels-expedia-link');
+  if (hotelsExpediaLink) {
+    const hotelsDestEncoded = encodeURIComponent(`https://www.hotels.com/search.do?destination=${city.name}`);
+    hotelsExpediaLink.href = `https://www.hotels.com/affiliate?landingPage=${hotelsDestEncoded}&camref=1110lCi3P&creativeref=1011l66481&adref=PZtELLwj2M`;
+  }
+
   const carsLink = document.getElementById('cars-link');
   if (carsLink) carsLink.href = `https://www.trip.com/carhire/?${baseParams}`;
 
