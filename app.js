@@ -302,27 +302,60 @@ function renderCityPage() {
   const sub3 = 'D15250377';
   const cityEncoded = encodeURIComponent(city.name);
   const baseParams = `Allianceid=${aid}&SID=${sid}&trip_sub1=&trip_sub3=${sub3}`;
+  const isAsiaAfrica = city.region === 'asia' || city.region === 'africa';
+  const isAmericasEurope = city.region === 'americas' || city.region === 'europe';
 
+  // Flights
   const flightsLink = document.getElementById('flights-link');
-  if (flightsLink) flightsLink.href = `https://www.trip.com/flights/welcome/?to=${cityEncoded}&${baseParams}`;
-
-  const hotelsLink = document.getElementById('hotels-link');
-  if (hotelsLink) hotelsLink.href = `https://www.trip.com/hotels/list?searchWord=${cityEncoded}&${baseParams}`;
-
-  const hotelsExpediaLink = document.getElementById('hotels-expedia-link');
-  if (hotelsExpediaLink) {
-    const hotelsDestEncoded = encodeURIComponent(`https://www.hotels.com/search.do?destination=${city.name}`);
-    hotelsExpediaLink.href = `https://www.hotels.com/affiliate?landingPage=${hotelsDestEncoded}&camref=1110lCi3P&creativeref=1011l66481&adref=PZtELLwj2M`;
+  if (flightsLink) {
+    if (isAsiaAfrica) {
+      flightsLink.href = `https://www.trip.com/flights/welcome/?to=${cityEncoded}&${baseParams}`;
+    } else {
+      flightsLink.href = `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent(`https://www.expedia.com/Flights-Search?trip=roundtrip&leg1=from:${city.name}`)}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZsdtQ7jiB`;
+    }
   }
 
-  const carsLink = document.getElementById('cars-link');
-  if (carsLink) carsLink.href = `https://www.trip.com/carhire/?${baseParams}`;
+  // Hotels — Trip.com for Asia/Africa, Hotels.com for Americas/Europe
+  const hotelsLink = document.getElementById('hotels-link');
+  const hotelsExpediaLink = document.getElementById('hotels-expedia-link');
+  if (hotelsLink) hotelsLink.style.display = isAsiaAfrica ? '' : 'none';
+  if (hotelsExpediaLink) hotelsExpediaLink.style.display = isAmericasEurope ? '' : 'none';
+  if (hotelsLink && isAsiaAfrica) {
+    hotelsLink.href = `https://www.trip.com/hotels/?searchWord=${cityEncoded}&${baseParams}`;
+  }
+  if (hotelsExpediaLink && isAmericasEurope) {
+    hotelsExpediaLink.href = `https://www.hotels.com/affiliate?landingPage=${encodeURIComponent(`https://www.hotels.com/search.do?destination=${city.name}`)}&camref=1110lCi3P&creativeref=1011l66481&adref=PZtELLwj2M`;
+  }
 
-  const trainsLink = document.getElementById('trains-link');
-  if (trainsLink) trainsLink.href = `https://www.trip.com/trains/?${baseParams}`;
-
+  // Tours (Viator — all regions)
   const toursLink = document.getElementById('tours-link');
   if (toursLink) toursLink.href = `https://www.viator.com/search/${cityEncoded}?pid=P00295924&mcid=42383&medium=link&medium_version=selector`;
+
+  // Cars
+  const carsLink = document.getElementById('cars-link');
+  if (carsLink) {
+    if (isAsiaAfrica) {
+      carsLink.href = `https://www.trip.com/carhire/?${baseParams}`;
+    } else {
+      carsLink.href = `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent(`https://www.expedia.com/carsearch?locn=${city.name}`)}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZ2Q47j9j0`;
+    }
+  }
+
+  // Trains (Trip.com — shown for Asia/Africa only)
+  const trainsLink = document.getElementById('trains-link');
+  if (trainsLink) {
+    trainsLink.style.display = isAsiaAfrica ? '' : 'none';
+    if (isAsiaAfrica) trainsLink.href = `https://www.trip.com/trains/?${baseParams}`;
+  }
+
+  // Packages (Expedia — shown for Americas/Europe only)
+  const packagesLink = document.getElementById('packages-link');
+  if (packagesLink) {
+    packagesLink.style.display = isAmericasEurope ? '' : 'none';
+    if (isAmericasEurope) {
+      packagesLink.href = `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent('https://www.expedia.com/Vacation-Packages')}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZFikPKL6y`;
+    }
+  }
 
   // Conversions
   if (convsEl) {
