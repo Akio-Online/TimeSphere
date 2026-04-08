@@ -304,13 +304,13 @@ function renderCityPage() {
   const baseParams = `Allianceid=${aid}&SID=${sid}&trip_sub1=&trip_sub3=${sub3}`;
 
   const flightsLink = document.getElementById('flights-link');
-  if (flightsLink) flightsLink.href = `https://www.trip.com/flights/?dcity=${cityEncoded}&${baseParams}`;
+  if (flightsLink) flightsLink.href = `https://www.trip.com/flights/welcome/?to=${cityEncoded}&${baseParams}`;
 
   const hotelsLink = document.getElementById('hotels-link');
-  if (hotelsLink) hotelsLink.href = `https://www.trip.com/hotels/list?searchKey=${cityEncoded}&${baseParams}`;
+  if (hotelsLink) hotelsLink.href = `https://www.trip.com/hotels/?city=${cityEncoded}&${baseParams}`;
 
   const carsLink = document.getElementById('cars-link');
-  if (carsLink) carsLink.href = `https://www.trip.com/carhire/${cityEncoded}/?${baseParams}`;
+  if (carsLink) carsLink.href = `https://www.trip.com/carhire/?${baseParams}`;
 
   const trainsLink = document.getElementById('trains-link');
   if (trainsLink) trainsLink.href = `https://www.trip.com/trains/?${baseParams}`;
