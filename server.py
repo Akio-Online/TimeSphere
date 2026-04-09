@@ -63,6 +63,17 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header('Content-Length', len(sitemap))
             self.end_headers()
             self.wfile.write(sitemap)
+        elif self.path == '/ads.txt':
+            try:
+                with open('ads.txt', 'rb') as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/plain')
+                self.send_header('Content-Length', len(content))
+                self.end_headers()
+                self.wfile.write(content)
+            except FileNotFoundError:
+                self.send_error(404)
         else:
             super().do_GET()
 
