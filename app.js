@@ -5,53 +5,112 @@
 
 // --- City Data ---
 const CITIES = [
-  { id: 'new-york',    name: 'New York',    country: 'USA',           tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 40.71,  lon: -74.01 },
-  { id: 'los-angeles', name: 'Los Angeles', country: 'USA',           tz: 'America/Los_Angeles', flag: '🇺🇸', region: 'americas', lat: 34.05,  lon: -118.24 },
-  { id: 'chicago',     name: 'Chicago',     country: 'USA',           tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 41.85,  lon: -87.65 },
-  { id: 'toronto',     name: 'Toronto',     country: 'Canada',        tz: 'America/Toronto',     flag: '🇨🇦', region: 'americas', lat: 43.70,  lon: -79.42 },
-  { id: 'mexico-city', name: 'Mexico City', country: 'Mexico',        tz: 'America/Mexico_City', flag: '🇲🇽', region: 'americas', lat: 19.43,  lon: -99.13 },
-  { id: 'sao-paulo',   name: 'São Paulo',   country: 'Brazil',        tz: 'America/Sao_Paulo',   flag: '🇧🇷', region: 'americas', lat: -23.55, lon: -46.63 },
-  { id: 'london',      name: 'London',      country: 'United Kingdom',tz: 'Europe/London',       flag: '🇬🇧', region: 'europe',   lat: 51.51,  lon: -0.13 },
-  { id: 'paris',       name: 'Paris',       country: 'France',        tz: 'Europe/Paris',        flag: '🇫🇷', region: 'europe',   lat: 48.85,  lon: 2.35 },
-  { id: 'berlin',      name: 'Berlin',      country: 'Germany',       tz: 'Europe/Berlin',       flag: '🇩🇪', region: 'europe',   lat: 52.52,  lon: 13.40 },
-  { id: 'rome',        name: 'Rome',        country: 'Italy',         tz: 'Europe/Rome',         flag: '🇮🇹', region: 'europe',   lat: 41.90,  lon: 12.50 },
-  { id: 'madrid',      name: 'Madrid',      country: 'Spain',         tz: 'Europe/Madrid',       flag: '🇪🇸', region: 'europe',   lat: 40.42,  lon: -3.70 },
-  { id: 'moscow',      name: 'Moscow',      country: 'Russia',        tz: 'Europe/Moscow',       flag: '🇷🇺', region: 'europe',   lat: 55.75,  lon: 37.62 },
-  { id: 'tokyo',       name: 'Tokyo',       country: 'Japan',         tz: 'Asia/Tokyo',          flag: '🇯🇵', region: 'asia',     lat: 35.69,  lon: 139.69 },
-  { id: 'singapore',   name: 'Singapore',   country: 'Singapore',     tz: 'Asia/Singapore',      flag: '🇸🇬', region: 'asia',     lat: 1.35,   lon: 103.82 },
-  { id: 'hong-kong',   name: 'Hong Kong',   country: 'China',         tz: 'Asia/Hong_Kong',      flag: '🇭🇰', region: 'asia',     lat: 22.32,  lon: 114.17 },
-  { id: 'seoul',       name: 'Seoul',       country: 'South Korea',   tz: 'Asia/Seoul',          flag: '🇰🇷', region: 'asia',     lat: 37.57,  lon: 127.00 },
-  { id: 'mumbai',      name: 'Mumbai',      country: 'India',         tz: 'Asia/Kolkata',        flag: '🇮🇳', region: 'asia',     lat: 19.08,  lon: 72.88 },
-  { id: 'sydney',      name: 'Sydney',      country: 'Australia',     tz: 'Australia/Sydney',    flag: '🇦🇺', region: 'asia',     lat: -33.87, lon: 151.21 },
-  { id: 'dubai',       name: 'Dubai',       country: 'UAE',           tz: 'Asia/Dubai',          flag: '🇦🇪', region: 'africa',   lat: 25.20,  lon: 55.27 },
-  { id: 'istanbul',    name: 'Istanbul',    country: 'Turkey',        tz: 'Europe/Istanbul',     flag: '🇹🇷', region: 'africa',   lat: 41.01,  lon: 28.95 },
-  { id: 'cairo',       name: 'Cairo',       country: 'Egypt',         tz: 'Africa/Cairo',        flag: '🇪🇬', region: 'africa',   lat: 30.06,  lon: 31.25 },
-  { id: 'johannesburg',name: 'Johannesburg',country: 'South Africa',  tz: 'Africa/Johannesburg', flag: '🇿🇦', region: 'africa',   lat: -26.20, lon: 28.04 },
-  // ── Cities 23 & 24 — shown on homepage ──
-  { id: 'amsterdam',   name: 'Amsterdam',   country: 'Netherlands',   tz: 'Europe/Amsterdam',    flag: '🇳🇱', region: 'europe',   lat: 52.37,  lon: 4.90 },
-  { id: 'bangkok',     name: 'Bangkok',     country: 'Thailand',      tz: 'Asia/Bangkok',        flag: '🇹🇭', region: 'asia',     lat: 13.75,  lon: 100.52 },
+  // ── Featured cities (shown on homepage grid) ──
+  { id: 'new-york',    name: 'New York',    state: 'New York',         country: 'USA',           tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 40.71,  lon: -74.01 },
+  { id: 'los-angeles', name: 'Los Angeles', state: 'California',       country: 'USA',           tz: 'America/Los_Angeles', flag: '🇺🇸', region: 'americas', lat: 34.05,  lon: -118.24 },
+  { id: 'chicago',     name: 'Chicago',     state: 'Illinois',         country: 'USA',           tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 41.85,  lon: -87.65 },
+  { id: 'toronto',     name: 'Toronto',     state: 'Ontario',          country: 'Canada',        tz: 'America/Toronto',     flag: '🇨🇦', region: 'americas', lat: 43.70,  lon: -79.42 },
+  { id: 'mexico-city', name: 'Mexico City',                            country: 'Mexico',        tz: 'America/Mexico_City', flag: '🇲🇽', region: 'americas', lat: 19.43,  lon: -99.13 },
+  { id: 'sao-paulo',   name: 'São Paulo',                              country: 'Brazil',        tz: 'America/Sao_Paulo',   flag: '🇧🇷', region: 'americas', lat: -23.55, lon: -46.63 },
+  { id: 'london',      name: 'London',                                 country: 'United Kingdom',tz: 'Europe/London',       flag: '🇬🇧', region: 'europe',   lat: 51.51,  lon: -0.13 },
+  { id: 'paris',       name: 'Paris',                                  country: 'France',        tz: 'Europe/Paris',        flag: '🇫🇷', region: 'europe',   lat: 48.85,  lon: 2.35 },
+  { id: 'berlin',      name: 'Berlin',                                 country: 'Germany',       tz: 'Europe/Berlin',       flag: '🇩🇪', region: 'europe',   lat: 52.52,  lon: 13.40 },
+  { id: 'rome',        name: 'Rome',                                   country: 'Italy',         tz: 'Europe/Rome',         flag: '🇮🇹', region: 'europe',   lat: 41.90,  lon: 12.50 },
+  { id: 'madrid',      name: 'Madrid',                                 country: 'Spain',         tz: 'Europe/Madrid',       flag: '🇪🇸', region: 'europe',   lat: 40.42,  lon: -3.70 },
+  { id: 'moscow',      name: 'Moscow',                                 country: 'Russia',        tz: 'Europe/Moscow',       flag: '🇷🇺', region: 'europe',   lat: 55.75,  lon: 37.62 },
+  { id: 'tokyo',       name: 'Tokyo',                                  country: 'Japan',         tz: 'Asia/Tokyo',          flag: '🇯🇵', region: 'asia',     lat: 35.69,  lon: 139.69 },
+  { id: 'singapore',   name: 'Singapore',                              country: 'Singapore',     tz: 'Asia/Singapore',      flag: '🇸🇬', region: 'asia',     lat: 1.35,   lon: 103.82 },
+  { id: 'hong-kong',   name: 'Hong Kong',                              country: 'China',         tz: 'Asia/Hong_Kong',      flag: '🇭🇰', region: 'asia',     lat: 22.32,  lon: 114.17 },
+  { id: 'seoul',       name: 'Seoul',                                  country: 'South Korea',   tz: 'Asia/Seoul',          flag: '🇰🇷', region: 'asia',     lat: 37.57,  lon: 127.00 },
+  { id: 'mumbai',      name: 'Mumbai',                                 country: 'India',         tz: 'Asia/Kolkata',        flag: '🇮🇳', region: 'asia',     lat: 19.08,  lon: 72.88 },
+  { id: 'sydney',      name: 'Sydney',                                 country: 'Australia',     tz: 'Australia/Sydney',    flag: '🇦🇺', region: 'asia',     lat: -33.87, lon: 151.21 },
+  { id: 'dubai',       name: 'Dubai',                                  country: 'UAE',           tz: 'Asia/Dubai',          flag: '🇦🇪', region: 'africa',   lat: 25.20,  lon: 55.27 },
+  { id: 'istanbul',    name: 'Istanbul',                               country: 'Turkey',        tz: 'Europe/Istanbul',     flag: '🇹🇷', region: 'africa',   lat: 41.01,  lon: 28.95 },
+  { id: 'cairo',       name: 'Cairo',                                  country: 'Egypt',         tz: 'Africa/Cairo',        flag: '🇪🇬', region: 'africa',   lat: 30.06,  lon: 31.25 },
+  { id: 'johannesburg',name: 'Johannesburg',                           country: 'South Africa',  tz: 'Africa/Johannesburg', flag: '🇿🇦', region: 'africa',   lat: -26.20, lon: 28.04 },
+  { id: 'amsterdam',   name: 'Amsterdam',                              country: 'Netherlands',   tz: 'Europe/Amsterdam',    flag: '🇳🇱', region: 'europe',   lat: 52.37,  lon: 4.90 },
+  { id: 'bangkok',     name: 'Bangkok',                                country: 'Thailand',      tz: 'Asia/Bangkok',        flag: '🇹🇭', region: 'asia',     lat: 13.75,  lon: 100.52 },
   // ── Search-only cities (not shown on homepage grid) ──
-  { id: 'miami',          name: 'Miami',          country: 'USA',          tz: 'America/New_York',       flag: '🇺🇸', region: 'americas', lat: 25.77,  lon: -80.19,  searchOnly: true },
-  { id: 'las-vegas',      name: 'Las Vegas',      country: 'USA',          tz: 'America/Los_Angeles',    flag: '🇺🇸', region: 'americas', lat: 36.17,  lon: -115.14, searchOnly: true },
-  { id: 'seattle',        name: 'Seattle',        country: 'USA',          tz: 'America/Los_Angeles',    flag: '🇺🇸', region: 'americas', lat: 47.61,  lon: -122.33, searchOnly: true },
-  { id: 'denver',         name: 'Denver',         country: 'USA',          tz: 'America/Denver',         flag: '🇺🇸', region: 'americas', lat: 39.74,  lon: -104.98, searchOnly: true },
-  { id: 'houston',        name: 'Houston',        country: 'USA',          tz: 'America/Chicago',        flag: '🇺🇸', region: 'americas', lat: 29.76,  lon: -95.37,  searchOnly: true },
-  { id: 'phoenix',        name: 'Phoenix',        country: 'USA',          tz: 'America/Phoenix',        flag: '🇺🇸', region: 'americas', lat: 33.45,  lon: -112.07, searchOnly: true },
-  { id: 'atlanta',        name: 'Atlanta',        country: 'USA',          tz: 'America/New_York',       flag: '🇺🇸', region: 'americas', lat: 33.75,  lon: -84.39,  searchOnly: true },
-  { id: 'boston',         name: 'Boston',         country: 'USA',          tz: 'America/New_York',       flag: '🇺🇸', region: 'americas', lat: 42.36,  lon: -71.06,  searchOnly: true },
-  { id: 'philadelphia',   name: 'Philadelphia',   country: 'USA',          tz: 'America/New_York',       flag: '🇺🇸', region: 'americas', lat: 39.95,  lon: -75.16,  searchOnly: true },
-  { id: 'washington-dc',  name: 'Washington DC',  country: 'USA',          tz: 'America/New_York',       flag: '🇺🇸', region: 'americas', lat: 38.91,  lon: -77.04,  searchOnly: true },
-  { id: 'san-francisco',  name: 'San Francisco',  country: 'USA',          tz: 'America/Los_Angeles',    flag: '🇺🇸', region: 'americas', lat: 37.77,  lon: -122.42, searchOnly: true },
-  { id: 'dallas',         name: 'Dallas',         country: 'USA',          tz: 'America/Chicago',        flag: '🇺🇸', region: 'americas', lat: 32.78,  lon: -96.80,  searchOnly: true },
-  { id: 'minneapolis',    name: 'Minneapolis',    country: 'USA',          tz: 'America/Chicago',        flag: '🇺🇸', region: 'americas', lat: 44.98,  lon: -93.27,  searchOnly: true },
-  { id: 'detroit',        name: 'Detroit',        country: 'USA',          tz: 'America/Detroit',        flag: '🇺🇸', region: 'americas', lat: 42.33,  lon: -83.05,  searchOnly: true },
-  { id: 'portland',       name: 'Portland',       country: 'USA',          tz: 'America/Los_Angeles',    flag: '🇺🇸', region: 'americas', lat: 45.52,  lon: -122.68, searchOnly: true },
-  { id: 'san-diego',      name: 'San Diego',      country: 'USA',          tz: 'America/Los_Angeles',    flag: '🇺🇸', region: 'americas', lat: 32.72,  lon: -117.16, searchOnly: true },
-  { id: 'honolulu',       name: 'Honolulu',       country: 'USA',          tz: 'Pacific/Honolulu',       flag: '🇺🇸', region: 'americas', lat: 21.31,  lon: -157.86, searchOnly: true },
-  { id: 'anchorage',      name: 'Anchorage',      country: 'USA',          tz: 'America/Anchorage',      flag: '🇺🇸', region: 'americas', lat: 61.22,  lon: -149.90, searchOnly: true },
-  { id: 'montreal',       name: 'Montreal',       country: 'Canada',       tz: 'America/Toronto',        flag: '🇨🇦', region: 'americas', lat: 45.50,  lon: -73.57,  searchOnly: true },
-  { id: 'vancouver',      name: 'Vancouver',      country: 'Canada',       tz: 'America/Vancouver',      flag: '🇨🇦', region: 'americas', lat: 49.25,  lon: -123.12, searchOnly: true },
-  { id: 'calgary',        name: 'Calgary',        country: 'Canada',       tz: 'America/Edmonton',       flag: '🇨🇦', region: 'americas', lat: 51.05,  lon: -114.07, searchOnly: true },
+  // USA — existing
+  { id: 'miami',          name: 'Miami',          state: 'Florida',          country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 25.77,  lon: -80.19,  searchOnly: true },
+  { id: 'las-vegas',      name: 'Las Vegas',      state: 'Nevada',           country: 'USA', tz: 'America/Los_Angeles', flag: '🇺🇸', region: 'americas', lat: 36.17,  lon: -115.14, searchOnly: true },
+  { id: 'seattle',        name: 'Seattle',        state: 'Washington',       country: 'USA', tz: 'America/Los_Angeles', flag: '🇺🇸', region: 'americas', lat: 47.61,  lon: -122.33, searchOnly: true },
+  { id: 'denver',         name: 'Denver',         state: 'Colorado',         country: 'USA', tz: 'America/Denver',      flag: '🇺🇸', region: 'americas', lat: 39.74,  lon: -104.98, searchOnly: true },
+  { id: 'houston',        name: 'Houston',        state: 'Texas',            country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 29.76,  lon: -95.37,  searchOnly: true },
+  { id: 'phoenix',        name: 'Phoenix',        state: 'Arizona',          country: 'USA', tz: 'America/Phoenix',     flag: '🇺🇸', region: 'americas', lat: 33.45,  lon: -112.07, searchOnly: true },
+  { id: 'atlanta',        name: 'Atlanta',        state: 'Georgia',          country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 33.75,  lon: -84.39,  searchOnly: true },
+  { id: 'boston',         name: 'Boston',         state: 'Massachusetts',    country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 42.36,  lon: -71.06,  searchOnly: true },
+  { id: 'philadelphia',   name: 'Philadelphia',   state: 'Pennsylvania',     country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 39.95,  lon: -75.16,  searchOnly: true },
+  { id: 'washington-dc',  name: 'Washington DC',  state: 'D.C.',             country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 38.91,  lon: -77.04,  searchOnly: true },
+  { id: 'san-francisco',  name: 'San Francisco',  state: 'California',       country: 'USA', tz: 'America/Los_Angeles', flag: '🇺🇸', region: 'americas', lat: 37.77,  lon: -122.42, searchOnly: true },
+  { id: 'dallas',         name: 'Dallas',         state: 'Texas',            country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 32.78,  lon: -96.80,  searchOnly: true },
+  { id: 'minneapolis',    name: 'Minneapolis',    state: 'Minnesota',        country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 44.98,  lon: -93.27,  searchOnly: true },
+  { id: 'detroit',        name: 'Detroit',        state: 'Michigan',         country: 'USA', tz: 'America/Detroit',     flag: '🇺🇸', region: 'americas', lat: 42.33,  lon: -83.05,  searchOnly: true },
+  { id: 'portland',       name: 'Portland',       state: 'Oregon',           country: 'USA', tz: 'America/Los_Angeles', flag: '🇺🇸', region: 'americas', lat: 45.52,  lon: -122.68, searchOnly: true },
+  { id: 'san-diego',      name: 'San Diego',      state: 'California',       country: 'USA', tz: 'America/Los_Angeles', flag: '🇺🇸', region: 'americas', lat: 32.72,  lon: -117.16, searchOnly: true },
+  { id: 'honolulu',       name: 'Honolulu',       state: 'Hawaii',           country: 'USA', tz: 'Pacific/Honolulu',    flag: '🇺🇸', region: 'americas', lat: 21.31,  lon: -157.86, searchOnly: true },
+  { id: 'anchorage',      name: 'Anchorage',      state: 'Alaska',           country: 'USA', tz: 'America/Anchorage',   flag: '🇺🇸', region: 'americas', lat: 61.22,  lon: -149.90, searchOnly: true },
+  // USA — new
+  { id: 'tampa',          name: 'Tampa',          state: 'Florida',          country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 27.95,  lon: -82.46,  searchOnly: true },
+  { id: 'orlando',        name: 'Orlando',        state: 'Florida',          country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 28.54,  lon: -81.38,  searchOnly: true },
+  { id: 'jacksonville',   name: 'Jacksonville',   state: 'Florida',          country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 30.33,  lon: -81.66,  searchOnly: true },
+  { id: 'charlotte',      name: 'Charlotte',      state: 'North Carolina',   country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 35.23,  lon: -80.84,  searchOnly: true },
+  { id: 'raleigh',        name: 'Raleigh',        state: 'North Carolina',   country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 35.78,  lon: -78.64,  searchOnly: true },
+  { id: 'nashville',      name: 'Nashville',      state: 'Tennessee',        country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 36.17,  lon: -86.78,  searchOnly: true },
+  { id: 'memphis',        name: 'Memphis',        state: 'Tennessee',        country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 35.15,  lon: -90.05,  searchOnly: true },
+  { id: 'louisville',     name: 'Louisville',     state: 'Kentucky',         country: 'USA', tz: 'America/Kentucky/Louisville', flag: '🇺🇸', region: 'americas', lat: 38.25, lon: -85.76, searchOnly: true },
+  { id: 'indianapolis',   name: 'Indianapolis',   state: 'Indiana',          country: 'USA', tz: 'America/Indiana/Indianapolis', flag: '🇺🇸', region: 'americas', lat: 39.77, lon: -86.16, searchOnly: true },
+  { id: 'columbus',       name: 'Columbus',       state: 'Ohio',             country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 39.96,  lon: -82.99,  searchOnly: true },
+  { id: 'cleveland',      name: 'Cleveland',      state: 'Ohio',             country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 41.50,  lon: -81.69,  searchOnly: true },
+  { id: 'cincinnati',     name: 'Cincinnati',     state: 'Ohio',             country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 39.10,  lon: -84.51,  searchOnly: true },
+  { id: 'pittsburgh',     name: 'Pittsburgh',     state: 'Pennsylvania',     country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 40.44,  lon: -79.99,  searchOnly: true },
+  { id: 'baltimore',      name: 'Baltimore',      state: 'Maryland',         country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 39.29,  lon: -76.61,  searchOnly: true },
+  { id: 'richmond',       name: 'Richmond',       state: 'Virginia',         country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 37.54,  lon: -77.43,  searchOnly: true },
+  { id: 'norfolk',        name: 'Norfolk',        state: 'Virginia',         country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 36.85,  lon: -76.29,  searchOnly: true },
+  { id: 'buffalo',        name: 'Buffalo',        state: 'New York',         country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 42.89,  lon: -78.88,  searchOnly: true },
+  { id: 'albany',         name: 'Albany',         state: 'New York',         country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 42.65,  lon: -73.75,  searchOnly: true },
+  { id: 'hartford',       name: 'Hartford',       state: 'Connecticut',      country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 41.76,  lon: -72.68,  searchOnly: true },
+  { id: 'providence',     name: 'Providence',     state: 'Rhode Island',     country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 41.82,  lon: -71.42,  searchOnly: true },
+  { id: 'portland-me',    name: 'Portland',       state: 'Maine',            country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 43.66,  lon: -70.26,  searchOnly: true },
+  { id: 'burlington',     name: 'Burlington',     state: 'Vermont',          country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 44.48,  lon: -73.21,  searchOnly: true },
+  { id: 'albuquerque',    name: 'Albuquerque',    state: 'New Mexico',       country: 'USA', tz: 'America/Denver',      flag: '🇺🇸', region: 'americas', lat: 35.08,  lon: -106.65, searchOnly: true },
+  { id: 'tucson',         name: 'Tucson',         state: 'Arizona',          country: 'USA', tz: 'America/Phoenix',     flag: '🇺🇸', region: 'americas', lat: 32.22,  lon: -110.97, searchOnly: true },
+  { id: 'el-paso',        name: 'El Paso',        state: 'Texas',            country: 'USA', tz: 'America/Denver',      flag: '🇺🇸', region: 'americas', lat: 31.76,  lon: -106.49, searchOnly: true },
+  { id: 'san-antonio',    name: 'San Antonio',    state: 'Texas',            country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 29.42,  lon: -98.49,  searchOnly: true },
+  { id: 'austin',         name: 'Austin',         state: 'Texas',            country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 30.27,  lon: -97.74,  searchOnly: true },
+  { id: 'fort-worth',     name: 'Fort Worth',     state: 'Texas',            country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 32.75,  lon: -97.33,  searchOnly: true },
+  { id: 'oklahoma-city',  name: 'Oklahoma City',  state: 'Oklahoma',         country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 35.47,  lon: -97.52,  searchOnly: true },
+  { id: 'tulsa',          name: 'Tulsa',          state: 'Oklahoma',         country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 36.15,  lon: -95.99,  searchOnly: true },
+  { id: 'wichita',        name: 'Wichita',        state: 'Kansas',           country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 37.69,  lon: -97.34,  searchOnly: true },
+  { id: 'omaha',          name: 'Omaha',          state: 'Nebraska',         country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 41.26,  lon: -95.94,  searchOnly: true },
+  { id: 'des-moines',     name: 'Des Moines',     state: 'Iowa',             country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 41.59,  lon: -93.62,  searchOnly: true },
+  { id: 'milwaukee',      name: 'Milwaukee',      state: 'Wisconsin',        country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 43.04,  lon: -87.91,  searchOnly: true },
+  { id: 'madison',        name: 'Madison',        state: 'Wisconsin',        country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 43.07,  lon: -89.40,  searchOnly: true },
+  { id: 'grand-rapids',   name: 'Grand Rapids',   state: 'Michigan',         country: 'USA', tz: 'America/Detroit',     flag: '🇺🇸', region: 'americas', lat: 42.97,  lon: -85.67,  searchOnly: true },
+  { id: 'kansas-city',    name: 'Kansas City',    state: 'Missouri',         country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 39.10,  lon: -94.58,  searchOnly: true },
+  { id: 'st-louis',       name: 'St. Louis',      state: 'Missouri',         country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 38.63,  lon: -90.20,  searchOnly: true },
+  { id: 'little-rock',    name: 'Little Rock',    state: 'Arkansas',         country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 34.75,  lon: -92.29,  searchOnly: true },
+  { id: 'jackson',        name: 'Jackson',        state: 'Mississippi',      country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 32.30,  lon: -90.18,  searchOnly: true },
+  { id: 'birmingham',     name: 'Birmingham',     state: 'Alabama',          country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 33.52,  lon: -86.80,  searchOnly: true },
+  { id: 'montgomery',     name: 'Montgomery',     state: 'Alabama',          country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 32.37,  lon: -86.30,  searchOnly: true },
+  { id: 'mobile',         name: 'Mobile',         state: 'Alabama',          country: 'USA', tz: 'America/Chicago',     flag: '🇺🇸', region: 'americas', lat: 30.69,  lon: -88.04,  searchOnly: true },
+  { id: 'savannah',       name: 'Savannah',       state: 'Georgia',          country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 32.08,  lon: -81.10,  searchOnly: true },
+  { id: 'charleston',     name: 'Charleston',     state: 'South Carolina',   country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 32.78,  lon: -79.93,  searchOnly: true },
+  { id: 'columbia-sc',    name: 'Columbia',       state: 'South Carolina',   country: 'USA', tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 34.00,  lon: -81.03,  searchOnly: true },
+  { id: 'boise',          name: 'Boise',          state: 'Idaho',            country: 'USA', tz: 'America/Boise',       flag: '🇺🇸', region: 'americas', lat: 43.62,  lon: -116.21, searchOnly: true },
+  { id: 'salt-lake-city', name: 'Salt Lake City', state: 'Utah',             country: 'USA', tz: 'America/Denver',      flag: '🇺🇸', region: 'americas', lat: 40.76,  lon: -111.89, searchOnly: true },
+  { id: 'reno',           name: 'Reno',           state: 'Nevada',           country: 'USA', tz: 'America/Los_Angeles', flag: '🇺🇸', region: 'americas', lat: 39.53,  lon: -119.81, searchOnly: true },
+  { id: 'spokane',        name: 'Spokane',        state: 'Washington',       country: 'USA', tz: 'America/Los_Angeles', flag: '🇺🇸', region: 'americas', lat: 47.66,  lon: -117.43, searchOnly: true },
+  // Canada — existing
+  { id: 'montreal',       name: 'Montreal',       state: 'Quebec',           country: 'Canada', tz: 'America/Toronto',   flag: '🇨🇦', region: 'americas', lat: 45.50,  lon: -73.57,  searchOnly: true },
+  { id: 'vancouver',      name: 'Vancouver',      state: 'British Columbia', country: 'Canada', tz: 'America/Vancouver', flag: '🇨🇦', region: 'americas', lat: 49.25,  lon: -123.12, searchOnly: true },
+  { id: 'calgary',        name: 'Calgary',        state: 'Alberta',          country: 'Canada', tz: 'America/Edmonton',  flag: '🇨🇦', region: 'americas', lat: 51.05,  lon: -114.07, searchOnly: true },
+  // Canada — new
+  { id: 'winnipeg',       name: 'Winnipeg',       state: 'Manitoba',         country: 'Canada', tz: 'America/Winnipeg',  flag: '🇨🇦', region: 'americas', lat: 49.90,  lon: -97.14,  searchOnly: true },
+  { id: 'edmonton',       name: 'Edmonton',       state: 'Alberta',          country: 'Canada', tz: 'America/Edmonton',  flag: '🇨🇦', region: 'americas', lat: 53.55,  lon: -113.47, searchOnly: true },
+  { id: 'quebec-city',    name: 'Quebec City',    state: 'Quebec',           country: 'Canada', tz: 'America/Toronto',   flag: '🇨🇦', region: 'americas', lat: 46.81,  lon: -71.21,  searchOnly: true },
+  { id: 'halifax',        name: 'Halifax',        state: 'Nova Scotia',      country: 'Canada', tz: 'America/Halifax',   flag: '🇨🇦', region: 'americas', lat: 44.65,  lon: -63.57,  searchOnly: true },
+  // Latin America — existing
   { id: 'buenos-aires',   name: 'Buenos Aires',   country: 'Argentina',    tz: 'America/Argentina/Buenos_Aires', flag: '🇦🇷', region: 'americas', lat: -34.60, lon: -58.38, searchOnly: true },
   { id: 'santiago',       name: 'Santiago',       country: 'Chile',        tz: 'America/Santiago',       flag: '🇨🇱', region: 'americas', lat: -33.45, lon: -70.67,  searchOnly: true },
   { id: 'lima',           name: 'Lima',           country: 'Peru',         tz: 'America/Lima',           flag: '🇵🇪', region: 'americas', lat: -12.05, lon: -77.04,  searchOnly: true },
@@ -59,6 +118,19 @@ const CITIES = [
   { id: 'caracas',        name: 'Caracas',        country: 'Venezuela',    tz: 'America/Caracas',        flag: '🇻🇪', region: 'americas', lat: 10.48,  lon: -66.88,  searchOnly: true },
   { id: 'panama-city',    name: 'Panama City',    country: 'Panama',       tz: 'America/Panama',         flag: '🇵🇦', region: 'americas', lat: 8.99,   lon: -79.52,  searchOnly: true },
   { id: 'havana',         name: 'Havana',         country: 'Cuba',         tz: 'America/Havana',         flag: '🇨🇺', region: 'americas', lat: 23.13,  lon: -82.38,  searchOnly: true },
+  // Latin America — new
+  { id: 'monterrey',      name: 'Monterrey',      country: 'Mexico',       tz: 'America/Monterrey',      flag: '🇲🇽', region: 'americas', lat: 25.67,  lon: -100.31, searchOnly: true },
+  { id: 'guadalajara',    name: 'Guadalajara',    country: 'Mexico',       tz: 'America/Mexico_City',    flag: '🇲🇽', region: 'americas', lat: 20.67,  lon: -103.35, searchOnly: true },
+  { id: 'tijuana',        name: 'Tijuana',        country: 'Mexico',       tz: 'America/Tijuana',        flag: '🇲🇽', region: 'americas', lat: 32.52,  lon: -117.04, searchOnly: true },
+  { id: 'medellin',       name: 'Medellín',       country: 'Colombia',     tz: 'America/Bogota',         flag: '🇨🇴', region: 'americas', lat: 6.25,   lon: -75.56,  searchOnly: true },
+  { id: 'montevideo',     name: 'Montevideo',     country: 'Uruguay',      tz: 'America/Montevideo',     flag: '🇺🇾', region: 'americas', lat: -34.90, lon: -56.19,  searchOnly: true },
+  { id: 'quito',          name: 'Quito',          country: 'Ecuador',      tz: 'America/Guayaquil',      flag: '🇪🇨', region: 'americas', lat: -0.23,  lon: -78.52,  searchOnly: true },
+  { id: 'la-paz',         name: 'La Paz',         country: 'Bolivia',      tz: 'America/La_Paz',         flag: '🇧🇴', region: 'americas', lat: -16.50, lon: -68.15,  searchOnly: true },
+  { id: 'san-jose-cr',    name: 'San José',       country: 'Costa Rica',   tz: 'America/Costa_Rica',     flag: '🇨🇷', region: 'americas', lat: 9.93,   lon: -84.08,  searchOnly: true },
+  { id: 'guatemala-city', name: 'Guatemala City', country: 'Guatemala',    tz: 'America/Guatemala',      flag: '🇬🇹', region: 'americas', lat: 14.63,  lon: -90.52,  searchOnly: true },
+  { id: 'kingston',       name: 'Kingston',       country: 'Jamaica',      tz: 'America/Jamaica',        flag: '🇯🇲', region: 'americas', lat: 17.99,  lon: -76.79,  searchOnly: true },
+  { id: 'port-of-spain',  name: 'Port of Spain',  country: 'Trinidad',     tz: 'America/Port_of_Spain',  flag: '🇹🇹', region: 'americas', lat: 10.65,  lon: -61.52,  searchOnly: true },
+  // Europe — existing
   { id: 'barcelona',      name: 'Barcelona',      country: 'Spain',        tz: 'Europe/Madrid',          flag: '🇪🇸', region: 'europe',   lat: 41.39,  lon: 2.15,    searchOnly: true },
   { id: 'brussels',       name: 'Brussels',       country: 'Belgium',      tz: 'Europe/Brussels',        flag: '🇧🇪', region: 'europe',   lat: 50.85,  lon: 4.35,    searchOnly: true },
   { id: 'vienna',         name: 'Vienna',         country: 'Austria',      tz: 'Europe/Vienna',          flag: '🇦🇹', region: 'europe',   lat: 48.21,  lon: 16.37,   searchOnly: true },
@@ -81,6 +153,7 @@ const CITIES = [
   { id: 'manchester',     name: 'Manchester',     country: 'United Kingdom',tz: 'Europe/London',         flag: '🇬🇧', region: 'europe',   lat: 53.48,  lon: -2.24,   searchOnly: true },
   { id: 'kyiv',           name: 'Kyiv',           country: 'Ukraine',      tz: 'Europe/Kiev',            flag: '🇺🇦', region: 'europe',   lat: 50.45,  lon: 30.52,   searchOnly: true },
   { id: 'bucharest',      name: 'Bucharest',      country: 'Romania',      tz: 'Europe/Bucharest',       flag: '🇷🇴', region: 'europe',   lat: 44.43,  lon: 26.10,   searchOnly: true },
+  // Asia/Pacific — existing
   { id: 'jakarta',        name: 'Jakarta',        country: 'Indonesia',    tz: 'Asia/Jakarta',           flag: '🇮🇩', region: 'asia',     lat: -6.21,  lon: 106.85,  searchOnly: true },
   { id: 'kuala-lumpur',   name: 'Kuala Lumpur',   country: 'Malaysia',     tz: 'Asia/Kuala_Lumpur',      flag: '🇲🇾', region: 'asia',     lat: 3.14,   lon: 101.69,  searchOnly: true },
   { id: 'manila',         name: 'Manila',         country: 'Philippines',  tz: 'Asia/Manila',            flag: '🇵🇭', region: 'asia',     lat: 14.60,  lon: 120.98,  searchOnly: true },
@@ -96,6 +169,19 @@ const CITIES = [
   { id: 'lahore',         name: 'Lahore',         country: 'Pakistan',     tz: 'Asia/Karachi',           flag: '🇵🇰', region: 'asia',     lat: 31.55,  lon: 74.35,   searchOnly: true },
   { id: 'colombo',        name: 'Colombo',        country: 'Sri Lanka',    tz: 'Asia/Colombo',           flag: '🇱🇰', region: 'asia',     lat: 6.93,   lon: 79.85,   searchOnly: true },
   { id: 'kathmandu',      name: 'Kathmandu',      country: 'Nepal',        tz: 'Asia/Kathmandu',         flag: '🇳🇵', region: 'asia',     lat: 27.71,  lon: 85.31,   searchOnly: true },
+  { id: 'almaty',         name: 'Almaty',         country: 'Kazakhstan',   tz: 'Asia/Almaty',            flag: '🇰🇿', region: 'asia',     lat: 43.26,  lon: 76.95,   searchOnly: true },
+  { id: 'tashkent',       name: 'Tashkent',       country: 'Uzbekistan',   tz: 'Asia/Tashkent',          flag: '🇺🇿', region: 'asia',     lat: 41.30,  lon: 69.24,   searchOnly: true },
+  { id: 'melbourne',      name: 'Melbourne',      country: 'Australia',    tz: 'Australia/Melbourne',    flag: '🇦🇺', region: 'asia',     lat: -37.81, lon: 144.96,  searchOnly: true },
+  { id: 'brisbane',       name: 'Brisbane',       country: 'Australia',    tz: 'Australia/Brisbane',     flag: '🇦🇺', region: 'asia',     lat: -27.47, lon: 153.02,  searchOnly: true },
+  { id: 'perth',          name: 'Perth',          country: 'Australia',    tz: 'Australia/Perth',        flag: '🇦🇺', region: 'asia',     lat: -31.95, lon: 115.86,  searchOnly: true },
+  { id: 'auckland',       name: 'Auckland',       country: 'New Zealand',  tz: 'Pacific/Auckland',       flag: '🇳🇿', region: 'asia',     lat: -36.87, lon: 174.77,  searchOnly: true },
+  { id: 'wellington',     name: 'Wellington',     country: 'New Zealand',  tz: 'Pacific/Auckland',       flag: '🇳🇿', region: 'asia',     lat: -41.29, lon: 174.78,  searchOnly: true },
+  // Asia — new
+  { id: 'baku',           name: 'Baku',           country: 'Azerbaijan',   tz: 'Asia/Baku',              flag: '🇦🇿', region: 'asia',     lat: 40.41,  lon: 49.87,   searchOnly: true },
+  { id: 'yangon',         name: 'Yangon',         country: 'Myanmar',      tz: 'Asia/Rangoon',           flag: '🇲🇲', region: 'asia',     lat: 16.87,  lon: 96.19,   searchOnly: true },
+  { id: 'phnom-penh',     name: 'Phnom Penh',     country: 'Cambodia',     tz: 'Asia/Phnom_Penh',        flag: '🇰🇭', region: 'asia',     lat: 11.55,  lon: 104.92,  searchOnly: true },
+  { id: 'vientiane',      name: 'Vientiane',      country: 'Laos',         tz: 'Asia/Vientiane',         flag: '🇱🇦', region: 'asia',     lat: 17.97,  lon: 102.60,  searchOnly: true },
+  // Middle East — existing
   { id: 'tehran',         name: 'Tehran',         country: 'Iran',         tz: 'Asia/Tehran',            flag: '🇮🇷', region: 'africa',   lat: 35.69,  lon: 51.39,   searchOnly: true },
   { id: 'baghdad',        name: 'Baghdad',        country: 'Iraq',         tz: 'Asia/Baghdad',           flag: '🇮🇶', region: 'africa',   lat: 33.34,  lon: 44.40,   searchOnly: true },
   { id: 'riyadh',         name: 'Riyadh',         country: 'Saudi Arabia', tz: 'Asia/Riyadh',            flag: '🇸🇦', region: 'africa',   lat: 24.69,  lon: 46.72,   searchOnly: true },
@@ -106,6 +192,7 @@ const CITIES = [
   { id: 'beirut',         name: 'Beirut',         country: 'Lebanon',      tz: 'Asia/Beirut',            flag: '🇱🇧', region: 'africa',   lat: 33.89,  lon: 35.50,   searchOnly: true },
   { id: 'amman',          name: 'Amman',          country: 'Jordan',       tz: 'Asia/Amman',             flag: '🇯🇴', region: 'africa',   lat: 31.95,  lon: 35.93,   searchOnly: true },
   { id: 'tel-aviv',       name: 'Tel Aviv',       country: 'Israel',       tz: 'Asia/Jerusalem',         flag: '🇮🇱', region: 'africa',   lat: 32.08,  lon: 34.78,   searchOnly: true },
+  // Africa — existing
   { id: 'nairobi',        name: 'Nairobi',        country: 'Kenya',        tz: 'Africa/Nairobi',         flag: '🇰🇪', region: 'africa',   lat: -1.29,  lon: 36.82,   searchOnly: true },
   { id: 'lagos',          name: 'Lagos',          country: 'Nigeria',      tz: 'Africa/Lagos',           flag: '🇳🇬', region: 'africa',   lat: 6.52,   lon: 3.38,    searchOnly: true },
   { id: 'accra',          name: 'Accra',          country: 'Ghana',        tz: 'Africa/Accra',           flag: '🇬🇭', region: 'africa',   lat: 5.56,   lon: -0.20,   searchOnly: true },
@@ -115,13 +202,11 @@ const CITIES = [
   { id: 'addis-ababa',    name: 'Addis Ababa',    country: 'Ethiopia',     tz: 'Africa/Addis_Ababa',     flag: '🇪🇹', region: 'africa',   lat: 9.02,   lon: 38.75,   searchOnly: true },
   { id: 'dar-es-salaam',  name: 'Dar es Salaam',  country: 'Tanzania',     tz: 'Africa/Dar_es_Salaam',   flag: '🇹🇿', region: 'africa',   lat: -6.79,  lon: 39.21,   searchOnly: true },
   { id: 'cape-town',      name: 'Cape Town',      country: 'South Africa', tz: 'Africa/Johannesburg',    flag: '🇿🇦', region: 'africa',   lat: -33.93, lon: 18.42,   searchOnly: true },
-  { id: 'melbourne',      name: 'Melbourne',      country: 'Australia',    tz: 'Australia/Melbourne',    flag: '🇦🇺', region: 'asia',     lat: -37.81, lon: 144.96,  searchOnly: true },
-  { id: 'brisbane',       name: 'Brisbane',       country: 'Australia',    tz: 'Australia/Brisbane',     flag: '🇦🇺', region: 'asia',     lat: -27.47, lon: 153.02,  searchOnly: true },
-  { id: 'perth',          name: 'Perth',          country: 'Australia',    tz: 'Australia/Perth',        flag: '🇦🇺', region: 'asia',     lat: -31.95, lon: 115.86,  searchOnly: true },
-  { id: 'auckland',       name: 'Auckland',       country: 'New Zealand',  tz: 'Pacific/Auckland',       flag: '🇳🇿', region: 'asia',     lat: -36.87, lon: 174.77,  searchOnly: true },
-  { id: 'wellington',     name: 'Wellington',     country: 'New Zealand',  tz: 'Pacific/Auckland',       flag: '🇳🇿', region: 'asia',     lat: -41.29, lon: 174.78,  searchOnly: true },
-  { id: 'almaty',         name: 'Almaty',         country: 'Kazakhstan',   tz: 'Asia/Almaty',            flag: '🇰🇿', region: 'asia',     lat: 43.26,  lon: 76.95,   searchOnly: true },
-  { id: 'tashkent',       name: 'Tashkent',       country: 'Uzbekistan',   tz: 'Asia/Tashkent',          flag: '🇺🇿', region: 'asia',     lat: 41.30,  lon: 69.24,   searchOnly: true },
+  // Africa — new
+  { id: 'kampala',        name: 'Kampala',        country: 'Uganda',       tz: 'Africa/Kampala',         flag: '🇺🇬', region: 'africa',   lat: 0.32,   lon: 32.58,   searchOnly: true },
+  { id: 'lusaka',         name: 'Lusaka',         country: 'Zambia',       tz: 'Africa/Lusaka',          flag: '🇿🇲', region: 'africa',   lat: -15.42, lon: 28.28,   searchOnly: true },
+  { id: 'harare',         name: 'Harare',         country: 'Zimbabwe',     tz: 'Africa/Harare',          flag: '🇿🇼', region: 'africa',   lat: -17.83, lon: 31.05,   searchOnly: true },
+  { id: 'maputo',         name: 'Maputo',         country: 'Mozambique',   tz: 'Africa/Maputo',          flag: '🇲🇿', region: 'africa',   lat: -25.97, lon: 32.59,   searchOnly: true },
 ];
 
 // --- Utility: get current time in a timezone ---
@@ -157,6 +242,12 @@ function getUTCOffset(tz) {
   return `UTC${sign}${h}:${m}`;
 }
 
+// --- City display label: "City, State" for US/Canada, "City, Country" otherwise ---
+function cityLabel(city) {
+  if (city.state) return `${city.name}, ${city.state}`;
+  return `${city.name}, ${city.country}`;
+}
+
 // Simple DST check: compare Jan and Jun offsets
 function isDST(tz) {
   const now = new Date();
@@ -186,8 +277,11 @@ function renderCityGrid() {
       // Only show non-searchOnly cities unless user is searching
       const isSearching = filter.trim().length > 0;
       if (c.searchOnly && !isSearching) return false;
-      const matchesText = c.name.toLowerCase().includes(filter.toLowerCase()) ||
-                          c.country.toLowerCase().includes(filter.toLowerCase());
+      const lf = filter.toLowerCase();
+      const matchesText = c.name.toLowerCase().includes(lf) ||
+                          c.country.toLowerCase().includes(lf) ||
+                          (c.state && c.state.toLowerCase().includes(lf)) ||
+                          cityLabel(c).toLowerCase().includes(lf);
       const matchesRegion = region === 'all' || c.region === region;
       return matchesText && matchesRegion;
     });
@@ -196,7 +290,7 @@ function renderCityGrid() {
       <a href="time.html?city=${city.id}" class="city-card" data-id="${city.id}" data-region="${city.region}">
         <div class="city-name">${city.flag} ${city.name}</div>
         <div class="city-time" id="mini-${city.id}">--:--:--</div>
-        <div class="city-tz">${city.country} · ${city.tz}</div>
+        <div class="city-tz">${cityLabel(city)} · ${city.tz}</div>
       </a>
     `).join('');
   }
@@ -239,7 +333,9 @@ function setupSearch() {
     const val = input.value.trim().toLowerCase();
     const match = CITIES.find(c =>
       c.name.toLowerCase().includes(val) ||
-      c.id.includes(val.replace(/\s+/g, '-'))
+      c.id.includes(val.replace(/\s+/g, '-')) ||
+      (c.state && c.state.toLowerCase().includes(val)) ||
+      cityLabel(c).toLowerCase().includes(val)
     );
     if (match) {
       window.location.href = `time.html?city=${match.id}`;
@@ -281,7 +377,7 @@ function renderCityPage() {
   // Page title
   document.title = `Current time in ${city.name} — Live Clock | The Time Sphere`;
   if (titleEl) titleEl.textContent = `${city.flag} ${city.name}`;
-  if (labelEl) labelEl.textContent = `${city.country} · Current Local Time`;
+  if (labelEl) labelEl.textContent = `${cityLabel(city)} · Current Local Time`;
 
   // Static TZ info
   const offset = getUTCOffset(city.tz);
@@ -457,8 +553,86 @@ const CITY_IMAGES = {
   'istanbul':    'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=1600&q=80',
   'cairo':       'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=1600&q=80',
   'johannesburg':'https://images.unsplash.com/photo-1577948000111-9c970dfe3743?w=1600&q=80',
+  // USA — new cities
+  'tampa':           'https://images.unsplash.com/photo-1605723517503-3cadb5818a0c?w=1600&q=80',
+  'orlando':         'https://images.unsplash.com/photo-1575089976121-8ed7b2a54265?w=1600&q=80',
+  'jacksonville':    'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=1600&q=80',
+  'charlotte':       'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1600&q=80',
+  'raleigh':         'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80',
+  'nashville':       'https://images.unsplash.com/photo-1545579133-99bb5ab189bd?w=1600&q=80',
+  'memphis':         'https://images.unsplash.com/photo-1568894411339-29e5fb8e4428?w=1600&q=80',
+  'louisville':      'https://images.unsplash.com/photo-1572026640804-763a3e5c6a79?w=1600&q=80',
+  'indianapolis':    'https://images.unsplash.com/photo-1589553416260-f586c8f1514f?w=1600&q=80',
+  'columbus':        'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1600&q=80',
+  'cleveland':       'https://images.unsplash.com/photo-1569025690938-a00729c9e1f9?w=1600&q=80',
+  'cincinnati':      'https://images.unsplash.com/photo-1558452919-08ae4aea8e29?w=1600&q=80',
+  'pittsburgh':      'https://images.unsplash.com/photo-1530841344095-5e0c1d0c7f51?w=1600&q=80',
+  'baltimore':       'https://images.unsplash.com/photo-1574518861790-2c64c36b1d2a?w=1600&q=80',
+  'richmond':        'https://images.unsplash.com/photo-1597500931372-44f6c4cb63e3?w=1600&q=80',
+  'norfolk':         'https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=1600&q=80',
+  'buffalo':         'https://images.unsplash.com/photo-1569025743873-ea3a9ade89f9?w=1600&q=80',
+  'albany':          'https://images.unsplash.com/photo-1444723121867-7a241cacace9?w=1600&q=80',
+  'hartford':        'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
+  'providence':      'https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=1600&q=80',
+  'portland-me':     'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=1600&q=80',
+  'burlington':      'https://images.unsplash.com/photo-1501621667575-af81f1f0bacc?w=1600&q=80',
+  'albuquerque':     'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1600&q=80',
+  'tucson':          'https://images.unsplash.com/photo-1558005137-d9619a5c539f?w=1600&q=80',
+  'el-paso':         'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80',
+  'san-antonio':     'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=1600&q=80',
+  'austin':          'https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=1600&q=80',
+  'fort-worth':      'https://images.unsplash.com/photo-1548169874-53e85f753f1e?w=1600&q=80',
+  'oklahoma-city':   'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1600&q=80',
+  'tulsa':           'https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=1600&q=80',
+  'wichita':         'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
+  'omaha':           'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=1600&q=80',
+  'des-moines':      'https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?w=1600&q=80',
+  'milwaukee':       'https://images.unsplash.com/photo-1559566740-e63e29d3948f?w=1600&q=80',
+  'madison':         'https://images.unsplash.com/photo-1501621667575-af81f1f0bacc?w=1600&q=80',
+  'grand-rapids':    'https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?w=1600&q=80',
+  'kansas-city':     'https://images.unsplash.com/photo-1558452919-08ae4aea8e29?w=1600&q=80',
+  'st-louis':        'https://images.unsplash.com/photo-1541336032412-2048a678540d?w=1600&q=80',
+  'little-rock':     'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
+  'jackson':         'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
+  'birmingham':      'https://images.unsplash.com/photo-1559566740-e63e29d3948f?w=1600&q=80',
+  'montgomery':      'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
+  'mobile':          'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
+  'savannah':        'https://images.unsplash.com/photo-1558005530-a7958896ec60?w=1600&q=80',
+  'charleston':      'https://images.unsplash.com/photo-1558005137-d9619a5c539f?w=1600&q=80',
+  'columbia-sc':     'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
+  'boise':           'https://images.unsplash.com/photo-1501621667575-af81f1f0bacc?w=1600&q=80',
+  'salt-lake-city':  'https://images.unsplash.com/photo-1509824227185-9c5a01ceba0d?w=1600&q=80',
+  'reno':            'https://images.unsplash.com/photo-1559566740-e63e29d3948f?w=1600&q=80',
+  'spokane':         'https://images.unsplash.com/photo-1501621667575-af81f1f0bacc?w=1600&q=80',
+  // Canada — new
+  'winnipeg':        'https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?w=1600&q=80',
+  'edmonton':        'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=1600&q=80',
+  'quebec-city':     'https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=1600&q=80',
+  'halifax':         'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=1600&q=80',
+  // Latin America — new
+  'monterrey':       'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=1600&q=80',
+  'guadalajara':     'https://images.unsplash.com/photo-1518638150340-f706e86654de?w=1600&q=80',
+  'tijuana':         'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
+  'medellin':        'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=1600&q=80',
+  'montevideo':      'https://images.unsplash.com/photo-1559566740-e63e29d3948f?w=1600&q=80',
+  'quito':           'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=1600&q=80',
+  'la-paz':          'https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?w=1600&q=80',
+  'san-jose-cr':     'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=1600&q=80',
+  'guatemala-city':  'https://images.unsplash.com/photo-1518638150340-f706e86654de?w=1600&q=80',
+  'kingston':        'https://images.unsplash.com/photo-1559566740-e63e29d3948f?w=1600&q=80',
+  'port-of-spain':   'https://images.unsplash.com/photo-1548169874-53e85f753f1e?w=1600&q=80',
+  // Africa — new
+  'kampala':         'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=1600&q=80',
+  'lusaka':          'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=1600&q=80',
+  'harare':          'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=1600&q=80',
+  'maputo':          'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=1600&q=80',
+  // Asia — new
+  'baku':            'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1600&q=80',
+  'yangon':          'https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?w=1600&q=80',
+  'phnom-penh':      'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1600&q=80',
+  'vientiane':       'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1600&q=80',
   // fallback
-  'default':     'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
+  'default':         'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
 };
 
 // --- Weather (Open-Meteo — free, no API key needed) ---
