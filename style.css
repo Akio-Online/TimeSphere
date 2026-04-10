@@ -935,11 +935,12 @@ footer a:hover { color: var(--gold); }
 
 /* Day/Night Card */
 .daynight-card {
-  background: rgba(5, 8, 16, 0.35);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: var(--radius);
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0;
   padding: 16px 20px;
   display: flex;
   align-items: center;
@@ -948,9 +949,9 @@ footer a:hover { color: var(--gold); }
   min-height: 100px;
 }
 
-.daynight-icon { font-size: 2.2rem; line-height: 1; }
-.daynight-label { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--text); }
-.daynight-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.04em; }
+.daynight-icon { font-size: 2.2rem; line-height: 1; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+.daynight-label { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--text); text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+.daynight-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.04em; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
 
 /* Travel + Events two-column headers (mirrors travel-events-row grid) */
 .travel-events-col-headers {
@@ -1343,12 +1344,13 @@ footer a:hover { color: var(--gold); }
   display: flex;
   align-items: stretch;
   gap: 0;
-  background: rgba(5, 8, 16, 0.35);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.1);
-  overflow: hidden;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0;
+  overflow: visible;
   flex: 1;
   min-width: 0;
   align-self: stretch;
@@ -1365,15 +1367,15 @@ footer a:hover { color: var(--gold); }
   gap: 14px;
   padding: 14px 20px;
   min-width: 220px;
-  border-right: 1px solid rgba(255,255,255,0.1);
+  border-right: none;
   flex-shrink: 0;
 }
-.wx-cur-icon { font-size: 2.4rem; line-height: 1; }
+.wx-cur-icon { font-size: 2.4rem; line-height: 1; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
 .wx-cur-info { display: flex; flex-direction: column; gap: 3px; }
-.wx-cur-temp { font-size: 1.15rem; font-weight: 700; color: #f0a830; }
-.wx-cur-c    { font-size: 0.8rem; color: rgba(255,255,255,0.5); font-weight: 400; }
-.wx-cur-label{ font-size: 0.82rem; color: rgba(255,255,255,0.75); }
-.wx-cur-extra{ font-size: 0.72rem; color: rgba(255,255,255,0.5); }
+.wx-cur-temp { font-size: 1.15rem; font-weight: 700; color: #f0a830; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+.wx-cur-c    { font-size: 0.8rem; color: rgba(255,255,255,0.5); font-weight: 400; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+.wx-cur-label{ font-size: 0.82rem; color: rgba(255,255,255,0.75); text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+.wx-cur-extra{ font-size: 0.72rem; color: rgba(255,255,255,0.5); text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
 .wx-forecast {
   display: flex;
   align-items: center;
@@ -1388,15 +1390,15 @@ footer a:hover { color: var(--gold); }
   align-items: center;
   gap: 4px;
   padding: 12px 14px;
-  border-right: 1px solid rgba(255,255,255,0.06);
+  border-right: none;
   flex-shrink: 0;
   min-width: 62px;
 }
 .wx-day-box:last-child { border-right: none; }
-.wx-day-name { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; }
-.wx-day-icon { font-size: 1.4rem; }
-.wx-day-hi   { font-size: 0.82rem; color: #f0a830; font-weight: 600; }
-.wx-day-lo   { font-size: 0.72rem; color: rgba(255,255,255,0.4); }
+.wx-day-name { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+.wx-day-icon { font-size: 1.4rem; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+.wx-day-hi   { font-size: 0.82rem; color: #f0a830; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+.wx-day-lo   { font-size: 0.72rem; color: rgba(255,255,255,0.4); text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
 
 /* ── 6-box info row: related-city badges ── */
 .tz-badge-related {
