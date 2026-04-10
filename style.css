@@ -389,7 +389,7 @@ nav ul a:hover { color: var(--gold); }
   font-size: 1.12rem;
   color: var(--text-mid);
   letter-spacing: 0.06em;
-  margin-bottom: 36px;
+  margin-bottom: 16px;
 }
 
 .tz-details { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 0; }
@@ -935,13 +935,16 @@ footer a:hover { color: var(--gold); }
 
 /* Day/Night Card */
 .daynight-card {
-  background: linear-gradient(145deg, var(--bg2), var(--bg3));
-  border: 1px solid var(--border);
+  background: rgba(5, 8, 16, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: var(--radius);
-  padding: 20px 24px;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-shrink: 0;
 }
 
 .daynight-icon { font-size: 2.2rem; line-height: 1; }
@@ -1309,18 +1312,27 @@ footer a:hover { color: var(--gold); }
 .ac-flag { font-size: 1.1rem; flex-shrink: 0; }
 .ac-label { flex: 1; }
 
+/* ── Banner bottom row: day/night + weather strip ── */
+.banner-bottom-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
 /* ── Weather Strip ── */
 .weather-strip {
   display: flex;
   align-items: stretch;
   gap: 0;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(8px);
+  background: rgba(5, 8, 16, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.1);
-  margin-top: 20px;
   overflow: hidden;
-  max-width: 720px;
+  flex: 1;
+  min-width: 0;
 }
 .weather-strip-loading {
   padding: 14px 20px;
@@ -1384,17 +1396,21 @@ footer a:hover { color: var(--gold); }
   margin-bottom: 4px;
 }
 
-/* ── Day/Night row ── */
-.city-daynight-row {
-  margin: 16px 0;
-  display: flex;
+/* .city-daynight-row removed — day/night now lives in banner-bottom-row */
+
+/* ── Travel + Events side-by-side row ── */
+.travel-events-row {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 20px;
+  align-items: start;
 }
 
-/* ── Travel 3×2 Grid ── */
-.travel-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+/* ── Travel vertical stack ── */
+.travel-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin-top: 12px;
 }
 .travel-tile {
@@ -1408,8 +1424,22 @@ footer a:hover { color: var(--gold); }
   background: var(--card);
 }
 .travel-tile:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   border-color: rgba(240,168,48,0.4);
+}
+/* Vertical row variant: image left, label right */
+.travel-tile-row {
+  flex-direction: row;
+  align-items: center;
+}
+.travel-tile-row .travel-tile-img {
+  width: 72px;
+  height: 52px;
+  flex-shrink: 0;
+}
+.travel-tile-row .travel-tile-label {
+  text-align: left;
+  padding: 10px 14px;
 }
 .travel-tile-img {
   height: 110px;
@@ -1424,9 +1454,10 @@ footer a:hover { color: var(--gold); }
   color: var(--text);
   text-align: center;
   background: var(--card);
+  flex: 1;
 }
 
-/* ── Discover 2-column layout ── */
+/* ── Discover 2-column layout (Things To Do + Restaurants) ── */
 .discover-two-col {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1436,6 +1467,11 @@ footer a:hover { color: var(--gold); }
 .discover-left-col  { display: flex; flex-direction: column; gap: 24px; }
 .discover-right-col { display: flex; flex-direction: column; }
 .discover-events-card { height: 100%; }
+
+/* ── Viator full-width strip ── */
+.discover-viator-full {
+  margin-top: 24px;
+}
 
 /* ── Reserve a Table button ── */
 .reserve-table-wrap {
@@ -1458,13 +1494,12 @@ footer a:hover { color: var(--gold); }
 .reserve-table-btn:hover { opacity: 0.85; }
 
 @media (max-width: 900px) {
-  .travel-grid { grid-template-columns: repeat(2, 1fr); }
-  .discover-two-col { grid-template-columns: 1fr; }
-  .weather-strip { max-width: 100%; }
+  .travel-events-row { grid-template-columns: 1fr; }
+  .discover-two-col  { grid-template-columns: 1fr; }
+  .banner-bottom-row { flex-direction: column; align-items: stretch; }
 }
 @media (max-width: 600px) {
-  .travel-grid { grid-template-columns: repeat(2, 1fr); }
-  .wx-current { min-width: 180px; padding: 12px 14px; }
+  .wx-current { min-width: 160px; padding: 12px 14px; }
   .wx-day-box { min-width: 52px; padding: 10px 10px; }
   .tz-details { flex-wrap: wrap; }
 }

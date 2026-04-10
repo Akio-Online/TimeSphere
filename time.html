@@ -39,9 +39,18 @@
       <h1 id="city-page-title">—</h1>
       <div class="live-clock" id="live-clock">--:--:--</div>
       <div class="live-date" id="live-date">—</div>
-      <!-- 7-Day Weather Strip -->
-      <div class="weather-strip" id="weather-strip">
-        <div class="weather-strip-loading">⏳ Loading weather…</div>
+      <!-- Day/Night + 7-Day Weather Strip (same row in banner) -->
+      <div class="banner-bottom-row">
+        <div class="daynight-card" id="daynight-card">
+          <div class="daynight-icon" id="daynight-icon">🌍</div>
+          <div class="daynight-info">
+            <div class="daynight-label" id="daynight-label">Loading…</div>
+            <div class="daynight-sub" id="daynight-sub">—</div>
+          </div>
+        </div>
+        <div class="weather-strip" id="weather-strip">
+          <div class="weather-strip-loading">⏳ Loading weather…</div>
+        </div>
       </div>
     </div>
   </section>
@@ -66,48 +75,64 @@
       <!-- 3 related city badges injected by JS -->
     </div>
 
-    <!-- Day/Night Indicator -->
-    <div class="city-daynight-row">
-      <div class="daynight-card" id="daynight-card">
-        <div class="daynight-icon" id="daynight-icon">🌍</div>
-        <div class="daynight-info">
-          <div class="daynight-label" id="daynight-label">Loading…</div>
-          <div class="daynight-sub" id="daynight-sub">—</div>
+    <!-- TRAVEL + EVENTS: side-by-side two-column -->
+    <div class="travel-events-row">
+
+      <!-- LEFT: Planning a Trip — vertical stack -->
+      <div class="travel-card">
+        <p class="section-title" style="margin-bottom: 16px;">Planning a Trip?</p>
+        <h3 class="travel-heading" id="travel-heading">Explore This City</h3>
+        <p class="travel-sub">Find the best flights, hotels, and experiences.</p>
+        <div class="travel-stack">
+          <a href="#" target="_blank" class="travel-tile travel-tile-row" id="flights-link">
+            <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80')"></div>
+            <div class="travel-tile-label">✈️ Find Flights</div>
+          </a>
+          <a href="#" target="_blank" class="travel-tile travel-tile-row" id="hotels-link">
+            <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80')"></div>
+            <div class="travel-tile-label">🏨 Book Hotels</div>
+          </a>
+          <a href="#" target="_blank" class="travel-tile travel-tile-row" id="cars-link">
+            <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&q=80')"></div>
+            <div class="travel-tile-label">🚗 Rent a Car</div>
+          </a>
+          <a href="#" target="_blank" class="travel-tile travel-tile-row" id="cruises-link">
+            <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1548574505-5e239809ee19?w=800&q=80')"></div>
+            <div class="travel-tile-label">🚢 Cruises</div>
+          </a>
+          <a href="#" target="_blank" class="travel-tile travel-tile-row" id="tours-link">
+            <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=800&q=80')"></div>
+            <div class="travel-tile-label">🎟️ Tours &amp; Experiences</div>
+          </a>
+          <a href="#" target="_blank" class="travel-tile travel-tile-row" id="packages-link">
+            <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80')"></div>
+            <div class="travel-tile-label">📦 Vacation Packages</div>
+          </a>
         </div>
       </div>
-    </div>
 
-    <!-- TRAVEL CARD — 3×2 Grid -->
-    <div class="travel-card">
-      <p class="section-title" style="margin-bottom: 16px;">Planning a Trip?</p>
-      <h3 class="travel-heading" id="travel-heading">Explore This City</h3>
-      <p class="travel-sub">Find the best flights, hotels, and experiences.</p>
-      <div class="travel-grid">
-        <a href="#" target="_blank" class="travel-tile" id="flights-link">
-          <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80')"></div>
-          <div class="travel-tile-label">✈️ Find Flights</div>
-        </a>
-        <a href="#" target="_blank" class="travel-tile" id="hotels-link">
-          <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80')"></div>
-          <div class="travel-tile-label">🏨 Book Hotels</div>
-        </a>
-        <a href="#" target="_blank" class="travel-tile" id="cars-link">
-          <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&q=80')"></div>
-          <div class="travel-tile-label">🚗 Rent a Car</div>
-        </a>
-        <a href="#" target="_blank" class="travel-tile" id="cruises-link">
-          <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1548574505-5e239809ee19?w=800&q=80')"></div>
-          <div class="travel-tile-label">🚢 Cruises</div>
-        </a>
-        <a href="#" target="_blank" class="travel-tile" id="tours-link">
-          <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=800&q=80')"></div>
-          <div class="travel-tile-label">🎟️ Tours &amp; Experiences</div>
-        </a>
-        <a href="#" target="_blank" class="travel-tile" id="packages-link">
-          <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80')"></div>
-          <div class="travel-tile-label">📦 Vacation Packages</div>
-        </a>
+      <!-- RIGHT: Local Events -->
+      <div class="discover-card discover-events-card">
+        <div class="discover-card-header">
+          <span class="discover-icon">🎫</span>
+          <h3 class="discover-card-title">Local Events</h3>
+        </div>
+        <div class="discover-card-body" id="ticketmaster-body">
+          <div class="discover-loading">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+          </div>
+        </div>
+        <div class="discover-card-body" id="eventbrite-body">
+          <div class="discover-loading">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+          </div>
+        </div>
       </div>
+
     </div>
 
     <!-- AD SLOT 2: Mid Leaderboard -->
@@ -126,9 +151,8 @@
         <p class="section-sub" id="discover-sub">Things to do, places to eat, and upcoming events</p>
       </div>
 
+      <!-- AI cards: Things To Do + Restaurants side by side -->
       <div class="discover-two-col">
-
-        <!-- LEFT COLUMN: AI cards + Viator -->
         <div class="discover-left-col">
 
           <!-- Things To Do -->
@@ -145,6 +169,9 @@
               </div>
             </div>
           </div>
+
+        </div>
+        <div class="discover-right-col">
 
           <!-- Restaurants + Reserve Table -->
           <div class="discover-card" id="restaurant-card">
@@ -164,47 +191,22 @@
             </div>
           </div>
 
-          <!-- Viator Experiences -->
-          <div class="discover-full">
-            <div class="discover-card-header" style="margin-bottom: 20px;">
-              <span class="discover-icon">🎟️</span>
-              <h3 class="discover-card-title">Book Experiences</h3>
-              <span class="discover-badge">via Viator</span>
-            </div>
-            <div id="viator-widget" class="viator-wrap">
-              <div class="widget-placeholder">
-                <p class="widget-placeholder-icon">✈️</p>
-                <p class="widget-placeholder-title" id="viator-city-name">Experiences in This City</p>
-              </div>
-            </div>
-          </div>
-
         </div>
+      </div>
 
-        <!-- RIGHT COLUMN: Unified Events card -->
-        <div class="discover-right-col">
-          <div class="discover-card discover-events-card">
-            <div class="discover-card-header">
-              <span class="discover-icon">🎫</span>
-              <h3 class="discover-card-title">Local Events</h3>
-            </div>
-            <div class="discover-card-body" id="ticketmaster-body">
-              <div class="discover-loading">
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-              </div>
-            </div>
-            <div class="discover-card-body" id="eventbrite-body">
-              <div class="discover-loading">
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-              </div>
-            </div>
+      <!-- Viator — full width -->
+      <div class="discover-viator-full">
+        <div class="discover-card-header" style="margin-bottom: 20px;">
+          <span class="discover-icon">🎟️</span>
+          <h3 class="discover-card-title">Book Experiences</h3>
+          <span class="discover-badge">via Viator</span>
+        </div>
+        <div id="viator-widget" class="viator-wrap">
+          <div class="widget-placeholder">
+            <p class="widget-placeholder-icon">✈️</p>
+            <p class="widget-placeholder-title" id="viator-city-name">Experiences in This City</p>
           </div>
         </div>
-
       </div>
 
     </section>
