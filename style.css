@@ -935,7 +935,7 @@ footer a:hover { color: var(--gold); }
 
 /* Day/Night Card */
 .daynight-card {
-  background: rgba(5, 8, 16, 0.45);
+  background: rgba(5, 8, 16, 0.35);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   border: 1px solid rgba(255,255,255,0.1);
@@ -944,7 +944,8 @@ footer a:hover { color: var(--gold); }
   display: flex;
   align-items: center;
   gap: 16px;
-  flex-shrink: 0;
+  align-self: stretch;
+  min-height: 100px;
 }
 
 .daynight-icon { font-size: 2.2rem; line-height: 1; }
@@ -1315,7 +1316,7 @@ footer a:hover { color: var(--gold); }
 /* ── Banner bottom row: day/night + weather strip ── */
 .banner-bottom-row {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 12px;
   margin-top: 20px;
 }
@@ -1325,7 +1326,7 @@ footer a:hover { color: var(--gold); }
   display: flex;
   align-items: stretch;
   gap: 0;
-  background: rgba(5, 8, 16, 0.45);
+  background: rgba(5, 8, 16, 0.35);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   border-radius: 12px;
@@ -1333,6 +1334,8 @@ footer a:hover { color: var(--gold); }
   overflow: hidden;
   flex: 1;
   min-width: 0;
+  align-self: stretch;
+  min-height: 100px;
 }
 .weather-strip-loading {
   padding: 14px 20px;
@@ -1401,9 +1404,9 @@ footer a:hover { color: var(--gold); }
 /* ── Travel + Events side-by-side row ── */
 .travel-events-row {
   display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 20px;
-  align-items: start;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
 }
 
 /* ── Travel vertical stack ── */
