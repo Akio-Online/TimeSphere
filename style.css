@@ -1161,6 +1161,7 @@ footer a:hover { color: var(--gold); }
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 8px;
+  min-height: 320px;
   text-decoration: none;
   color: inherit;
   display: block;
@@ -1192,6 +1193,8 @@ footer a:hover { color: var(--gold); }
 
 .event-item-content {
   padding: 12px;
+  height: 100px;
+  overflow: hidden;
 }
 
 .event-item:hover {
@@ -1430,6 +1433,7 @@ footer a:hover { color: var(--gold); }
   flex-direction: column;
   border-radius: 10px;
   overflow: hidden;
+  min-height: 320px;
   border: 1px solid rgba(255,255,255,0.08);
   text-decoration: none;
   transition: transform 0.2s, border-color 0.2s;
@@ -1452,6 +1456,8 @@ footer a:hover { color: var(--gold); }
 .travel-tile-row .travel-tile-label {
   text-align: left;
   padding: 10px 14px;
+  height: 100px;
+  overflow: hidden;
 }
 .travel-tile-img {
   height: 110px;
