@@ -1176,9 +1176,9 @@ footer a:hover { color: var(--gold); }
 
 .event-item-img {
   width: 100%;
-  height: 240px;
+  height: 220px;
   overflow: hidden;
-  border-radius: 8px 8px 0 0;
+  border-radius: 0;
 }
 
 .event-item-img img {
@@ -1446,7 +1446,7 @@ footer a:hover { color: var(--gold); }
 }
 .travel-tile-row .travel-tile-img {
   width: 100%;
-  height: 200px;
+  height: 220px;
   flex-shrink: 0;
 }
 .travel-tile-row .travel-tile-label {
@@ -1478,7 +1478,7 @@ footer a:hover { color: var(--gold); }
 }
 .discover-left-col  { display: flex; flex-direction: column; gap: 24px; }
 .discover-right-col { display: flex; flex-direction: column; }
-.discover-events-card { height: 100%; }
+.discover-events-card { height: 100%; padding: 0; overflow: hidden; }
 
 /* ── Viator full-width strip ── */
 .discover-viator-full {
