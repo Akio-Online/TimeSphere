@@ -952,8 +952,11 @@ footer a:hover { color: var(--gold); }
 .daynight-label { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--text); }
 .daynight-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.04em; }
 
-/* Travel + Events shared header (sits above both columns) */
-.travel-events-header {
+/* Travel + Events two-column headers (mirrors travel-events-row grid) */
+.travel-events-col-headers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
   margin-bottom: 16px;
 }
 
@@ -1504,6 +1507,7 @@ footer a:hover { color: var(--gold); }
 
 @media (max-width: 900px) {
   .travel-events-row { grid-template-columns: 1fr; }
+  .travel-events-col-headers { grid-template-columns: 1fr; }
   .discover-two-col  { grid-template-columns: 1fr; }
   .banner-bottom-row { flex-direction: column; align-items: stretch; }
 }
