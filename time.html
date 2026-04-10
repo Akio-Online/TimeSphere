@@ -39,37 +39,35 @@
       <h1 id="city-page-title">—</h1>
       <div class="live-clock" id="live-clock">--:--:--</div>
       <div class="live-date" id="live-date">—</div>
+      <!-- 7-Day Weather Strip -->
+      <div class="weather-strip" id="weather-strip">
+        <div class="weather-strip-loading">⏳ Loading weather…</div>
+      </div>
     </div>
   </section>
 
   <!-- MAIN CONTENT -->
   <div class="city-main container">
 
-    <!-- TOP ROW: TZ Badges | Weather | Day/Night -->
-    <div class="city-top-row">
-      <div class="tz-details">
-        <div class="tz-badge">
-          <strong id="utc-offset">—</strong>
-          UTC Offset
-        </div>
-        <div class="tz-badge" id="dst-badge">
-          <strong id="dst-status">—</strong>
-          Daylight Saving
-        </div>
-        <div class="tz-badge">
-          <strong id="tz-name">—</strong>
-          IANA Time Zone
-        </div>
+    <!-- 6-BOX INFO BAR: 3 TZ badges + 3 related city badges -->
+    <div class="tz-details" id="tz-row">
+      <div class="tz-badge">
+        <strong id="utc-offset">—</strong>
+        UTC Offset
       </div>
-
-      <!-- Weather Card -->
-      <div class="daynight-card" id="weather-card">
-        <div class="weather-icon">⏳</div>
-        <div class="weather-info">
-          <div class="weather-label">Loading weather…</div>
-        </div>
+      <div class="tz-badge" id="dst-badge">
+        <strong id="dst-status">—</strong>
+        Daylight Saving
       </div>
+      <div class="tz-badge">
+        <strong id="tz-name">—</strong>
+        IANA Time Zone
+      </div>
+      <!-- 3 related city badges injected by JS -->
+    </div>
 
+    <!-- Day/Night Indicator -->
+    <div class="city-daynight-row">
       <div class="daynight-card" id="daynight-card">
         <div class="daynight-icon" id="daynight-icon">🌍</div>
         <div class="daynight-info">
@@ -79,206 +77,139 @@
       </div>
     </div>
 
-    <!-- BOTTOM ROW: Conversions (left) + Travel + Related (right) -->
-    <div class="city-bottom-row">
+    <!-- TRAVEL CARD — 3×2 Grid -->
+    <div class="travel-card">
+      <p class="section-title" style="margin-bottom: 16px;">Planning a Trip?</p>
+      <h3 class="travel-heading" id="travel-heading">Explore This City</h3>
+      <p class="travel-sub">Find the best flights, hotels, and experiences.</p>
+      <div class="travel-grid">
+        <a href="#" target="_blank" class="travel-tile" id="flights-link">
+          <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80')"></div>
+          <div class="travel-tile-label">✈️ Find Flights</div>
+        </a>
+        <a href="#" target="_blank" class="travel-tile" id="hotels-link">
+          <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80')"></div>
+          <div class="travel-tile-label">🏨 Book Hotels</div>
+        </a>
+        <a href="#" target="_blank" class="travel-tile" id="cars-link">
+          <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&q=80')"></div>
+          <div class="travel-tile-label">🚗 Rent a Car</div>
+        </a>
+        <a href="#" target="_blank" class="travel-tile" id="cruises-link">
+          <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1548574505-5e239809ee19?w=800&q=80')"></div>
+          <div class="travel-tile-label">🚢 Cruises</div>
+        </a>
+        <a href="#" target="_blank" class="travel-tile" id="tours-link">
+          <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=800&q=80')"></div>
+          <div class="travel-tile-label">🎟️ Tours &amp; Experiences</div>
+        </a>
+        <a href="#" target="_blank" class="travel-tile" id="packages-link">
+          <div class="travel-tile-img" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80')"></div>
+          <div class="travel-tile-label">📦 Vacation Packages</div>
+        </a>
+      </div>
+    </div>
 
-      <div class="city-left">
-        <div class="conversions">
-          <h3>Live Conversions — Major Cities</h3>
-          <div id="conversions-body"></div>
-        </div>
+    <!-- AD SLOT 2: Mid Leaderboard -->
+    <div style="padding-top: 8px; margin-bottom: 0;">
+      <div class="ad-slot ad-top" style="margin-bottom: 0;">Advertisement</div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         DISCOVER SECTION
+    ══════════════════════════════════════ -->
+    <section class="discover-section">
+
+      <div class="discover-header">
+        <div class="grid-divider"></div>
+        <p class="section-title" id="discover-title">Discover This City</p>
+        <p class="section-sub" id="discover-sub">Things to do, places to eat, and upcoming events</p>
       </div>
 
-      <div class="city-right">
-        <div class="travel-card">
-          <p class="section-title" style="margin-bottom: 16px;">Planning a Trip?</p>
-          <h3 class="travel-heading" id="travel-heading">Explore This City</h3>
-          <p class="travel-sub">Find the best flights, hotels, and experiences.</p>
-          <div class="travel-links">
-            <a href="#" target="_blank" class="travel-btn" id="flights-link">
-              <span class="travel-icon">✈️</span>
-              <span class="travel-text">
-                <strong>Find Flights</strong>
-                <small>Save up to 30%</small>
-              </span>
-              <span class="travel-arrow">→</span>
-            </a>
-            <a href="#" target="_blank" class="travel-btn" id="hotels-link">
-              <span class="travel-icon">🏨</span>
-              <span class="travel-text">
-                <strong>Book Hotels</strong>
-                <small>Best price guarantee</small>
-              </span>
-              <span class="travel-arrow">→</span>
-            </a>
-            <a href="#" target="_blank" class="travel-btn" id="hotels-expedia-link">
-              <span class="travel-icon">🏨</span>
-              <span class="travel-text">
-                <strong>Book Hotels</strong>
-                <small>Hotels.com deals</small>
-              </span>
-              <span class="travel-arrow">→</span>
-            </a>
-            <a href="#" target="_blank" class="travel-btn" id="tours-link">
-              <span class="travel-icon">🎟️</span>
-              <span class="travel-text">
-                <strong>Tours &amp; Experiences</strong>
-                <small>Top-rated activities</small>
-              </span>
-              <span class="travel-arrow">→</span>
-            </a>
-            <a href="#" target="_blank" class="travel-btn" id="cars-link">
-              <span class="travel-icon">🚗</span>
-              <span class="travel-text">
-                <strong>Rent a Car</strong>
-                <small>Best rates guaranteed</small>
-              </span>
-              <span class="travel-arrow">→</span>
-            </a>
-            <a href="#" target="_blank" class="travel-btn" id="trains-link">
-              <span class="travel-icon">🚄</span>
-              <span class="travel-text">
-                <strong>Train Tickets</strong>
-                <small>Rail routes worldwide</small>
-              </span>
-              <span class="travel-arrow">→</span>
-            </a>
-            <a href="#" target="_blank" class="travel-btn" id="packages-link">
-              <span class="travel-icon">📦</span>
-              <span class="travel-text">
-                <strong>Flight + Hotel Package</strong>
-                <small>Bundle and save</small>
-              </span>
-              <span class="travel-arrow">→</span>
-            </a>
+      <div class="discover-two-col">
+
+        <!-- LEFT COLUMN: AI cards + Viator -->
+        <div class="discover-left-col">
+
+          <!-- Things To Do -->
+          <div class="discover-card" id="todo-card">
+            <div class="discover-card-header">
+              <span class="discover-icon">🗺️</span>
+              <h3 class="discover-card-title">Top Things To Do</h3>
+            </div>
+            <div class="discover-card-body" id="todo-body">
+              <div class="discover-loading">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Restaurants + Reserve Table -->
+          <div class="discover-card" id="restaurant-card">
+            <div class="discover-card-header">
+              <span class="discover-icon">🍽️</span>
+              <h3 class="discover-card-title">Top Restaurants</h3>
+            </div>
+            <div class="discover-card-body" id="restaurant-body">
+              <div class="discover-loading">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+              </div>
+            </div>
+            <div class="reserve-table-wrap">
+              <a href="#" target="_blank" id="reserve-table-btn" class="reserve-table-btn">🍴 Reserve a Table</a>
+            </div>
+          </div>
+
+          <!-- Viator Experiences -->
+          <div class="discover-full">
+            <div class="discover-card-header" style="margin-bottom: 20px;">
+              <span class="discover-icon">🎟️</span>
+              <h3 class="discover-card-title">Book Experiences</h3>
+              <span class="discover-badge">via Viator</span>
+            </div>
+            <div id="viator-widget" class="viator-wrap">
+              <div class="widget-placeholder">
+                <p class="widget-placeholder-icon">✈️</p>
+                <p class="widget-placeholder-title" id="viator-city-name">Experiences in This City</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Unified Events card -->
+        <div class="discover-right-col">
+          <div class="discover-card discover-events-card">
+            <div class="discover-card-header">
+              <span class="discover-icon">🎫</span>
+              <h3 class="discover-card-title">Local Events</h3>
+            </div>
+            <div class="discover-card-body" id="ticketmaster-body">
+              <div class="discover-loading">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+              </div>
+            </div>
+            <div class="discover-card-body" id="eventbrite-body">
+              <div class="discover-loading">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="related-cities">
-          <p class="section-title" style="margin-bottom: 16px;">Related Cities</p>
-          <div class="related-grid" id="related-grid"></div>
-        </div>
+
       </div>
 
-    </div>
+    </section>
+
   </div>
-
-  <!-- AD SLOT 2: Mid Leaderboard — full width, below grid -->
-  <div class="container" style="padding-top: 8px;">
-    <div class="ad-slot ad-top" style="margin-bottom: 0;">Advertisement</div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       DISCOVER SECTION
-  ══════════════════════════════════════ -->
-  <section class="discover-section container">
-
-    <div class="discover-header">
-      <div class="grid-divider"></div>
-      <p class="section-title" id="discover-title">Discover This City</p>
-      <p class="section-sub" id="discover-sub">Things to do, places to eat, and upcoming events</p>
-    </div>
-
-    <!-- ROW 1: AI Content — Things To Do + Restaurants -->
-    <div class="discover-grid">
-
-      <!-- Things To Do -->
-      <div class="discover-card" id="todo-card">
-        <div class="discover-card-header">
-          <span class="discover-icon">🗺️</span>
-          <h3 class="discover-card-title">Top Things To Do</h3>
-        </div>
-        <div class="discover-card-body" id="todo-body">
-          <div class="discover-loading">
-            <div class="loading-dot"></div>
-            <div class="loading-dot"></div>
-            <div class="loading-dot"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Restaurants -->
-      <div class="discover-card" id="restaurant-card">
-        <div class="discover-card-header">
-          <span class="discover-icon">🍽️</span>
-          <h3 class="discover-card-title">Top Restaurants</h3>
-        </div>
-        <div class="discover-card-body" id="restaurant-body">
-          <div class="discover-loading">
-            <div class="loading-dot"></div>
-            <div class="loading-dot"></div>
-            <div class="loading-dot"></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ROW 2: Viator Experiences Widget -->
-    <div class="discover-full">
-      <div class="discover-card-header" style="margin-bottom: 20px;">
-        <span class="discover-icon">🎟️</span>
-        <h3 class="discover-card-title">Book Experiences</h3>
-        <span class="discover-badge">via Viator</span>
-      </div>
-      <!-- Viator Partner Widget — replace VIATOR_PARTNER_ID with your real ID -->
-      <div id="viator-widget" class="viator-wrap">
-        <div class="widget-placeholder">
-          <p class="widget-placeholder-icon">✈️</p>
-          <p class="widget-placeholder-title" id="viator-city-name">Experiences in This City</p>
-          <p class="widget-placeholder-sub">Connect your Viator Partner ID to show real bookable tours and activities here. Each booking earns you affiliate commission.</p>
-          <a href="https://partner.viator.com" target="_blank" class="btn" style="display:inline-block; margin-top:16px; font-size:0.72rem;">Get Viator Partner ID →</a>
-        </div>
-        <!--
-          VIATOR SETUP (when you have your Partner ID):
-          Replace the placeholder above with:
-          <script src="https://www.viator.com/orion/partner/widget.js"
-            data-viator-partnerid="YOUR_VIATOR_PARTNER_ID"
-            data-viator-language="en"
-            data-viator-currency="USD"
-            data-viator-query="CITY_NAME"
-          ></script>
-        -->
-      </div>
-    </div>
-
-    <!-- ROW 3: Events — Ticketmaster + Eventbrite side by side -->
-    <div class="discover-grid">
-
-      <!-- Ticketmaster Events -->
-      <div class="discover-card">
-        <div class="discover-card-header">
-          <span class="discover-icon">🎵</span>
-          <h3 class="discover-card-title">Concerts &amp; Sports</h3>
-          <span class="discover-badge">Ticketmaster</span>
-        </div>
-        <div class="discover-card-body" id="ticketmaster-body">
-          <div class="discover-loading">
-            <div class="loading-dot"></div>
-            <div class="loading-dot"></div>
-            <div class="loading-dot"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Eventbrite Events -->
-      <div class="discover-card">
-        <div class="discover-card-header">
-          <span class="discover-icon">📅</span>
-          <h3 class="discover-card-title">Local Events</h3>
-          <span class="discover-badge">Eventbrite</span>
-        </div>
-        <div class="discover-card-body" id="eventbrite-body">
-          <div class="discover-loading">
-            <div class="loading-dot"></div>
-            <div class="loading-dot"></div>
-            <div class="loading-dot"></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-  </section>
 
   <!-- AD SLOT 3: Bottom Banner -->
   <div class="container" style="padding-bottom: 48px;">

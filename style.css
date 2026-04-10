@@ -1274,3 +1274,197 @@ footer a:hover { color: var(--gold); }
 @media (max-width: 768px) {
   .discover-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Search Autocomplete Dropdown ── */
+.search-autocomplete {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #0e1225;
+  border: 1px solid rgba(240,168,48,0.3);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  z-index: 1000;
+  display: none;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.autocomplete-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-mid);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:hover, .autocomplete-highlighted {
+  background: rgba(240,168,48,0.1);
+  color: var(--text);
+}
+.ac-flag { font-size: 1.1rem; flex-shrink: 0; }
+.ac-label { flex: 1; }
+
+/* ── Weather Strip ── */
+.weather-strip {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  margin-top: 20px;
+  overflow: hidden;
+  max-width: 720px;
+}
+.weather-strip-loading {
+  padding: 14px 20px;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.85rem;
+}
+.wx-current {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  min-width: 220px;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+.wx-cur-icon { font-size: 2.4rem; line-height: 1; }
+.wx-cur-info { display: flex; flex-direction: column; gap: 3px; }
+.wx-cur-temp { font-size: 1.15rem; font-weight: 700; color: #f0a830; }
+.wx-cur-c    { font-size: 0.8rem; color: rgba(255,255,255,0.5); font-weight: 400; }
+.wx-cur-label{ font-size: 0.82rem; color: rgba(255,255,255,0.75); }
+.wx-cur-extra{ font-size: 0.72rem; color: rgba(255,255,255,0.5); }
+.wx-forecast {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  flex: 1;
+  scrollbar-width: none;
+}
+.wx-forecast::-webkit-scrollbar { display: none; }
+.wx-day-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 14px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+  min-width: 62px;
+}
+.wx-day-box:last-child { border-right: none; }
+.wx-day-name { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; }
+.wx-day-icon { font-size: 1.4rem; }
+.wx-day-hi   { font-size: 0.82rem; color: #f0a830; font-weight: 600; }
+.wx-day-lo   { font-size: 0.72rem; color: rgba(255,255,255,0.4); }
+
+/* ── 6-box info row: related-city badges ── */
+.tz-badge-related {
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.tz-badge-related:hover {
+  border-color: rgba(240,168,48,0.5);
+  transform: translateY(-2px);
+}
+.tz-badge-related strong {
+  display: block;
+  font-size: 0.95rem;
+  color: #f0a830;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 4px;
+}
+
+/* ── Day/Night row ── */
+.city-daynight-row {
+  margin: 16px 0;
+  display: flex;
+}
+
+/* ── Travel 3×2 Grid ── */
+.travel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+.travel-tile {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+  text-decoration: none;
+  transition: transform 0.2s, border-color 0.2s;
+  background: var(--card);
+}
+.travel-tile:hover {
+  transform: translateY(-3px);
+  border-color: rgba(240,168,48,0.4);
+}
+.travel-tile-img {
+  height: 110px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+.travel-tile-label {
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  background: var(--card);
+}
+
+/* ── Discover 2-column layout ── */
+.discover-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.discover-left-col  { display: flex; flex-direction: column; gap: 24px; }
+.discover-right-col { display: flex; flex-direction: column; }
+.discover-events-card { height: 100%; }
+
+/* ── Reserve a Table button ── */
+.reserve-table-wrap {
+  padding: 12px 20px 20px;
+}
+.reserve-table-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 11px 20px;
+  background: linear-gradient(135deg, #c8860a, #f0a830);
+  color: #050810;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 50px;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: opacity 0.2s;
+}
+.reserve-table-btn:hover { opacity: 0.85; }
+
+@media (max-width: 900px) {
+  .travel-grid { grid-template-columns: repeat(2, 1fr); }
+  .discover-two-col { grid-template-columns: 1fr; }
+  .weather-strip { max-width: 100%; }
+}
+@media (max-width: 600px) {
+  .travel-grid { grid-template-columns: repeat(2, 1fr); }
+  .wx-current { min-width: 180px; padding: 12px 14px; }
+  .wx-day-box { min-width: 52px; padding: 10px 10px; }
+  .tz-details { flex-wrap: wrap; }
+}

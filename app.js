@@ -323,13 +323,58 @@ function renderCityGrid() {
   setInterval(tickGrid, 1000);
 }
 
-// Search button handler
+// Search button handler with autocomplete dropdown
 function setupSearch() {
-  const btn = document.getElementById('search-btn');
-  const input = document.getElementById('city-search');
+  const btn      = document.getElementById('search-btn');
+  const input    = document.getElementById('city-search');
+  const dropdown = document.getElementById('search-autocomplete');
   if (!btn || !input) return;
 
-  btn.addEventListener('click', () => {
+  let activeIndex = -1;
+
+  function getMatches(val) {
+    if (!val.trim()) return [];
+    const lv = val.trim().toLowerCase();
+    return CITIES.filter(c =>
+      c.name.toLowerCase().includes(lv) ||
+      c.id.includes(lv.replace(/\s+/g, '-')) ||
+      (c.state && c.state.toLowerCase().includes(lv)) ||
+      cityLabel(c).toLowerCase().includes(lv)
+    ).slice(0, 8);
+  }
+
+  function renderDropdown(matches) {
+    if (!dropdown) return;
+    if (!matches.length) { dropdown.style.display = 'none'; return; }
+    dropdown.innerHTML = matches.map((c, i) => `
+      <div class="autocomplete-item${i === 0 ? ' autocomplete-highlighted' : ''}" data-id="${c.id}">
+        <span class="ac-flag">${c.flag}</span>
+        <span class="ac-label">${cityLabel(c)}</span>
+      </div>
+    `).join('');
+    activeIndex = 0;
+    dropdown.style.display = 'block';
+    dropdown.querySelectorAll('.autocomplete-item').forEach((item, i) => {
+      item.addEventListener('mouseenter', () => setActive(i));
+      item.addEventListener('click', () => { window.location.href = `time.html?city=${item.dataset.id}`; });
+    });
+  }
+
+  function setActive(idx) {
+    const items = dropdown ? dropdown.querySelectorAll('.autocomplete-item') : [];
+    items.forEach(el => el.classList.remove('autocomplete-highlighted'));
+    if (idx >= 0 && idx < items.length) {
+      items[idx].classList.add('autocomplete-highlighted');
+      activeIndex = idx;
+    }
+  }
+
+  function navigate() {
+    const items = dropdown ? dropdown.querySelectorAll('.autocomplete-item') : [];
+    if (items.length && activeIndex >= 0 && activeIndex < items.length) {
+      window.location.href = `time.html?city=${items[activeIndex].dataset.id}`;
+      return;
+    }
     const val = input.value.trim().toLowerCase();
     const match = CITIES.find(c =>
       c.name.toLowerCase().includes(val) ||
@@ -343,23 +388,45 @@ function setupSearch() {
       input.style.borderColor = '#ff4466';
       setTimeout(() => { input.style.borderColor = ''; }, 1500);
     }
-  });
+  }
+
+  input.addEventListener('input', (e) => renderDropdown(getMatches(e.target.value)));
 
   input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') btn.click();
+    const items = dropdown ? dropdown.querySelectorAll('.autocomplete-item') : [];
+    const open  = dropdown && dropdown.style.display !== 'none';
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (open) setActive(Math.min(activeIndex + 1, items.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (open) setActive(Math.max(activeIndex - 1, 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      navigate();
+    } else if (e.key === 'Escape') {
+      if (dropdown) dropdown.style.display = 'none';
+    }
+  });
+
+  btn.addEventListener('click', navigate);
+
+  document.addEventListener('click', (e) => {
+    if (dropdown && !input.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.style.display = 'none';
+    }
   });
 }
 
 // --- City page (time.html): render live clock ---
 function renderCityPage() {
-  const clockEl   = document.getElementById('live-clock');
-  const dateEl    = document.getElementById('live-date');
-  const titleEl   = document.getElementById('city-page-title');
-  const labelEl   = document.getElementById('city-label');
-  const offsetEl  = document.getElementById('utc-offset');
-  const dstEl     = document.getElementById('dst-status');
-  const tzNameEl  = document.getElementById('tz-name');
-  const convsEl   = document.getElementById('conversions-body');
+  const clockEl  = document.getElementById('live-clock');
+  const dateEl   = document.getElementById('live-date');
+  const titleEl  = document.getElementById('city-page-title');
+  const labelEl  = document.getElementById('city-label');
+  const offsetEl = document.getElementById('utc-offset');
+  const dstEl    = document.getElementById('dst-status');
+  const tzNameEl = document.getElementById('tz-name');
 
   if (!clockEl) return;
 
@@ -388,6 +455,19 @@ function renderCityPage() {
   const dstBadge = document.getElementById('dst-badge');
   if (dstBadge && dst) dstBadge.classList.add('dst-active');
 
+  // Related city badges inline in the tz-row
+  const tzRow = document.getElementById('tz-row');
+  if (tzRow) {
+    const related = CITIES.filter(c => c.region === city.region && c.id !== city.id && !c.searchOnly).slice(0, 3);
+    related.forEach(c => {
+      const badge = document.createElement('a');
+      badge.href = `time.html?city=${c.id}`;
+      badge.className = 'tz-badge tz-badge-related';
+      badge.innerHTML = `<strong id="rel-${c.id}">--:--</strong>${c.flag} ${c.name}`;
+      tzRow.appendChild(badge);
+    });
+  }
+
   // Travel card heading
   const travelHeading = document.getElementById('travel-heading');
   if (travelHeading) travelHeading.textContent = `Explore ${city.name}`;
@@ -399,28 +479,21 @@ function renderCityPage() {
   const cityEncoded = encodeURIComponent(city.name);
   const baseParams = `Allianceid=${aid}&SID=${sid}&trip_sub1=&trip_sub3=${sub3}`;
   const isAsiaAfrica = city.region === 'asia' || city.region === 'africa';
-  const isAmericasEurope = city.region === 'americas' || city.region === 'europe';
 
   // Flights
   const flightsLink = document.getElementById('flights-link');
   if (flightsLink) {
-    if (isAsiaAfrica) {
-      flightsLink.href = `https://www.trip.com/flights/welcome/?to=${cityEncoded}&${baseParams}`;
-    } else {
-      flightsLink.href = `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent(`https://www.expedia.com/Flights-Search?trip=roundtrip&leg1=from:${city.name}`)}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZsdtQ7jiB`;
-    }
+    flightsLink.href = isAsiaAfrica
+      ? `https://www.trip.com/flights/welcome/?to=${cityEncoded}&${baseParams}`
+      : `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent(`https://www.expedia.com/Flights-Search?trip=roundtrip&leg1=from:${city.name}`)}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZsdtQ7jiB`;
   }
 
   // Hotels — Trip.com for Asia/Africa, Hotels.com for Americas/Europe
   const hotelsLink = document.getElementById('hotels-link');
-  const hotelsExpediaLink = document.getElementById('hotels-expedia-link');
-  if (hotelsLink) hotelsLink.style.display = isAsiaAfrica ? '' : 'none';
-  if (hotelsExpediaLink) hotelsExpediaLink.style.display = isAmericasEurope ? '' : 'none';
-  if (hotelsLink && isAsiaAfrica) {
-    hotelsLink.href = `https://www.trip.com/hotels/?searchWord=${cityEncoded}&${baseParams}`;
-  }
-  if (hotelsExpediaLink && isAmericasEurope) {
-    hotelsExpediaLink.href = `https://www.hotels.com/affiliate?landingPage=${encodeURIComponent(`https://www.hotels.com/search.do?destination=${city.name}`)}&camref=1110lCi3P&creativeref=1011l66481&adref=PZtELLwj2M`;
+  if (hotelsLink) {
+    hotelsLink.href = isAsiaAfrica
+      ? `https://www.trip.com/hotels/?searchWord=${cityEncoded}&${baseParams}`
+      : `https://www.hotels.com/affiliate?landingPage=${encodeURIComponent(`https://www.hotels.com/search.do?destination=${city.name}`)}&camref=1110lCi3P&creativeref=1011l66481&adref=PZtELLwj2M`;
   }
 
   // Tours (Viator — all regions)
@@ -430,71 +503,59 @@ function renderCityPage() {
   // Cars
   const carsLink = document.getElementById('cars-link');
   if (carsLink) {
-    if (isAsiaAfrica) {
-      carsLink.href = `https://www.trip.com/carhire/?${baseParams}`;
-    } else {
-      carsLink.href = `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent(`https://www.expedia.com/carsearch?locn=${city.name}`)}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZ2Q47j9j0`;
-    }
+    carsLink.href = isAsiaAfrica
+      ? `https://www.trip.com/carhire/?${baseParams}`
+      : `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent(`https://www.expedia.com/carsearch?locn=${city.name}`)}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZ2Q47j9j0`;
   }
 
-  // Trains (Trip.com — shown for Asia/Africa only)
-  const trainsLink = document.getElementById('trains-link');
-  if (trainsLink) {
-    trainsLink.style.display = isAsiaAfrica ? '' : 'none';
-    if (isAsiaAfrica) trainsLink.href = `https://www.trip.com/trains/?${baseParams}`;
-  }
+  // Cruises (placeholder — CruiseDirect pending approval)
+  const cruisesLink = document.getElementById('cruises-link');
+  if (cruisesLink) cruisesLink.href = '#';
 
-  // Packages (Expedia — shown for Americas/Europe only)
+  // Packages
   const packagesLink = document.getElementById('packages-link');
   if (packagesLink) {
-    packagesLink.style.display = isAmericasEurope ? '' : 'none';
-    if (isAmericasEurope) {
-      packagesLink.href = `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent('https://www.expedia.com/Vacation-Packages')}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZFikPKL6y`;
+    packagesLink.href = isAsiaAfrica
+      ? `https://www.trip.com/flights/welcome/?to=${cityEncoded}&${baseParams}`
+      : `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent('https://www.expedia.com/Vacation-Packages')}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZFikPKL6y`;
+  }
+
+  // Reserve a Table — regional logic
+  const reserveBtn = document.getElementById('reserve-table-btn');
+  if (reserveBtn) {
+    const r = city.region;
+    if (r === 'americas') {
+      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table — OpenTable';
+    } else if (r === 'europe') {
+      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table — TheFork';
+    } else if (r === 'asia' && ['singapore','kuala-lumpur','bangkok','jakarta','manila','ho-chi-minh','hanoi'].includes(city.id)) {
+      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table — Eatigo';
+    } else if (r === 'asia' && ['mumbai','delhi','bangalore','karachi','lahore','tehran','baghdad','riyadh','kuwait-city','doha','abu-dhabi','muscat','beirut','amman'].includes(city.id)) {
+      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table — Zomato';
+    } else if (r === 'asia') {
+      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table — Quandoo';
+    } else if (r === 'africa') {
+      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table — Zomato';
+    } else {
+      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table';
     }
-  }
-
-  // Conversions
-  if (convsEl) {
-    const others = CITIES.filter(c => c.id !== city.id).slice(0, 12);
-    convsEl.innerHTML = others.map(c => `
-      <div class="conv-row">
-        <span class="conv-city">${c.flag} ${c.name}</span>
-        <span class="conv-time" id="conv-${c.id}">--:--</span>
-      </div>
-    `).join('');
-  }
-
-  // Related cities (same region, different city)
-  const relatedEl = document.getElementById('related-grid');
-  if (relatedEl) {
-    const related = CITIES.filter(c => c.region === city.region && c.id !== city.id).slice(0, 4);
-    relatedEl.innerHTML = related.map(c => `
-      <a href="time.html?city=${c.id}" class="related-card">
-        <div class="r-name">${c.flag} ${c.name}</div>
-        <div class="r-time" id="rel-${c.id}">--:--</div>
-      </a>
-    `).join('');
   }
 
   // Day/Night indicator
   function updateDayNight(now) {
-    const hour = now.getHours();
-    const card  = document.getElementById('daynight-card');
+    const hour  = now.getHours();
     const icon  = document.getElementById('daynight-icon');
     const label = document.getElementById('daynight-label');
     const sub   = document.getElementById('daynight-sub');
-    if (!card) return;
+    if (!icon) return;
     if (hour >= 6 && hour < 20) {
-      icon.textContent  = '☀️';
-      label.textContent = 'Daytime';
+      icon.textContent  = '☀️'; label.textContent = 'Daytime';
       sub.textContent   = `Business hours in ${city.name}`;
     } else if (hour >= 20 || hour < 1) {
-      icon.textContent  = '🌆';
-      label.textContent = 'Evening';
+      icon.textContent  = '🌆'; label.textContent = 'Evening';
       sub.textContent   = `Evening hours in ${city.name}`;
     } else {
-      icon.textContent  = '🌙';
-      label.textContent = 'Nighttime';
+      icon.textContent  = '🌙'; label.textContent = 'Nighttime';
       sub.textContent   = `Late night in ${city.name}`;
     }
   }
@@ -505,15 +566,8 @@ function renderCityPage() {
     if (clockEl) clockEl.textContent = formatTime(now);
     if (dateEl)  dateEl.textContent  = formatDate(now);
     updateDayNight(now);
-
-    // Conversions
-    CITIES.filter(c => c.id !== city.id).slice(0, 12).forEach(c => {
-      const el = document.getElementById(`conv-${c.id}`);
-      if (el) el.textContent = formatTime(getTimeInZone(c.tz), false);
-    });
-
-    // Related
-    CITIES.filter(c => c.region === city.region && c.id !== city.id).slice(0, 4).forEach(c => {
+    // Related city times
+    CITIES.filter(c => c.region === city.region && c.id !== city.id && !c.searchOnly).slice(0, 3).forEach(c => {
       const el = document.getElementById(`rel-${c.id}`);
       if (el) el.textContent = formatTime(getTimeInZone(c.tz), false);
     });
@@ -522,7 +576,7 @@ function renderCityPage() {
   tick();
   setInterval(tick, 1000);
 
-  // Load weather
+  // Load weather strip
   loadWeather(city);
 
   // Load discover section
@@ -637,49 +691,65 @@ const CITY_IMAGES = {
 
 // --- Weather (Open-Meteo — free, no API key needed) ---
 function weatherCodeToInfo(code) {
-  if (code === 0)  return { label: 'Clear Sky',     icon: '☀️' };
-  if (code <= 2)   return { label: 'Partly Cloudy', icon: '🌤️' };
-  if (code === 3)  return { label: 'Overcast',      icon: '☁️' };
-  if (code <= 48)  return { label: 'Foggy',         icon: '🌫️' };
-  if (code <= 55)  return { label: 'Drizzle',       icon: '🌦️' };
-  if (code <= 65)  return { label: 'Rain',           icon: '🌧️' };
-  if (code <= 75)  return { label: 'Snow',           icon: '❄️' };
-  if (code <= 82)  return { label: 'Rain Showers',  icon: '🌧️' };
-  if (code <= 86)  return { label: 'Snow Showers',  icon: '🌨️' };
-  if (code <= 99)  return { label: 'Thunderstorm',  icon: '⛈️' };
-  return                   { label: 'Unknown',       icon: '🌡️' };
+  if (code === 0)  return { label: 'Clear Sky',    icon: '☀️' };
+  if (code <= 2)   return { label: 'Partly Cloudy',icon: '🌤️' };
+  if (code === 3)  return { label: 'Overcast',     icon: '☁️' };
+  if (code <= 48)  return { label: 'Foggy',        icon: '🌫️' };
+  if (code <= 55)  return { label: 'Drizzle',      icon: '🌦️' };
+  if (code <= 65)  return { label: 'Rain',          icon: '🌧️' };
+  if (code <= 75)  return { label: 'Snow',          icon: '❄️' };
+  if (code <= 82)  return { label: 'Rain Showers', icon: '🌧️' };
+  if (code <= 86)  return { label: 'Snow Showers', icon: '🌨️' };
+  if (code <= 99)  return { label: 'Thunderstorm', icon: '⛈️' };
+  return                   { label: 'Unknown',      icon: '🌡️' };
 }
 
 async function loadWeather(city) {
-  const el = document.getElementById('weather-card');
-  if (!el || !city.lat) return;
-  el.innerHTML = `<div class="weather-icon">⏳</div><div class="weather-info"><div class="weather-label">Loading weather…</div></div>`;
+  const strip = document.getElementById('weather-strip');
+  if (!strip || !city.lat) return;
   try {
-    const url  = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}`
+      + `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m`
+      + `&daily=weather_code,temperature_2m_max,temperature_2m_min`
+      + `&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=7`;
     const res  = await fetch(url);
     const data = await res.json();
     const cur  = data.current;
     const info = weatherCodeToInfo(cur.weather_code);
-    const tempF   = Math.round(cur.temperature_2m);
-    const tempC   = Math.round((tempF - 32) * 5 / 9);
-    const feelsF  = Math.round(cur.apparent_temperature);
-    const feelsC  = Math.round((feelsF - 32) * 5 / 9);
-    const wind    = Math.round(cur.wind_speed_10m);
-    const humid   = cur.relative_humidity_2m;
-    el.innerHTML = `
-      <div class="weather-icon">${info.icon}</div>
-      <div class="weather-info">
-        <div class="weather-label">${info.label}</div>
-        <div class="weather-temp">${tempF}°F <span class="weather-c">/ ${tempC}°C</span></div>
-        <div class="weather-extra">
-          <span>🌡️ Feels like ${feelsF}°F / ${feelsC}°C</span>
-          <span>💧 Humidity ${humid}%</span>
-          <span>💨 Wind ${wind} mph</span>
+    const tempF  = Math.round(cur.temperature_2m);
+    const tempC  = Math.round((tempF - 32) * 5 / 9);
+    const feelsF = Math.round(cur.apparent_temperature);
+    const wind   = Math.round(cur.wind_speed_10m);
+    const humid  = cur.relative_humidity_2m;
+
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const daily = data.daily;
+    const forecastBoxes = daily.time.slice(1).map((dateStr, i) => {
+      const d    = new Date(dateStr + 'T12:00:00');
+      const inf  = weatherCodeToInfo(daily.weather_code[i + 1]);
+      const hi   = Math.round(daily.temperature_2m_max[i + 1]);
+      const lo   = Math.round(daily.temperature_2m_min[i + 1]);
+      return `<div class="wx-day-box">
+        <div class="wx-day-name">${dayNames[d.getDay()]}</div>
+        <div class="wx-day-icon">${inf.icon}</div>
+        <div class="wx-day-hi">${hi}°</div>
+        <div class="wx-day-lo">${lo}°</div>
+      </div>`;
+    }).join('');
+
+    strip.innerHTML = `
+      <div class="wx-current">
+        <div class="wx-cur-icon">${info.icon}</div>
+        <div class="wx-cur-info">
+          <div class="wx-cur-temp">${tempF}°F <span class="wx-cur-c">/ ${tempC}°C</span></div>
+          <div class="wx-cur-label">${info.label}</div>
+          <div class="wx-cur-extra">🌡️ ${feelsF}°F · 💧 ${humid}% · 💨 ${wind} mph</div>
         </div>
       </div>
+      <div class="wx-forecast">${forecastBoxes}</div>
     `;
   } catch(e) {
-    el.innerHTML = `<div class="weather-icon">🌡️</div><div class="weather-info"><div class="weather-label">Weather unavailable</div></div>`;
+    strip.innerHTML = `<div class="wx-current"><div class="wx-cur-icon">🌡️</div><div class="wx-cur-info"><div class="wx-cur-label">Weather unavailable</div></div></div>`;
   }
 }
 
@@ -719,7 +789,7 @@ async function loadTicketmasterEvents(city) {
     const seen = new Set();
     const events = (data._embedded?.events || [])
       .filter(e => {
-        const key = e.name.toLowerCase().trim();
+        const key = e.id || e.name.toLowerCase().trim();
         if (seen.has(key)) return false;
         seen.add(key);
         return true;
@@ -759,37 +829,28 @@ async function loadEventbriteEvents(city) {
 }
 
 async function loadDiscoverContent(city) {
-  const titleEl  = document.getElementById('discover-title');
-  const subEl    = document.getElementById('discover-sub');
-  const viatorEl = document.getElementById('viator-city-name');
-  const viatorBtn = document.getElementById('viator-btn');
+  const titleEl = document.getElementById('discover-title');
+  const subEl   = document.getElementById('discover-sub');
 
   if (titleEl) titleEl.textContent = `Discover ${city.name}`;
   if (subEl)   subEl.textContent   = `Things to do, places to eat, and upcoming events in ${city.name}`;
-  if (viatorEl) viatorEl.textContent = `Experiences in ${city.name}`;
 
-  // ── Wire Viator affiliate link with city search ──
-  const viatorUrl = `https://www.viator.com/search/${encodeURIComponent(city.name)}?pid=${VIATOR_PID}&mcid=${VIATOR_MCID}&medium=link&medium_version=selector`;
-  if (viatorBtn) {
-    viatorBtn.href = viatorUrl;
-    viatorBtn.textContent = `Browse Experiences in ${city.name} →`;
-  }
-
-  // Update Viator placeholder content
+  // ── Viator affiliate link ──
+  const viatorUrl  = `https://www.viator.com/search/${encodeURIComponent(city.name)}?pid=${VIATOR_PID}&mcid=${VIATOR_MCID}&medium=link&medium_version=selector`;
   const viatorWrap = document.getElementById('viator-widget');
   if (viatorWrap) {
     viatorWrap.innerHTML = `
       <div class="widget-placeholder">
         <p class="widget-placeholder-icon">🎟️</p>
-        <p class="widget-placeholder-title" id="viator-city-name">Experiences in ${city.name}</p>
-        <p class="widget-placeholder-sub">Browse top-rated tours, activities and experiences. Every booking earns affiliate commission.</p>
-        <a href="${viatorUrl}" target="_blank" rel="noopener" class="btn" style="display:inline-block; margin-top:16px; padding: 12px 28px; background: linear-gradient(135deg,#c8860a,#f0a830); color:#050810; font-weight:700; border-radius:50px; text-decoration:none; font-size:0.85rem; letter-spacing:0.05em;">
+        <p class="widget-placeholder-title">Experiences in ${city.name}</p>
+        <p class="widget-placeholder-sub">Browse top-rated tours, activities and experiences.</p>
+        <a href="${viatorUrl}" target="_blank" rel="noopener" class="btn" style="display:inline-block;margin-top:16px;padding:12px 28px;background:linear-gradient(135deg,#c8860a,#f0a830);color:#050810;font-weight:700;border-radius:50px;text-decoration:none;font-size:0.85rem;letter-spacing:0.05em;">
           Browse Experiences in ${city.name} →
         </a>
       </div>`;
   }
 
-  // ── Load real Ticketmaster events ──
+  // ── Load Ticketmaster events (deduplicated by event ID) ──
   const tmEl = document.getElementById('ticketmaster-body');
   if (tmEl) tmEl.innerHTML = `<div class="discover-loading"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>`;
   const tmEvents = await loadTicketmasterEvents(city);
@@ -799,54 +860,38 @@ async function loadDiscoverContent(city) {
     `https://www.ticketmaster.com/search?q=${encodeURIComponent(city.name)}`
   );
 
-  // ── Eventbrite — show branded city card (CORS blocks direct API) ──
+  // ── Eventbrite branded cards ──
   const ebEl = document.getElementById('eventbrite-body');
   if (ebEl) {
-    const ebCitySlug = encodeURIComponent(city.name);
+    const enc = encodeURIComponent(city.name);
     ebEl.innerHTML = `
-      <a href="https://www.eventbrite.com/d/${encodeURIComponent(city.name)}/events/" target="_blank" rel="noopener" class="event-item event-item-has-image">
-        <div class="event-item-img" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;">
+      <a href="https://www.eventbrite.com/d/${enc}/events/" target="_blank" rel="noopener" class="event-item event-item-has-image">
+        <div class="event-item-img" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
           <div style="font-size:2.5rem;">📅</div>
-          <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#fff; font-weight:700; text-align:center; padding:0 20px;">Local Events in ${city.name}</div>
-          <div style="font-size:0.75rem; color:rgba(255,255,255,0.6); text-align:center; padding:0 20px;">Festivals, meetups, markets &amp; more</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;font-weight:700;text-align:center;padding:0 20px;">Local Events in ${city.name}</div>
+          <div style="font-size:0.75rem;color:rgba(255,255,255,0.6);text-align:center;padding:0 20px;">Festivals, meetups, markets &amp; more</div>
         </div>
         <div class="event-item-content">
           <div class="event-item-name">Browse All Local Events →</div>
           <div class="event-item-meta">
             <span class="event-item-date">📍 ${city.name}, ${city.country}</span>
-            <span class="event-item-genre" style="background:rgba(255,105,65,0.15); border-color:rgba(255,105,65,0.3); color:#ff6941;">Eventbrite</span>
+            <span class="event-item-genre" style="background:rgba(255,105,65,0.15);border-color:rgba(255,105,65,0.3);color:#ff6941;">Eventbrite</span>
           </div>
         </div>
       </a>
-      <a href="https://www.eventbrite.com/d/${encodeURIComponent(city.name)}/food-and-drink--events/" target="_blank" rel="noopener" class="event-item event-item-has-image">
-        <div class="event-item-img" style="background: linear-gradient(135deg, #1a0a00 0%, #3d1a00 50%, #6b2f00 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;">
+      <a href="https://www.eventbrite.com/d/${enc}/food-and-drink--events/" target="_blank" rel="noopener" class="event-item event-item-has-image">
+        <div class="event-item-img" style="background:linear-gradient(135deg,#1a0a00,#6b2f00);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
           <div style="font-size:2.5rem;">🍽️</div>
-          <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#fff; font-weight:700; text-align:center; padding:0 20px;">Food &amp; Drink Events</div>
-          <div style="font-size:0.75rem; color:rgba(255,255,255,0.6); text-align:center; padding:0 20px;">Tastings, markets &amp; culinary experiences</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;font-weight:700;text-align:center;padding:0 20px;">Food &amp; Drink Events</div>
         </div>
         <div class="event-item-content">
           <div class="event-item-name">Browse Food Events in ${city.name} →</div>
           <div class="event-item-meta">
             <span class="event-item-date">📍 ${city.name}</span>
-            <span class="event-item-genre" style="background:rgba(255,105,65,0.15); border-color:rgba(255,105,65,0.3); color:#ff6941;">Eventbrite</span>
+            <span class="event-item-genre" style="background:rgba(255,105,65,0.15);border-color:rgba(255,105,65,0.3);color:#ff6941;">Eventbrite</span>
           </div>
         </div>
-      </a>
-      <a href="https://www.eventbrite.com/d/${encodeURIComponent(city.name)}/music--events/" target="_blank" rel="noopener" class="event-item event-item-has-image">
-        <div class="event-item-img" style="background: linear-gradient(135deg, #0a001a 0%, #1a0a3d 50%, #2f006b 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;">
-          <div style="font-size:2.5rem;">🎵</div>
-          <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#fff; font-weight:700; text-align:center; padding:0 20px;">Music Events</div>
-          <div style="font-size:0.75rem; color:rgba(255,255,255,0.6); text-align:center; padding:0 20px;">Live music, concerts &amp; performances</div>
-        </div>
-        <div class="event-item-content">
-          <div class="event-item-name">Browse Music Events in ${city.name} →</div>
-          <div class="event-item-meta">
-            <span class="event-item-date">📍 ${city.name}</span>
-            <span class="event-item-genre" style="background:rgba(255,105,65,0.15); border-color:rgba(255,105,65,0.3); color:#ff6941;">Eventbrite</span>
-          </div>
-        </div>
-      </a>
-    `;
+      </a>`;
   }
 
   // ── Load AI content ──
