@@ -952,12 +952,18 @@ footer a:hover { color: var(--gold); }
 .daynight-label { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--text); }
 .daynight-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.04em; }
 
+/* Travel + Events shared header (sits above both columns) */
+.travel-events-header {
+  margin-bottom: 16px;
+}
+
 /* Travel Card */
 .travel-card {
   background: linear-gradient(145deg, var(--bg2), var(--bg3));
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 28px;
+  padding: 0;
+  overflow: hidden;
 }
 
 .travel-heading {
@@ -968,7 +974,7 @@ footer a:hover { color: var(--gold); }
   margin-bottom: 6px;
 }
 
-.travel-sub { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 20px; }
+.travel-sub { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 0; }
 .travel-links { display: flex; flex-direction: column; gap: 10px; }
 
 .travel-btn {
