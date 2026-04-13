@@ -434,6 +434,10 @@ function renderCityPage() {
   const cityId = params.get('city') || 'london';
   const city = CITIES.find(c => c.id === cityId) || CITIES.find(c => c.id === 'london');
 
+  // Canonical tag
+  const canonicalTag = document.getElementById('canonical-tag');
+  if (canonicalTag) canonicalTag.href = 'https://www.thetimesphere.com/time.html?city=' + cityId;
+
   // Set city-specific night photo
   const overlay = document.querySelector('.city-banner-overlay');
   if (overlay) {
@@ -466,7 +470,32 @@ function renderCityPage() {
       badge.innerHTML = `<strong id="rel-${c.id}">--:--</strong>${c.flag} ${c.name}`;
       tzRow.appendChild(badge);
     });
+
+    // Blog discovery card — fills remaining width
+    const blogBadge = document.createElement('a');
+    blogBadge.href = '#city-blog';
+    blogBadge.className = 'tz-badge tz-badge-blog';
+    blogBadge.addEventListener('click', e => {
+      e.preventDefault();
+      document.getElementById('city-blog')?.scrollIntoView({ behavior: 'smooth' });
+    });
+    blogBadge.innerHTML = `
+      <span class="tz-badge-blog-type">CITY TRAVEL JOURNAL</span>
+      <strong>Read ${city.name} Guides</strong>
+      <span class="tz-badge-blog-sub">Vacation tips, restaurants, things to do and more</span>
+    `;
+    tzRow.appendChild(blogBadge);
   }
+
+  // Blog section titles
+  const blogSectionTitle = document.getElementById('blog-section-title');
+  if (blogSectionTitle) blogSectionTitle.textContent = `${city.name} Travel Journal`;
+  const blogTitle1 = document.getElementById('blog-title-1');
+  if (blogTitle1) blogTitle1.textContent = `Best Time to Visit ${city.name}`;
+  const blogTitle2 = document.getElementById('blog-title-2');
+  if (blogTitle2) blogTitle2.textContent = `Where to Eat in ${city.name}`;
+  const blogTitle3 = document.getElementById('blog-title-3');
+  if (blogTitle3) blogTitle3.textContent = `Top Attractions in ${city.name}`;
 
   // Travel card heading
   const travelHeading = document.getElementById('travel-heading');
