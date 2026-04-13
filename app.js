@@ -459,11 +459,18 @@ function renderCityPage() {
   const dstBadge = document.getElementById('dst-badge');
   if (dstBadge && dst) dstBadge.classList.add('dst-active');
 
-  // Related city badges inline in the tz-row
+  // Nearby city badges inline in the tz-row
+  const nearbyIds = (NEARBY_CITIES[city.id] || [])
+    .map(id => CITIES.find(c => c.id === id))
+    .filter(Boolean)
+    .slice(0, 3);
+  // Fallback: region peers if no nearby map entry
+  const relatedCities = nearbyIds.length === 3 ? nearbyIds
+    : CITIES.filter(c => c.region === city.region && c.id !== city.id && !c.searchOnly).slice(0, 3);
+
   const tzRow = document.getElementById('tz-row');
   if (tzRow) {
-    const related = CITIES.filter(c => c.region === city.region && c.id !== city.id && !c.searchOnly).slice(0, 3);
-    related.forEach(c => {
+    relatedCities.forEach(c => {
       const badge = document.createElement('a');
       badge.href = `time.html?city=${c.id}`;
       badge.className = 'tz-badge tz-badge-related';
@@ -595,8 +602,8 @@ function renderCityPage() {
     if (clockEl) clockEl.textContent = formatTime(now);
     if (dateEl)  dateEl.textContent  = formatDate(now);
     updateDayNight(now);
-    // Related city times
-    CITIES.filter(c => c.region === city.region && c.id !== city.id && !c.searchOnly).slice(0, 3).forEach(c => {
+    // Nearby city times
+    relatedCities.forEach(c => {
       const el = document.getElementById(`rel-${c.id}`);
       if (el) el.textContent = formatTime(getTimeInZone(c.tz), false);
     });
@@ -611,6 +618,116 @@ function renderCityPage() {
   // Load discover section
   loadDiscoverContent(city);
 }
+
+// --- Nearby Cities Map (geographic neighbors per city) ---
+const NEARBY_CITIES = {
+  // ── US ──
+  'new-york':       ['philadelphia', 'boston', 'washington-dc'],
+  'los-angeles':    ['san-diego', 'las-vegas', 'san-francisco'],
+  'chicago':        ['milwaukee', 'indianapolis', 'detroit'],
+  'miami':          ['tampa', 'orlando', 'atlanta'],
+  'las-vegas':      ['los-angeles', 'phoenix', 'san-diego'],
+  'seattle':        ['portland', 'vancouver', 'spokane'],
+  'denver':         ['salt-lake-city', 'albuquerque', 'phoenix'],
+  'houston':        ['dallas', 'austin', 'san-antonio'],
+  'phoenix':        ['tucson', 'las-vegas', 'albuquerque'],
+  'atlanta':        ['charlotte', 'birmingham', 'nashville'],
+  'boston':         ['providence', 'hartford', 'new-york'],
+  'philadelphia':   ['new-york', 'baltimore', 'washington-dc'],
+  'washington-dc':  ['baltimore', 'richmond', 'philadelphia'],
+  'san-francisco':  ['los-angeles', 'portland', 'seattle'],
+  'dallas':         ['houston', 'austin', 'fort-worth'],
+  'minneapolis':    ['milwaukee', 'des-moines', 'omaha'],
+  'detroit':        ['cleveland', 'grand-rapids', 'columbus'],
+  'portland':       ['seattle', 'spokane', 'san-francisco'],
+  'san-diego':      ['los-angeles', 'las-vegas', 'phoenix'],
+  'honolulu':       ['los-angeles', 'seattle', 'san-francisco'],
+  'anchorage':      ['seattle', 'portland', 'vancouver'],
+  'tampa':          ['miami', 'orlando', 'jacksonville'],
+  'orlando':        ['tampa', 'miami', 'jacksonville'],
+  'jacksonville':   ['savannah', 'charleston', 'atlanta'],
+  'charlotte':      ['raleigh', 'columbia-sc', 'atlanta'],
+  'raleigh':        ['charlotte', 'richmond', 'washington-dc'],
+  'nashville':      ['memphis', 'louisville', 'birmingham'],
+  'memphis':        ['nashville', 'jackson', 'little-rock'],
+  'louisville':     ['cincinnati', 'indianapolis', 'nashville'],
+  'indianapolis':   ['chicago', 'columbus', 'louisville'],
+  'columbus':       ['cleveland', 'cincinnati', 'pittsburgh'],
+  'cleveland':      ['pittsburgh', 'buffalo', 'detroit'],
+  'cincinnati':     ['louisville', 'columbus', 'indianapolis'],
+  'pittsburgh':     ['cleveland', 'buffalo', 'philadelphia'],
+  'buffalo':        ['toronto', 'cleveland', 'albany'],
+  'albany':         ['boston', 'buffalo', 'hartford'],
+  'hartford':       ['boston', 'providence', 'new-york'],
+  'providence':     ['boston', 'hartford', 'new-york'],
+  'portland-me':    ['boston', 'albany', 'burlington'],
+  'burlington':     ['montreal', 'albany', 'portland-me'],
+  'albuquerque':    ['el-paso', 'tucson', 'denver'],
+  'tucson':         ['phoenix', 'albuquerque', 'el-paso'],
+  'el-paso':        ['albuquerque', 'tucson', 'san-antonio'],
+  'san-antonio':    ['austin', 'houston', 'el-paso'],
+  'austin':         ['san-antonio', 'dallas', 'houston'],
+  'fort-worth':     ['dallas', 'oklahoma-city', 'wichita'],
+  'oklahoma-city':  ['tulsa', 'dallas', 'fort-worth'],
+  'tulsa':          ['oklahoma-city', 'wichita', 'kansas-city'],
+  'wichita':        ['tulsa', 'oklahoma-city', 'kansas-city'],
+  'omaha':          ['des-moines', 'kansas-city', 'minneapolis'],
+  'des-moines':     ['omaha', 'minneapolis', 'kansas-city'],
+  'milwaukee':      ['chicago', 'madison', 'minneapolis'],
+  'madison':        ['milwaukee', 'chicago', 'minneapolis'],
+  'grand-rapids':   ['detroit', 'chicago', 'cleveland'],
+  'kansas-city':    ['st-louis', 'omaha', 'tulsa'],
+  'st-louis':       ['kansas-city', 'chicago', 'nashville'],
+  'little-rock':    ['memphis', 'jackson', 'dallas'],
+  'jackson':        ['memphis', 'birmingham', 'little-rock'],
+  'birmingham':     ['atlanta', 'nashville', 'montgomery'],
+  'montgomery':     ['birmingham', 'mobile', 'atlanta'],
+  'mobile':         ['montgomery', 'birmingham', 'jackson'],
+  'savannah':       ['jacksonville', 'charleston', 'atlanta'],
+  'charleston':     ['savannah', 'columbia-sc', 'charlotte'],
+  'columbia-sc':    ['charleston', 'charlotte', 'raleigh'],
+  'boise':          ['salt-lake-city', 'spokane', 'portland'],
+  'salt-lake-city': ['denver', 'boise', 'las-vegas'],
+  'reno':           ['san-francisco', 'las-vegas', 'salt-lake-city'],
+  'spokane':        ['seattle', 'boise', 'portland'],
+  'norfolk':        ['richmond', 'baltimore', 'washington-dc'],
+  'richmond':       ['washington-dc', 'norfolk', 'charlotte'],
+  'baltimore':      ['washington-dc', 'philadelphia', 'richmond'],
+  // ── Canada ──
+  'toronto':        ['montreal', 'detroit', 'buffalo'],
+  'montreal':       ['toronto', 'quebec-city', 'burlington'],
+  'vancouver':      ['seattle', 'portland', 'calgary'],
+  'calgary':        ['edmonton', 'vancouver', 'winnipeg'],
+  'winnipeg':       ['minneapolis', 'calgary', 'edmonton'],
+  'edmonton':       ['calgary', 'winnipeg', 'vancouver'],
+  'quebec-city':    ['montreal', 'halifax', 'burlington'],
+  'halifax':        ['quebec-city', 'montreal', 'boston'],
+  // ── Latin America ──
+  'mexico-city':    ['houston', 'dallas', 'san-antonio'],
+  'sao-paulo':      ['buenos-aires', 'miami', 'mexico-city'],
+  'buenos-aires':   ['sao-paulo', 'miami', 'mexico-city'],
+  // ── Europe ──
+  'london':         ['amsterdam', 'paris', 'berlin'],
+  'paris':          ['london', 'amsterdam', 'madrid'],
+  'berlin':         ['amsterdam', 'london', 'paris'],
+  'rome':           ['paris', 'madrid', 'berlin'],
+  'madrid':         ['paris', 'london', 'rome'],
+  'amsterdam':      ['london', 'paris', 'berlin'],
+  'moscow':         ['berlin', 'istanbul', 'amsterdam'],
+  // ── Middle East / Africa ──
+  'istanbul':       ['moscow', 'cairo', 'dubai'],
+  'cairo':          ['istanbul', 'dubai', 'johannesburg'],
+  'johannesburg':   ['cairo', 'dubai', 'istanbul'],
+  'dubai':          ['istanbul', 'cairo', 'mumbai'],
+  // ── Asia / Pacific ──
+  'tokyo':          ['seoul', 'hong-kong', 'singapore'],
+  'singapore':      ['bangkok', 'hong-kong', 'tokyo'],
+  'hong-kong':      ['singapore', 'tokyo', 'bangkok'],
+  'seoul':          ['tokyo', 'hong-kong', 'singapore'],
+  'mumbai':         ['dubai', 'singapore', 'bangkok'],
+  'sydney':         ['singapore', 'hong-kong', 'tokyo'],
+  'bangkok':        ['singapore', 'hong-kong', 'tokyo'],
+};
 
 // --- City Night Photography (Unsplash — free commercial use) ---
 const CITY_IMAGES = {
