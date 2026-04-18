@@ -434,9 +434,55 @@ function renderCityPage() {
   const cityId = params.get('city') || 'london';
   const city = CITIES.find(c => c.id === cityId) || CITIES.find(c => c.id === 'london');
 
-  // Canonical tag
+  // ── SEO: dynamic per-city meta tags ──────────────────────────────────────
+  const cityName   = city.name;
+  const citySlug   = cityId;
+  const cityCountry = city.state ? `${city.state}, ${city.country}` : city.country;
+  const pageUrl    = `https://www.thetimesphere.com/time.html?city=${citySlug}`;
+  const pageTitle  = `${cityName} Current Time, Weather & Travel Guide — The Time Sphere`;
+  const pageDesc   = `Current local time in ${cityName}, ${cityCountry}. Weather forecast, local events, top restaurants, things to do, and travel booking.`;
+  const shortDesc  = `Current local time in ${cityName}, ${cityCountry}. Weather, events, restaurants, and travel booking.`;
+
+  // <title>
+  document.title = pageTitle;
+  const pageTitleEl = document.getElementById('page-title');
+  if (pageTitleEl) pageTitleEl.textContent = pageTitle;
+
+  // <meta name="description">
+  const pageDescEl = document.getElementById('page-description');
+  if (pageDescEl) pageDescEl.setAttribute('content', pageDesc);
+
+  // <link rel="canonical">
   const canonicalTag = document.getElementById('canonical-tag');
-  if (canonicalTag) canonicalTag.href = 'https://www.thetimesphere.com/time.html?city=' + cityId;
+  if (canonicalTag) canonicalTag.setAttribute('href', pageUrl);
+
+  // Open Graph
+  const ogTitle = document.getElementById('og-title');
+  if (ogTitle) ogTitle.setAttribute('content', `${cityName} Current Time, Weather & Travel Guide`);
+  const ogDesc = document.getElementById('og-description');
+  if (ogDesc) ogDesc.setAttribute('content', shortDesc);
+  const ogUrl = document.getElementById('og-url');
+  if (ogUrl) ogUrl.setAttribute('content', pageUrl);
+
+  // Twitter Card
+  const twTitle = document.getElementById('twitter-title');
+  if (twTitle) twTitle.setAttribute('content', `${cityName} Current Time, Weather & Travel Guide`);
+  const twDesc = document.getElementById('twitter-description');
+  if (twDesc) twDesc.setAttribute('content', shortDesc);
+
+  // JSON-LD structured data
+  const schemaScript = document.getElementById('city-schema');
+  if (schemaScript) {
+    schemaScript.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'TouristDestination',
+      'name': cityName,
+      'description': `Current local time, weather, events, restaurants, and travel guides for ${cityName}, ${cityCountry}`,
+      'url': pageUrl,
+      'touristType': ['Leisure', 'Business']
+    }, null, 2);
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 
   // Set city-specific night photo
   const overlay = document.querySelector('.city-banner-overlay');
@@ -445,8 +491,7 @@ function renderCityPage() {
     overlay.style.backgroundImage = `url('${imgUrl}')`;
   }
 
-  // Page title
-  document.title = `Current time in ${city.name} — Live Clock | The Time Sphere`;
+  // H1 and label — set immediately so Googlebot sees the city name at once
   if (titleEl) titleEl.textContent = `${city.flag} ${city.name}`;
   if (labelEl) labelEl.textContent = `${cityLabel(city)} · Current Local Time`;
 
