@@ -4,6 +4,7 @@
    ============================================= */
 
 // --- City Data ---
+let CITY_DATA_CACHE = null;
 const CITIES = [
   // ── Featured cities (shown on homepage grid) ──
   { id: 'new-york',    name: 'New York',    state: 'New York',         country: 'USA',           tz: 'America/New_York',    flag: '🇺🇸', region: 'americas', lat: 40.71,  lon: -74.01 },
@@ -1088,100 +1089,55 @@ async function loadDiscoverContent(city) {
   // ── Load AI content ──
   await loadAIContent(city);
 }
-async function loadAIContent(city) {
-  const todoEl  = document.getElementById('todo-body');
-  const restEl  = document.getElementById('restaurant-body');
-
+async function getCityData() {
+  if (CITY_DATA_CACHE) return CITY_DATA_CACHE;
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 600,
-        messages: [{
-          role: 'user',
-          content: `For the city of ${city.name}, ${city.country}, give me exactly this JSON format and nothing else:
-{
-  "todo": [
-    {"name": "attraction name", "desc": "one sentence description"},
-    {"name": "attraction name", "desc": "one sentence description"},
-    {"name": "attraction name", "desc": "one sentence description"}
-  ],
-  "restaurants": [
-    {"name": "restaurant name", "desc": "cuisine type and one sentence why it's great"},
-    {"name": "restaurant name", "desc": "cuisine type and one sentence why it's great"},
-    {"name": "restaurant name", "desc": "cuisine type and one sentence why it's great"}
-  ]
-}`
-        }]
-      })
-    });
-
-    const data = await response.json();
-    const text = data.content[0].text.trim();
-    const parsed = JSON.parse(text);
-
-    // Render Things To Do
-    if (todoEl && parsed.todo) {
-      todoEl.innerHTML = parsed.todo.map((item, i) => `
-        <div class="discover-item">
-          <div class="discover-item-num">${i + 1}</div>
-          <div class="discover-item-text">
-            <strong>${item.name}</strong>
-            <small>${item.desc}</small>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // Render Restaurants
-    if (restEl && parsed.restaurants) {
-      restEl.innerHTML = parsed.restaurants.map((item, i) => `
-        <div class="discover-item">
-          <div class="discover-item-num">${i + 1}</div>
-          <div class="discover-item-text">
-            <strong>${item.name}</strong>
-            <small>${item.desc}</small>
-          </div>
-        </div>
-      `).join('');
-    }
-
+    const res = await fetch('city-data.json');
+    if (!res.ok) throw new Error('City data fetch failed: ' + res.status);
+    CITY_DATA_CACHE = await res.json();
+    return CITY_DATA_CACHE;
   } catch (err) {
-    // Fallback if API not available
-    const fallback = (el, items) => {
-      if (!el) return;
-      el.innerHTML = items.map((item, i) => `
-        <div class="discover-item">
-          <div class="discover-item-num">${i + 1}</div>
-          <div class="discover-item-text">
-            <strong>${item.name}</strong>
-            <small>${item.desc}</small>
-          </div>
+    console.error('Could not load city-data.json:', err);
+    return {};
+  }
+}
+
+async function loadAIContent(city) {
+  const todoEl = document.getElementById('todo-body');
+  const restEl = document.getElementById('restaurant-body');
+  const renderItems = (el, items) => {
+    if (!el || !items) return;
+    el.innerHTML = items.map((item, i) => `
+      <div class="discover-item">
+        <div class="discover-item-num">${i + 1}</div>
+        <div class="discover-item-text">
+          <strong>${item.name}</strong>
+          <small>${item.desc}</small>
         </div>
-      `).join('');
-    };
-
-    const todoFallback = {
-      'new-york':    [{name:'Central Park',desc:'800 acres of iconic green space in the heart of Manhattan.'},{name:'The Metropolitan Museum of Art',desc:'World-class art collection spanning 5,000 years of history.'},{name:'Brooklyn Bridge',desc:'Walk across one of the world\'s most famous suspension bridges.'}],
-      'los-angeles': [{name:'Griffith Observatory',desc:'Stunning views of LA and the Hollywood sign, free admission.'},{name:'Getty Center',desc:'World-class art museum with breathtaking city views.'},{name:'Santa Monica Pier',desc:'Iconic beachfront pier with rides, food, and ocean views.'}],
-      'london':      [{name:'Tower of London',desc:'Nearly 1,000 years of royal history and the Crown Jewels.'},{name:'British Museum',desc:'World\'s greatest collection of human history and culture, free entry.'},{name:'Borough Market',desc:'London\'s oldest and most celebrated food market.'}],
-      'tokyo':       [{name:'Senso-ji Temple',desc:'Tokyo\'s oldest temple in the historic Asakusa district.'},{name:'Shibuya Crossing',desc:'The world\'s busiest pedestrian crossing, a true spectacle.'},{name:'Tsukiji Outer Market',desc:'Fresh sushi and Japanese street food at its finest.'}],
-    };
-
-    const restFallback = {
-      'new-york':    [{name:'Le Bernardin',desc:'French seafood. Arguably the finest restaurant in New York City.'},{name:'Katz\'s Delicatessen',desc:'Jewish deli. Iconic pastrami sandwiches since 1888.'},{name:'Di Fara Pizza',desc:'Italian-American. Legendary Brooklyn pizza made fresh daily.'}],
-      'los-angeles': [{name:'Nobu Malibu',desc:'Japanese fusion. Celebrity hotspot with stunning ocean views.'},{name:'Grand Central Market',desc:'American eclectic. Historic market hall with diverse food stalls.'},{name:'In-N-Out Burger',desc:'American classic. An LA institution since 1948.'}],
-      'london':      [{name:'Dishoom',desc:'Indian. Beloved Bombay-style café with legendary black daal.'},{name:'The Ledbury',desc:'Modern European. Two Michelin stars in Notting Hill.'},{name:'Padella',desc:'Italian. Fresh handmade pasta at unbeatable prices.'}],
-      'tokyo':       [{name:'Sukiyabashi Jiro',desc:'Sushi. The world\'s most famous sushi restaurant, 3 Michelin stars.'},{name:'Ichiran Ramen',desc:'Japanese ramen. Private solo dining booths for full focus on flavor.'},{name:'Tsuta',desc:'Japanese soba. World\'s first Michelin-starred ramen restaurant.'}],
-    };
-
-    const genericTodo = [{name:`Explore ${city.name}`,desc:`Discover the top landmarks and attractions in ${city.name}.`},{name:'Local Museums & Galleries',desc:'Immerse yourself in the history and culture of the region.'},{name:'City Food Markets',desc:'Sample the best local cuisine and street food the city has to offer.'}];
-    const genericRest = [{name:'Local Fine Dining',desc:'Experience the best of the local culinary scene.'},{name:'Traditional Cuisine',desc:`Authentic ${city.country} flavors in a classic setting.`},{name:'Street Food Tour',desc:'Explore the city\'s vibrant street food culture.'}];
-
-    fallback(todoEl, todoFallback[city.id] || genericTodo);
-    fallback(restEl, restFallback[city.id] || genericRest);
+      </div>
+    `).join('');
+  };
+  const genericTodo = [
+    { name: `Explore ${city.name}`, desc: `Discover the top landmarks and attractions in ${city.name}.` },
+    { name: 'Local Museums & Galleries', desc: 'Immerse yourself in the history and culture of the region.' },
+    { name: 'City Food Markets', desc: 'Sample the best local cuisine and street food the city has to offer.' }
+  ];
+  const genericRest = [
+    { name: 'Local Fine Dining', desc: 'Experience the best of the local culinary scene.' },
+    { name: 'Traditional Cuisine', desc: `Authentic ${city.country} flavors in a classic setting.` },
+    { name: 'Street Food Tour', desc: "Explore the city's vibrant street food culture." }
+  ];
+  const allData = await getCityData();
+  const cityData = allData[city.id];
+  if (cityData && cityData.todo && cityData.todo.length) {
+    renderItems(todoEl, cityData.todo);
+  } else {
+    renderItems(todoEl, genericTodo);
+  }
+  if (cityData && cityData.restaurants && cityData.restaurants.length) {
+    renderItems(restEl, cityData.restaurants);
+  } else {
+    renderItems(restEl, genericRest);
   }
 }
 
