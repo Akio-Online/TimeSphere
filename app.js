@@ -1143,9 +1143,337 @@ async function loadAIContent(city) {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// MOVING TO — search helper (called from inline onsubmit on search forms)
+// ─────────────────────────────────────────────────────────────────────────────
+function movingSearch(event) {
+  event.preventDefault();
+  const form   = event.target;
+  const topic  = form.dataset.topic  || '';
+  const city   = form.dataset.city   || '';
+  const typed  = (form.querySelector('input') || {}).value?.trim() || '';
+  const q      = typed ? `${typed} in ${city}` : `${topic} in ${city}`;
+  window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
+  return false;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MOVING TO PAGE — renderMovingPage()
+// ─────────────────────────────────────────────────────────────────────────────
+async function renderMovingPage() {
+  const pathMatch = window.location.pathname.match(/^\/moving-to\/([^/]+)$/);
+  if (!pathMatch) return;
+
+  const cityId = pathMatch[1];
+  const city   = CITIES.find(c => c.id === cityId) || CITIES.find(c => c.id === 'houston');
+  if (!city) return;
+
+  const cityName    = city.name;
+  const cityCountry = city.state ? `${city.state}, ${city.country}` : city.country;
+  const pageUrl     = `https://www.thetimesphere.com/moving-to/${city.id}`;
+  const pageTitle   = `Moving to ${cityName} — The Time Sphere`;
+  const pageDesc    = `Complete relocation guide for ${cityName}, ${cityCountry}. Find neighborhoods, moving services, utilities, housing, and local tips.`;
+
+  // ── SEO ──────────────────────────────────────────────────────────────────
+  document.title = pageTitle;
+  const setMeta = (id, attr, val) => { const el = document.getElementById(id); if (el) el[attr === 'content' ? 'setAttribute' : 'textContent'](attr, val); };
+  const setAttr = (id, attr, val) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, val); };
+
+  setAttr('moving-page-title',  'textContent', pageTitle);
+  setAttr('moving-page-desc',   'content',     pageDesc);
+  setAttr('canonical-tag',      'href',        pageUrl);
+  setAttr('og-title',           'content',     `Moving to ${cityName} — The Time Sphere`);
+  setAttr('og-description',     'content',     pageDesc);
+  setAttr('og-url',             'content',     pageUrl);
+  setAttr('twitter-title',      'content',     `Moving to ${cityName} — The Time Sphere`);
+  setAttr('twitter-description','content',     pageDesc);
+
+  // JSON-LD
+  const schema = document.getElementById('moving-schema');
+  if (schema) {
+    schema.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      'headline': `Moving to ${cityName}`,
+      'description': pageDesc,
+      'url': pageUrl
+    }, null, 2);
+  }
+
+  // ── Nav: mark MOVING TO active, update href ───────────────────────────────
+  const navLink = document.getElementById('nav-moving-to');
+  if (navLink) {
+    navLink.href = pageUrl;
+    navLink.classList.add('nav-active');
+  }
+
+  // ── Hero image (reuse CITY_IMAGES) ───────────────────────────────────────
+  const heroBg = document.getElementById('moving-hero-bg');
+  if (heroBg) {
+    const imgUrl = CITY_IMAGES[city.id] || CITY_IMAGES['default'];
+    heroBg.style.backgroundImage = `url('${imgUrl}')`;
+  }
+
+  // ── Inline text tokens ────────────────────────────────────────────────────
+  const setText = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+  setText('moving-city-label',   `${city.flag} ${cityCountry}`);
+  setText('moving-city-em',      cityName);
+  setText('moving-city-intro',   `Your complete guide to relocating to ${cityName} — neighborhoods, housing, moving services, and local life.`);
+  setText('moving-back-city',    cityName);
+  setText('snapshot-sub',        `Key facts before your move to ${cityName}`);
+  setText('agents-sub',          `Local agents serving ${cityName}`);
+  setText('agent-city-name',     cityName);
+  setText('neighborhoods-heading', `Best Neighborhoods in ${cityName}`);
+  setText('neighborhoods-sub',   `Find the right area of ${cityName} for your lifestyle and budget.`);
+  setText('movers-heading',      `Moving Services in ${cityName}`);
+  setText('movers-sub',         `Compare local movers, packing help, and full-service relocation companies in ${cityName}.`);
+  setText('trucks-heading',      `Truck Rental & Storage in ${cityName}`);
+  setText('trucks-sub',          `Moving trucks, portable storage containers, and self-storage facilities near ${cityName}.`);
+  setText('utilities-heading',   `Utilities, Internet & Home Setup in ${cityName}`);
+  setText('utilities-sub',       `Connect electricity, gas, internet, and water service for your new home in ${cityName}.`);
+  setText('insurance-heading',   `Insurance & Protection in ${cityName}`);
+  setText('insurance-sub',       `Compare home, renters, auto, and health insurance providers in ${cityName}.`);
+  setText('essentials-heading',  `Move-In Essentials in ${cityName}`);
+  setText('essentials-sub',      `Cleaning services, furniture delivery, handyman help, and home essentials in ${cityName}.`);
+  setText('hotels-sub',          `Extended-stay hotels and temporary housing in ${cityName}`);
+  setText('events-city-name',    cityName);
+  setText('events-sub',          `Discover what's on near your new home in ${cityName}`);
+  setText('todo-section-sub',    `Top things to do as a new resident of ${cityName}`);
+  setText('transit-sub',         `Getting around ${cityName}`);
+  setText('trainline-sub',       `Rail & transit options near ${cityName}`);
+  setText('faq-sub',             `Common questions about moving to ${cityName}`);
+  setText('explore-time-title',  `${cityName} Time & Travel Guide`);
+  setText('moving-eventbrite-label', `Browse Local Events in ${cityName} on Eventbrite →`);
+  setText('moving-eventbrite-sub',   `Festivals, meetups, markets and more in ${cityName}`);
+  setText('moving-tm-label',     `Concerts & Sports in ${cityName} on Ticketmaster →`);
+  setText('moving-tm-sub',       `Live music, sports, theatre and more`);
+  setText('moving-viator-title', `Experiences in ${cityName}`);
+  setText('viator-card-title',   `Experiences in ${cityName}`);
+
+  // ── Back link & explore links ─────────────────────────────────────────────
+  setAttr('moving-back-link',  'href', `/time/${city.id}`);
+  setAttr('explore-time-link', 'href', `/time/${city.id}`);
+  setAttr('agent-apply-link',  'href',
+    `/contact.html?subject=${encodeURIComponent(`Real Estate Agent Advertising Inquiry - ${cityName}`)}`);
+
+  // ── Set data-city on all search forms ────────────────────────────────────
+  document.querySelectorAll('.moving-search-form').forEach(f => {
+    f.dataset.city = cityName;
+    const inp = f.querySelector('input');
+    if (inp && inp.placeholder.includes('…')) {
+      inp.placeholder = inp.placeholder.replace('…', ` in ${cityName}…`).replace('in in', 'in');
+    }
+  });
+
+  // ── Affiliate URL construction (mirrors renderCityPage logic) ─────────────
+  const aid          = '8058275';
+  const sid          = '304813083';
+  const sub3         = 'D15250377';
+  const cityEncoded  = encodeURIComponent(city.name);
+  const baseParams   = `Allianceid=${aid}&SID=${sid}&trip_sub1=&trip_sub3=${sub3}`;
+  const isAsiaAfrica = city.region === 'asia' || city.region === 'africa';
+
+  // Trip.com
+  setAttr('moving-trip-btn', 'href',
+    `https://www.trip.com/hotels/?searchWord=${cityEncoded}&${baseParams}`);
+
+  // Expedia
+  setAttr('moving-expedia-btn', 'href',
+    isAsiaAfrica
+      ? `https://www.trip.com/hotels/?searchWord=${cityEncoded}&${baseParams}`
+      : `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent(`https://www.expedia.com/Hotel-Search?destination=${city.name}&startDate=&endDate=&rooms=1`)}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZsdtQ7jiB`);
+
+  // Hotels.com
+  setAttr('moving-hotels-btn', 'href',
+    isAsiaAfrica
+      ? `https://www.trip.com/hotels/?searchWord=${cityEncoded}&${baseParams}`
+      : `https://www.hotels.com/affiliate?landingPage=${encodeURIComponent(`https://www.hotels.com/search.do?destination=${city.name}`)}&camref=1110lCi3P&creativeref=1011l66481&adref=PZtELLwj2M`);
+
+  // Booking.com (no existing affiliate — using functional search URL)
+  setAttr('moving-booking-btn', 'href',
+    `https://www.booking.com/searchresults.html?ss=${cityEncoded}&checkin=&checkout=&group_adults=1`);
+
+  // Agoda (no existing affiliate — using functional search URL)
+  setAttr('moving-agoda-btn', 'href',
+    `https://www.agoda.com/search?city=${cityEncoded}&checkIn=&checkOut=&rooms=1`);
+
+  // Eventbrite
+  setAttr('moving-eventbrite-link', 'href',
+    `https://www.eventbrite.com/d/${cityEncoded}/events/`);
+
+  // Ticketmaster
+  setAttr('moving-ticketmaster-link', 'href',
+    `https://www.ticketmaster.com/search?q=${cityEncoded}`);
+
+  // Viator
+  const viatorUrl = `https://www.viator.com/search/${cityEncoded}?pid=${VIATOR_PID}&mcid=${VIATOR_MCID}&medium=link&medium_version=selector`;
+  const viatorBody = document.getElementById('moving-viator-body');
+  if (viatorBody) {
+    viatorBody.innerHTML = `
+      <div class="widget-placeholder">
+        <p class="widget-placeholder-icon">🎟️</p>
+        <p class="widget-placeholder-title">Experiences in ${cityName}</p>
+        <p class="widget-placeholder-sub">Browse top-rated tours, activities and experiences.</p>
+        <a href="${viatorUrl}" target="_blank" rel="noopener" class="btn"
+           style="display:inline-block;margin-top:16px;padding:12px 28px;background:linear-gradient(135deg,#c8860a,#f0a830);color:#050810;font-weight:700;border-radius:50px;text-decoration:none;font-size:0.85rem;letter-spacing:0.05em;">
+          Browse Experiences in ${cityName} →
+        </a>
+      </div>`;
+  }
+
+  // Trainline
+  setAttr('moving-trainline-btn', 'href',
+    `https://www.thetrainline.com/`);
+
+  // ── City Snapshot ─────────────────────────────────────────────────────────
+  function snapCost(c) {
+    if (c.region === 'americas' && c.country === 'USA') {
+      if (['new-york','san-francisco','los-angeles','seattle','boston','honolulu'].includes(c.id)) return 'Very High';
+      if (['miami','chicago','washington-dc','denver'].includes(c.id)) return 'High';
+      return 'Moderate';
+    }
+    if (c.region === 'europe') {
+      if (['london','zurich','oslo','amsterdam','paris'].includes(c.id)) return 'Very High';
+      if (['berlin','stockholm','vienna','brussels','munich'].includes(c.id)) return 'High';
+      return 'Moderate to High';
+    }
+    if (c.region === 'asia') {
+      if (['singapore','hong-kong','tokyo'].includes(c.id)) return 'Very High';
+      if (['seoul','dubai','abu-dhabi'].includes(c.id)) return 'High';
+      return 'Below Western Avg';
+    }
+    if (c.country === 'Canada') return 'High';
+    if (c.country === 'Australia') return 'High';
+    if (c.region === 'africa') return 'Low to Moderate';
+    return 'Moderate';
+  }
+  function snapTransit(c) {
+    const transit = ['new-york','chicago','boston','washington-dc','san-francisco','philadelphia',
+      'toronto','montreal','london','paris','berlin','amsterdam','tokyo','seoul','singapore',
+      'hong-kong','mexico-city','buenos-aires','beijing','shanghai','seoul','madrid','barcelona',
+      'moscow','stockholm','oslo','vienna','zurich','munich','rome','milan','sydney','melbourne'];
+    if (transit.includes(c.id)) return 'Excellent Transit';
+    if (c.region === 'americas' && c.country === 'USA') return 'Car Recommended';
+    if (c.region === 'europe') return 'Good Transit';
+    if (c.region === 'asia') return 'Good Transit';
+    return 'Car + Transit';
+  }
+  function snapBestFor(c) {
+    if (c.region === 'americas' && c.country === 'USA') return 'Professionals & Families';
+    if (c.region === 'europe') return 'Expats & Culture Seekers';
+    if (c.region === 'asia') return 'International Business';
+    if (c.country === 'Canada') return 'Families & Newcomers';
+    if (c.country === 'Australia') return 'Outdoor Lifestyles';
+    if (c.region === 'africa') return 'Adventurers & Expats';
+    return 'Global Professionals';
+  }
+  function snapClimate(c) {
+    const lat = c.lat || 0;
+    if (lat > 60 || lat < -60) return 'Subarctic / Very Cold';
+    if (lat > 50) return 'Cool / Cold Winters';
+    if (lat > 40) return 'Temperate / Four Seasons';
+    if (lat > 30) return 'Warm / Mild Winters';
+    if (lat > 15) return 'Subtropical / Hot Summers';
+    if (lat > -15) return 'Tropical / Hot & Humid';
+    if (lat > -30) return 'Subtropical (Southern)';
+    return 'Temperate (Southern Hemisphere)';
+  }
+  function snapScale(c) {
+    const mega = ['new-york','los-angeles','chicago','tokyo','london','paris','beijing','shanghai',
+      'mexico-city','sao-paulo','buenos-aires','moscow','istanbul','dubai','mumbai','singapore','seoul',
+      'jakarta','bangkok'];
+    const large = ['miami','seattle','boston','houston','toronto','montreal','berlin','madrid',
+      'rome','amsterdam','sydney','hong-kong','kuala-lumpur','karachi','lahore','dhaka'];
+    if (mega.includes(c.id)) return 'Global Megacity';
+    if (large.includes(c.id)) return 'Major Metro';
+    return 'Mid-Size City';
+  }
+
+  setText('snap-cost',    snapCost(city));
+  setText('snap-transit', snapTransit(city));
+  setText('snap-bestfor', snapBestFor(city));
+  setText('snap-climate', snapClimate(city));
+  setText('snap-scale',   snapScale(city));
+
+  // ── FAQ Accordion ─────────────────────────────────────────────────────────
+  const faqs = [
+    { q: `Is ${cityName} a good place to live?`,
+      a: `${cityName} offers a dynamic mix of culture, career opportunities, and lifestyle options. Whether it's right for you depends on your budget, career, and lifestyle preferences — but it consistently attracts professionals, families, and international residents alike.` },
+    { q: `What is the cost of living in ${cityName}?`,
+      a: `The cost of living in ${cityName} is generally rated as ${snapCost(city).toLowerCase()}. Housing is typically the largest expense — research specific neighborhoods to find the best value for your budget. Food, transport, and utilities vary significantly by area.` },
+    { q: `What are the best neighborhoods in ${cityName}?`,
+      a: `The best neighborhoods in ${cityName} depend on your priorities — walkability, affordability, nightlife, or schools. Use the neighborhood search above to explore options, and consider visiting in person before committing to a specific area.` },
+    { q: `How is traffic and commuting in ${cityName}?`,
+      a: `${cityName} has ${snapTransit(city).toLowerCase()} infrastructure. If you plan to commute by car, research typical journey times during peak hours. Many residents combine public transit, cycling, and occasional car use for the most flexibility.` },
+    { q: `When is the best time to move to ${cityName}?`,
+      a: `Spring (March–May) and early autumn (September–October) are typically the best times to move — weather is milder, movers are more available, and the rental market tends to be less competitive than summer peak months.` },
+  ];
+  const faqEl = document.getElementById('faq-accordion');
+  if (faqEl) {
+    faqEl.innerHTML = faqs.map((f, i) => `
+      <div class="faq-item" id="faq-item-${i}">
+        <button class="faq-question" onclick="toggleFaq(${i})" aria-expanded="false">
+          <span>${f.q}</span>
+          <span class="faq-chevron">▾</span>
+        </button>
+        <div class="faq-answer" id="faq-answer-${i}" hidden>${f.a}</div>
+      </div>
+    `).join('');
+  }
+
+  // ── Things To Do (from city-data.json) ───────────────────────────────────
+  const allData  = await getCityData();
+  const cityData = allData[city.id];
+  const todoEl   = document.getElementById('moving-todo-body');
+  const renderItems = (el, items) => {
+    if (!el || !items) return;
+    el.innerHTML = items.map((item, i) => `
+      <div class="discover-item">
+        <div class="discover-item-num">${i + 1}</div>
+        <div class="discover-item-text">
+          <strong>${item.name}</strong>
+          <small>${item.desc}</small>
+        </div>
+      </div>
+    `).join('');
+  };
+  const genericTodo = [
+    { name: `Explore ${cityName}`, desc: `Discover the top landmarks and attractions that define life in ${cityName}.` },
+    { name: 'Local Museums & Galleries', desc: 'Immerse yourself in the history and culture of the region.' },
+    { name: 'City Food Markets', desc: 'Sample the best local cuisine and street food the city has to offer.' }
+  ];
+  renderItems(todoEl, (cityData && cityData.todo && cityData.todo.length) ? cityData.todo : genericTodo);
+}
+
+// ── FAQ toggle ────────────────────────────────────────────────────────────────
+function toggleFaq(i) {
+  const btn = document.querySelector(`#faq-item-${i} .faq-question`);
+  const ans = document.getElementById(`faq-answer-${i}`);
+  if (!btn || !ans) return;
+  const isOpen = !ans.hidden;
+  ans.hidden = isOpen;
+  btn.setAttribute('aria-expanded', String(!isOpen));
+  btn.querySelector('.faq-chevron').textContent = isOpen ? '▾' : '▴';
+}
+
 // --- Init ---
 document.addEventListener('DOMContentLoaded', () => {
   renderCityGrid();
   setupSearch();
   renderCityPage();
+  renderMovingPage();
+
+  // Update MOVING TO nav link on time pages
+  if (window.location.pathname.match(/^\/time\/([^/]+)$/)) {
+    const slug = window.location.pathname.match(/^\/time\/([^/]+)$/)[1];
+    const navLink = document.getElementById('nav-moving-to');
+    if (navLink) navLink.href = `/moving-to/${slug}`;
+  }
+
+  // Pre-fill contact form subject from URL ?subject= param
+  const subjectParam = new URLSearchParams(window.location.search).get('subject');
+  if (subjectParam) {
+    const subjectInput = document.querySelector('input[name="subject"]');
+    if (subjectInput) subjectInput.value = subjectParam;
+  }
 });

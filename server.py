@@ -36,13 +36,22 @@ def generate_sitemap():
     <priority>{priority}</priority>
   </url>""")
 
-    # City pages — clean URLs
+    # City time pages — clean URLs
     for city_id in city_ids:
         urls.append(f"""  <url>
     <loc>{base}/time/{city_id}</loc>
     <lastmod>{today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
+  </url>""")
+
+    # Moving-to pages — one per city
+    for city_id in city_ids:
+        urls.append(f"""  <url>
+    <loc>{base}/moving-to/{city_id}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>""")
 
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -89,6 +98,17 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
         # Clean city URL: /time/{slug} → serve time.html
         if re.match(r'^/time/[a-z0-9][a-z0-9-]*$', path):
             serve_html(self, 'time.html')
+            return
+
+        # Moving-to city URL: /moving-to/{slug} → serve moving-to.html
+        # Validate slug exists in CITIES; return 404 for unknown slugs
+        m = re.match(r'^/moving-to/([a-z0-9][a-z0-9-]*)$', path)
+        if m:
+            slug = m.group(1)
+            if slug in get_city_ids():
+                serve_html(self, 'moving-to.html')
+            else:
+                self.send_error(404, 'City not found')
             return
 
         # Sitemap
