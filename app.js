@@ -288,7 +288,7 @@ function renderCityGrid() {
     });
 
     grid.innerHTML = filtered.map(city => `
-      <a href="time.html?city=${city.id}" class="city-card" data-id="${city.id}" data-region="${city.region}">
+      <a href="/time/${city.id}" class="city-card" data-id="${city.id}" data-region="${city.region}">
         <div class="city-name">${city.flag} ${city.name}</div>
         <div class="city-time" id="mini-${city.id}">--:--:--</div>
         <div class="city-tz">${cityLabel(city)} · ${city.tz}</div>
@@ -357,7 +357,7 @@ function setupSearch() {
     dropdown.style.display = 'block';
     dropdown.querySelectorAll('.autocomplete-item').forEach((item, i) => {
       item.addEventListener('mouseenter', () => setActive(i));
-      item.addEventListener('click', () => { window.location.href = `time.html?city=${item.dataset.id}`; });
+      item.addEventListener('click', () => { window.location.href = `/time/${item.dataset.id}`; });
     });
   }
 
@@ -373,7 +373,7 @@ function setupSearch() {
   function navigate() {
     const items = dropdown ? dropdown.querySelectorAll('.autocomplete-item') : [];
     if (items.length && activeIndex >= 0 && activeIndex < items.length) {
-      window.location.href = `time.html?city=${items[activeIndex].dataset.id}`;
+      window.location.href = `/time/${items[activeIndex].dataset.id}`;
       return;
     }
     const val = input.value.trim().toLowerCase();
@@ -384,7 +384,7 @@ function setupSearch() {
       cityLabel(c).toLowerCase().includes(val)
     );
     if (match) {
-      window.location.href = `time.html?city=${match.id}`;
+      window.location.href = `/time/${match.id}`;
     } else {
       input.style.borderColor = '#ff4466';
       setTimeout(() => { input.style.borderColor = ''; }, 1500);
@@ -431,15 +431,17 @@ function renderCityPage() {
 
   if (!clockEl) return;
 
-  const params = new URLSearchParams(window.location.search);
-  const cityId = params.get('city') || 'london';
+  // Read city slug from clean path (/time/houston) with fallback to legacy ?city= param
+  const pathMatch = window.location.pathname.match(/^\/time\/([^/]+)$/);
+  const cityId = pathMatch ? pathMatch[1]
+    : (new URLSearchParams(window.location.search).get('city') || 'london');
   const city = CITIES.find(c => c.id === cityId) || CITIES.find(c => c.id === 'london');
 
   // ── SEO: dynamic per-city meta tags ──────────────────────────────────────
   const cityName   = city.name;
   const citySlug   = cityId;
   const cityCountry = city.state ? `${city.state}, ${city.country}` : city.country;
-  const pageUrl    = `https://www.thetimesphere.com/time.html?city=${citySlug}`;
+  const pageUrl    = `https://www.thetimesphere.com/time/${citySlug}`;
   const pageTitle  = `${cityName} Current Time, Weather & Travel Guide — The Time Sphere`;
   const pageDesc   = `Current local time in ${cityName}, ${cityCountry}. Weather forecast, local events, top restaurants, things to do, and travel booking.`;
   const shortDesc  = `Current local time in ${cityName}, ${cityCountry}. Weather, events, restaurants, and travel booking.`;
@@ -518,7 +520,7 @@ function renderCityPage() {
   if (tzRow) {
     relatedCities.forEach(c => {
       const badge = document.createElement('a');
-      badge.href = `time.html?city=${c.id}`;
+      badge.href = `/time/${c.id}`;
       badge.className = 'tz-badge tz-badge-related';
       badge.innerHTML = `<strong id="rel-${c.id}">--:--</strong>${c.flag} ${c.name}`;
       tzRow.appendChild(badge);
@@ -1092,7 +1094,7 @@ async function loadDiscoverContent(city) {
 async function getCityData() {
   if (CITY_DATA_CACHE) return CITY_DATA_CACHE;
   try {
-    const res = await fetch('city-data.json');
+    const res = await fetch('/city-data.json');
     if (!res.ok) throw new Error('City data fetch failed: ' + res.status);
     CITY_DATA_CACHE = await res.json();
     return CITY_DATA_CACHE;
