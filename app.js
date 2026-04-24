@@ -1161,10 +1161,10 @@ function movingSearch(event) {
 // MOVING TO PAGE — renderMovingPage()
 // ─────────────────────────────────────────────────────────────────────────────
 async function renderMovingPage() {
-  const pathMatch = window.location.pathname.match(/^\/moving-to\/([^/]+)$/);
+  const pathMatch = window.location.pathname.match(/^\/moving-to\/([^/?#]+)/);
   if (!pathMatch) return;
 
-  const cityId = pathMatch[1];
+  const cityId = pathMatch[1].replace(/\/$/, '');
   const city   = CITIES.find(c => c.id === cityId) || CITIES.find(c => c.id === 'houston');
   if (!city) return;
 
@@ -1179,7 +1179,8 @@ async function renderMovingPage() {
   const setMeta = (id, attr, val) => { const el = document.getElementById(id); if (el) el[attr === 'content' ? 'setAttribute' : 'textContent'](attr, val); };
   const setAttr = (id, attr, val) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, val); };
 
-  setAttr('moving-page-title',  'textContent', pageTitle);
+  const titleEl = document.getElementById('moving-page-title');
+  if (titleEl) titleEl.textContent = pageTitle;
   setAttr('moving-page-desc',   'content',     pageDesc);
   setAttr('canonical-tag',      'href',        pageUrl);
   setAttr('og-title',           'content',     `Moving to ${cityName} — The Time Sphere`);
@@ -1200,10 +1201,11 @@ async function renderMovingPage() {
     }, null, 2);
   }
 
-  // ── Nav: mark MOVING TO active, update href ───────────────────────────────
+  // ── Nav: show "MOVING TO HOUSTON", mark active ───────────────────────────
   const navLink = document.getElementById('nav-moving-to');
   if (navLink) {
     navLink.href = pageUrl;
+    navLink.textContent = `Moving To ${cityName}`;
     navLink.classList.add('nav-active');
   }
 
@@ -1389,9 +1391,20 @@ async function renderMovingPage() {
     return 'Mid-Size City';
   }
 
+  function snapMedianHome(c) {
+    const tier = snapCost(c);
+    if (tier === 'Very High') return '$700K+';
+    if (tier === 'High') return '$450K–$700K';
+    if (tier === 'Moderate to High') return '$300K–$500K';
+    if (tier === 'Below Western Avg') return '$80K–$200K';
+    if (tier === 'Low to Moderate') return '$30K–$100K';
+    return '$200K–$400K';
+  }
+
   setText('snap-cost',    snapCost(city));
   setText('snap-transit', snapTransit(city));
   setText('snap-bestfor', snapBestFor(city));
+  setText('snap-price',   snapMedianHome(city));
   setText('snap-climate', snapClimate(city));
   setText('snap-scale',   snapScale(city));
 
@@ -1443,6 +1456,14 @@ async function renderMovingPage() {
     { name: 'City Food Markets', desc: 'Sample the best local cuisine and street food the city has to offer.' }
   ];
   renderItems(todoEl, (cityData && cityData.todo && cityData.todo.length) ? cityData.todo : genericTodo);
+
+  // ── Quote modal: pre-fill city and subject ───────────────────────────────
+  const quoteSubject = document.getElementById('quote-subject');
+  if (quoteSubject) quoteSubject.value = `Moving Quote Request — ${cityName}`;
+  const quoteToZip = document.querySelector('#quote-modal-form input[name="to_zip"]');
+  if (quoteToZip && !quoteToZip.value) quoteToZip.placeholder = `To: ${cityName} (ZIP or city)`;
+  const quoteModalCity = document.getElementById('quote-modal-city');
+  if (quoteModalCity) quoteModalCity.textContent = `Tell us about your move to ${cityName} and we'll connect you with top-rated movers.`;
 }
 
 // ── FAQ toggle ────────────────────────────────────────────────────────────────
@@ -1463,11 +1484,16 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCityPage();
   renderMovingPage();
 
-  // Update MOVING TO nav link on time pages
-  if (window.location.pathname.match(/^\/time\/([^/]+)$/)) {
-    const slug = window.location.pathname.match(/^\/time\/([^/]+)$/)[1];
+  // Update MOVING TO nav link on time and moving-to pages
+  const timeMatch = window.location.pathname.match(/^\/time\/([^/?#]+)/);
+  if (timeMatch) {
+    const slug    = timeMatch[1].replace(/\/$/, '');
+    const city    = CITIES.find(c => c.id === slug);
     const navLink = document.getElementById('nav-moving-to');
-    if (navLink) navLink.href = `/moving-to/${slug}`;
+    if (navLink) {
+      navLink.href = `/moving-to/${slug}`;
+      if (city) navLink.textContent = `Moving To ${city.name}`;
+    }
   }
 
   // Pre-fill contact form subject from URL ?subject= param
@@ -1477,3 +1503,47 @@ document.addEventListener('DOMContentLoaded', () => {
     if (subjectInput) subjectInput.value = subjectParam;
   }
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MOVING QUOTE MODAL
+// ─────────────────────────────────────────────────────────────────────────────
+function openQuoteModal() {
+  const modal    = document.getElementById('quote-modal');
+  const backdrop = document.getElementById('quote-modal-backdrop');
+  if (!modal || !backdrop) return;
+  modal.hidden    = false;
+  backdrop.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeQuoteModal() {
+  const modal    = document.getElementById('quote-modal');
+  const backdrop = document.getElementById('quote-modal-backdrop');
+  if (!modal || !backdrop) return;
+  modal.hidden    = true;
+  backdrop.hidden = true;
+  document.body.style.overflow = '';
+  const thanks = document.getElementById('quote-modal-thanks');
+  const form   = document.getElementById('quote-modal-form');
+  if (thanks) thanks.hidden = true;
+  if (form)   form.hidden   = false;
+}
+
+async function submitQuoteForm(event) {
+  event.preventDefault();
+  const form = event.target;
+  const data = new FormData(form);
+  try {
+    const res = await fetch('https://formspree.io/f/mgopzepw', {
+      method: 'POST', body: data,
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      form.hidden = true;
+      const thanks = document.getElementById('quote-modal-thanks');
+      if (thanks) thanks.hidden = false;
+      setTimeout(closeQuoteModal, 3000);
+    }
+  } catch(e) {}
+  return false;
+}

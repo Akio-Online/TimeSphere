@@ -402,6 +402,32 @@
     </div>
   </footer>
 
+  <!-- STICKY GET MOVING QUOTE CTA -->
+  <div class="quote-cta-sticky" id="quote-cta-sticky" onclick="openQuoteModal()">
+    Get Free Moving Quote →
+  </div>
+
+  <!-- MOVING QUOTE MODAL -->
+  <div class="quote-modal-backdrop" id="quote-modal-backdrop" onclick="closeQuoteModal()" hidden></div>
+  <div class="quote-modal" id="quote-modal" hidden>
+    <button class="quote-modal-close" onclick="closeQuoteModal()" aria-label="Close">&times;</button>
+    <h2 class="quote-modal-title">Get a Free Moving Quote</h2>
+    <p class="quote-modal-sub" id="quote-modal-city">Tell us about your move and we'll connect you with top-rated movers.</p>
+    <form class="quote-modal-form" id="quote-modal-form" onsubmit="return submitQuoteForm(event)">
+      <input type="text"  name="name"     placeholder="Your Name"       required />
+      <input type="email" name="email"    placeholder="Your Email"      required />
+      <input type="text"  name="from_zip" placeholder="From ZIP Code"   />
+      <input type="text"  name="to_zip"   placeholder="To ZIP / City"   />
+      <input type="text"  name="move_date" placeholder="Planned Move Date (e.g. June 2026)" />
+      <input type="hidden" name="_subject" id="quote-subject" value="Moving Quote Request" />
+      <input type="text"  name="_gotcha"  style="display:none" />
+      <button type="submit" class="quote-modal-submit">Send My Request →</button>
+    </form>
+    <div class="quote-modal-thanks" id="quote-modal-thanks" hidden>
+      <p>✅ Request received! We'll be in touch soon.</p>
+    </div>
+  </div>
+
   <script src="/app.js"></script>
 </body>
 </html>
