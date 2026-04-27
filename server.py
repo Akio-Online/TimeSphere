@@ -24,6 +24,7 @@ def generate_sitemap():
     # Static pages — clean URLs
     static_pages = [
         ('/', '1.0', 'daily'),
+        ('/moving-to/', '0.8', 'weekly'),
         ('/about', '0.5', 'monthly'),
         ('/contact', '0.5', 'monthly'),
         ('/privacy', '0.3', 'monthly'),
@@ -85,8 +86,18 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
 
-        # 301 redirect: /time.html?city=X → /time/X
+        # 301 redirect: /time.html?city=X → /time/X  (root-level legacy URL)
         if path == '/time.html':
+            qs = urllib.parse.parse_qs(parsed.query)
+            city_slug = qs.get('city', [''])[0]
+            if city_slug:
+                self.send_response(301)
+                self.send_header('Location', f'/time/{city_slug}')
+                self.end_headers()
+                return
+
+        # 301 redirect: /time/time.html?city=X → /time/X  (concatenation bug from old relative links)
+        if path == '/time/time.html':
             qs = urllib.parse.parse_qs(parsed.query)
             city_slug = qs.get('city', [''])[0]
             if city_slug:
@@ -98,6 +109,11 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
         # Clean city URL: /time/{slug} → serve time.html
         if re.match(r'^/time/[a-z0-9][a-z0-9-]*$', path):
             serve_html(self, 'time.html')
+            return
+
+        # Moving-to index: /moving-to or /moving-to/ → serve moving-to-index.html
+        if path in ('/moving-to', '/moving-to/'):
+            serve_html(self, 'moving-to-index.html')
             return
 
         # Moving-to city URL: /moving-to/{slug} → serve moving-to.html

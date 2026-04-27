@@ -1477,12 +1477,92 @@ function toggleFaq(i) {
   btn.querySelector('.faq-chevron').textContent = isOpen ? '▾' : '▴';
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// MOVING TO INDEX PAGE — renderMovingToIndex()
+// ─────────────────────────────────────────────────────────────────────────────
+function renderMovingToIndex() {
+  if (!window.location.pathname.match(/^\/moving-to\/?$/)) return;
+
+  const searchEl  = document.getElementById('city-index-search');
+  const usEl      = document.getElementById('us-section');
+  const intlEl    = document.getElementById('intl-section');
+  const usCount   = document.getElementById('us-count');
+  const intlCount = document.getElementById('intl-count');
+  if (!usEl || !intlEl) return;
+
+  function render(filter) {
+    const lf = (filter || '').toLowerCase().trim();
+    const visible = CITIES.filter(c => {
+      if (!lf) return true;
+      return c.name.toLowerCase().includes(lf) ||
+             (c.state && c.state.toLowerCase().includes(lf)) ||
+             c.country.toLowerCase().includes(lf) ||
+             c.id.includes(lf.replace(/\s+/g, '-'));
+    });
+
+    const usCities   = visible.filter(c => c.country === 'USA');
+    const intlCities = visible.filter(c => c.country !== 'USA');
+
+    if (usCount)   usCount.textContent   = `${usCities.length} cities`;
+    if (intlCount) intlCount.textContent = `${intlCities.length} cities`;
+
+    // Group US cities by state
+    const stateMap = {};
+    usCities.forEach(c => {
+      const k = c.state || 'Other';
+      if (!stateMap[k]) stateMap[k] = [];
+      stateMap[k].push(c);
+    });
+    if (usCities.length === 0) {
+      usEl.innerHTML = `<p class="city-index-no-results">No US cities match your search.</p>`;
+    } else {
+      usEl.innerHTML = Object.keys(stateMap).sort().map(state => `
+        <div class="city-group">
+          <div class="city-group-title">${state}</div>
+          <div class="city-index-list">
+            ${stateMap[state].sort((a, b) => a.name.localeCompare(b.name)).map(c =>
+              `<a href="/moving-to/${c.id}" class="city-index-item">${c.flag} Moving to ${c.name}</a>`
+            ).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Group international cities by country
+    const countryMap = {};
+    intlCities.forEach(c => {
+      if (!countryMap[c.country]) countryMap[c.country] = [];
+      countryMap[c.country].push(c);
+    });
+    if (intlCities.length === 0) {
+      intlEl.innerHTML = `<p class="city-index-no-results">No international cities match your search.</p>`;
+    } else {
+      intlEl.innerHTML = Object.keys(countryMap).sort().map(country => `
+        <div class="city-group">
+          <div class="city-group-title">${countryMap[country][0].flag} ${country}</div>
+          <div class="city-index-list">
+            ${countryMap[country].sort((a, b) => a.name.localeCompare(b.name)).map(c =>
+              `<a href="/moving-to/${c.id}" class="city-index-item">${c.flag} Moving to ${c.name}</a>`
+            ).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  render('');
+  if (searchEl) {
+    searchEl.addEventListener('input', e => render(e.target.value));
+  }
+}
+
 // --- Init ---
 document.addEventListener('DOMContentLoaded', () => {
   renderCityGrid();
   setupSearch();
   renderCityPage();
   renderMovingPage();
+  renderMovingToIndex();
 
   // Update MOVING TO nav link on time and moving-to pages
   const timeMatch = window.location.pathname.match(/^\/time\/([^/?#]+)/);
