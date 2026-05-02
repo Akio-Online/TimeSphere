@@ -69,7 +69,8 @@ def serve_html(handler, filepath):
         handler.send_header('Content-Type', 'text/html; charset=utf-8')
         handler.send_header('Content-Length', len(content))
         handler.end_headers()
-        handler.wfile.write(content)
+        if handler.command != 'HEAD':
+            handler.wfile.write(content)
     except FileNotFoundError:
         handler.send_error(404)
 
@@ -82,42 +83,52 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
         '.json': 'application/json',
     }
 
-    def do_GET(self):
+    def _send_redirect(self, location):
+        self.send_response(301)
+        self.send_header('Location', location)
+        self.end_headers()
+
+    def _handle_request(self):
+        """Shared routing for GET and HEAD. Returns True if the request was handled."""
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
+        qs = urllib.parse.parse_qs(parsed.query)
+        city = qs.get('city', [''])[0]
 
-        # 301 redirect: /time.html?city=X → /time/X  (root-level legacy URL)
+        # ── Legacy 301 redirects — registered FIRST, before any 200 handler ──
+        # These fire for both GET and HEAD so Google's redirect checks work.
+
+        # /time.html or /time.html?city=X  (root-level legacy URL)
         if path == '/time.html':
-            qs = urllib.parse.parse_qs(parsed.query)
-            city_slug = qs.get('city', [''])[0]
-            if city_slug:
-                self.send_response(301)
-                self.send_header('Location', f'/time/{city_slug}')
-                self.end_headers()
-                return
+            self._send_redirect(f'/time/{city}' if city else '/time')
+            return True
 
-        # 301 redirect: /time/time.html?city=X → /time/X  (concatenation bug from old relative links)
+        # /time/time.html or /time/time.html?city=X  (relative-link concatenation bug)
         if path == '/time/time.html':
-            qs = urllib.parse.parse_qs(parsed.query)
-            city_slug = qs.get('city', [''])[0]
-            if city_slug:
-                self.send_response(301)
-                self.send_header('Location', f'/time/{city_slug}')
-                self.end_headers()
-                return
+            self._send_redirect(f'/time/{city}' if city else '/time')
+            return True
 
-        # Clean city URL: /time/{slug} → serve time.html
+        # /moving-to.html or /moving-to.html?city=X
+        if path == '/moving-to.html':
+            self._send_redirect(f'/moving-to/{city}' if city else '/moving-to/')
+            return True
+
+        # /moving-to/moving-to.html or /moving-to/moving-to.html?city=X
+        if path == '/moving-to/moving-to.html':
+            self._send_redirect(f'/moving-to/{city}' if city else '/moving-to/')
+            return True
+
+        # ── Clean city URL: /time/{slug} ──────────────────────────────────────
         if re.match(r'^/time/[a-z0-9][a-z0-9-]*$', path):
             serve_html(self, 'time.html')
-            return
+            return True
 
-        # Moving-to index: /moving-to or /moving-to/ → serve moving-to-index.html
+        # ── Moving-to index: /moving-to or /moving-to/ ────────────────────────
         if path in ('/moving-to', '/moving-to/'):
             serve_html(self, 'moving-to-index.html')
-            return
+            return True
 
-        # Moving-to city URL: /moving-to/{slug} → serve moving-to.html
-        # Validate slug exists in CITIES; return 404 for unknown slugs
+        # ── Moving-to city URL: /moving-to/{slug} ─────────────────────────────
         m = re.match(r'^/moving-to/([a-z0-9][a-z0-9-]*)$', path)
         if m:
             slug = m.group(1)
@@ -125,19 +136,20 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
                 serve_html(self, 'moving-to.html')
             else:
                 self.send_error(404, 'City not found')
-            return
+            return True
 
-        # Sitemap
+        # ── Sitemap ───────────────────────────────────────────────────────────
         if path == '/sitemap.xml':
             sitemap = generate_sitemap().encode('utf-8')
             self.send_response(200)
             self.send_header('Content-Type', 'application/xml; charset=utf-8')
             self.send_header('Content-Length', len(sitemap))
             self.end_headers()
-            self.wfile.write(sitemap)
-            return
+            if self.command != 'HEAD':
+                self.wfile.write(sitemap)
+            return True
 
-        # Ads.txt
+        # ── Ads.txt ───────────────────────────────────────────────────────────
         if path == '/ads.txt':
             try:
                 with open('ads.txt', 'rb') as f:
@@ -146,24 +158,32 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_header('Content-Type', 'text/plain')
                 self.send_header('Content-Length', len(content))
                 self.end_headers()
-                self.wfile.write(content)
+                if self.command != 'HEAD':
+                    self.wfile.write(content)
             except FileNotFoundError:
                 self.send_error(404)
-            return
+            return True
 
-        # Clean static routes (no .html extension)
+        # ── Static clean routes (no .html extension) ──────────────────────────
         if path == '/about':
             serve_html(self, 'about.html')
-            return
+            return True
         if path == '/contact':
             serve_html(self, 'contact.html')
-            return
+            return True
         if path == '/privacy':
             serve_html(self, 'privacy.html')
-            return
+            return True
 
-        # Default: SimpleHTTPRequestHandler serves files directly
-        super().do_GET()
+        return False  # fall through to SimpleHTTPRequestHandler
+
+    def do_GET(self):
+        if not self._handle_request():
+            super().do_GET()
+
+    def do_HEAD(self):
+        if not self._handle_request():
+            super().do_HEAD()
 
     def log_message(self, format, *args):
         pass  # Suppress logs for cleaner Railway output
