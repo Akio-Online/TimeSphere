@@ -108,36 +108,6 @@ def _fetch_ticketmaster(city_name):
     except Exception:
         return []
 
-def _fetch_eventbrite(city_name):
-    """Eventbrite API — free public token, 1000 calls/hour.
-    Key: eventbrite.com/account-settings/apps → 'Create API Key'
-    Env var: EVENTBRITE_API_KEY"""
-    api_key = os.environ.get('EVENTBRITE_API_KEY', 'SBQORL5REUVO342LNKQ5')
-    url = ('https://www.eventbriteapi.com/v3/events/search/'
-           '?location.address=' + urllib.parse.quote(city_name) +
-           '&expand=venue,logo&sort_by=date&token=' + api_key)
-    try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'TimeSphere/1.0'})
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            data = json.loads(resp.read().decode())
-        events = data.get('events', [])
-        out = []
-        for ev in events[:3]:
-            logo = ev.get('logo') or {}
-            orig = logo.get('original') or {}
-            venue = ev.get('venue') or {}
-            out.append({
-                'name':   (ev.get('name') or {}).get('text', ''),
-                'date':   (ev.get('start') or {}).get('local', '')[:10],
-                'venue':  venue.get('name', ''),
-                'image':  orig.get('url', ''),
-                'url':    ev.get('url', ''),
-                'source': 'eventbrite',
-            })
-        return out
-    except Exception:
-        return []
-
 def _fetch_viator(city_name):
     """Viator Partner API — requires separate partner API key (different from affiliate pid).
     Key: partnerapi.viator.com → request access at partners.viator.com
@@ -310,11 +280,7 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             if not city_name:
                 _json_response(self, {'events': []})
                 return True
-            def _fetch_events():
-                tm = _fetch_ticketmaster(city_name)
-                eb = _fetch_eventbrite(city_name)
-                return (tm + eb)[:6]
-            events = _cached('events:' + slug, _fetch_events)
+            events = _cached('events:' + slug, lambda: _fetch_ticketmaster(city_name))
             _json_response(self, {'events': events})
             return True
 
