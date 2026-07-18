@@ -143,9 +143,7 @@ def _fetch_viator(city_name):
     Key: partnerapi.viator.com → request access at partners.viator.com
     Env var: VIATOR_API_KEY
     POST https://api.viator.com/partner/products/search"""
-    api_key = os.environ.get('VIATOR_API_KEY', '')
-    if not api_key:
-        return []
+    api_key = os.environ.get('VIATOR_API_KEY', '8ff2c7b5-700a-4366-aa99-4f9c32b653ee')
     payload = json.dumps({
         'filtering': {'destination': city_name},
         'sorting':   {'sort': 'TRAVELER_RATING', 'order': 'DESCENDING'},
