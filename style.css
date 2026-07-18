@@ -1093,9 +1093,13 @@ footer a:hover { color: var(--gold); }
   gap: 10px;
 }
 
-.discover-icon {
-  font-size: 1.3rem;
-  line-height: 1;
+.discover-icon-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid rgba(240,168,48,0.3);
 }
 
 .discover-card-title {
@@ -1627,6 +1631,14 @@ footer a:hover { color: var(--gold); }
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+.blog-post-photo {
+  width: calc(100% + 56px);
+  margin: -28px -28px 4px;
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--radius) var(--radius) 0 0;
 }
 .blog-post-type {
   font-size: 0.63rem;
@@ -2924,7 +2936,7 @@ footer a:hover { color: var(--gold); }
   border-bottom: 1px solid var(--border);
 }
 
-.discover-icon { font-size: 1.4rem; }
+.discover-icon-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid rgba(240,168,48,0.3); }
 
 .discover-card-title {
   font-family: 'Playfair Display', serif;

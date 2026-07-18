@@ -880,7 +880,7 @@ const CITY_IMAGES = {
   'phnom-penh':      'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1600&q=80',
   'vientiane':       'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1600&q=80',
   // Major US cities — added to replace generic fallback
-  'houston':         'https://images.unsplash.com/photo-1548618635-bde35df8f6de?w=1600&q=80',
+  'houston':         'https://images.unsplash.com/photo-1611232658409-0d98127f237f?w=1600&q=80',
   'miami':           'https://images.unsplash.com/photo-1533106418989-52240bc3f9b1?w=1600&q=80',
   'seattle':         'https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=1600&q=80',
   'denver':          'https://images.unsplash.com/photo-1546156929-a4c0ac411f47?w=1600&q=80',
