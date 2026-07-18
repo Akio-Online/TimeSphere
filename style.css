@@ -2306,11 +2306,12 @@ footer a:hover { color: var(--gold); }
 }
 
 .hero-city-photo {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
-  border-radius: 12px;
   display: block;
   filter: contrast(1.05) saturate(1.1) brightness(0.85);
 }
