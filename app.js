@@ -883,6 +883,25 @@ const CITY_IMAGES = {
   'default':         'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
 };
 
+// --- Curated city photos for Moving-To hero (w=700 for faster load) ---
+const MOVING_CITY_IMAGES = {
+  'houston':       'photo-1548618635-bde35df8f6de',
+  'new-york':      'photo-1485871981521-5b1fd3805eee',
+  'los-angeles':   'photo-1534430480872-3498386e7856',
+  'chicago':       'photo-1477959858617-67f85cf4f1df',
+  'phoenix':       'photo-1558618666-fcd25c85cd64',
+  'philadelphia':  'photo-1569761316261-9a8696fa2ca3',
+  'san-antonio':   'photo-1531218150217-54595bc2b934',
+  'san-diego':     'photo-1538964173425-93884d739596',
+  'dallas':        'photo-1545194445-dddb8f4487c6',
+  'seattle':       'photo-1502175353174-a7a70e73b362',
+  'denver':        'photo-1546156929-a4c0ac411f47',
+  'boston':        'photo-1501979376754-1ff209e77968',
+  'miami':         'photo-1533106418989-52240bc3f9b1',
+  'atlanta':       'photo-1575917649705-5b59aaa12e6b',
+  'portland':      'photo-1477959858617-67f85cf4f1df',
+};
+
 // --- Weather (Open-Meteo — free, no API key needed) ---
 function weatherCodeToInfo(code) {
   if (code === 0)  return { label: 'Clear Sky',    icon: '☀️' };
@@ -1212,10 +1231,13 @@ async function renderMovingPage() {
     navLink.classList.add('nav-active');
   }
 
-  // ── Hero image (reuse CITY_IMAGES) ───────────────────────────────────────
+  // ── Hero image (curated map → CITY_IMAGES → Unsplash featured fallback) ──
   const heroBg = document.getElementById('moving-hero-bg');
   if (heroBg) {
-    const imgUrl = CITY_IMAGES[city.id] || CITY_IMAGES['default'];
+    const movingPhotoId = MOVING_CITY_IMAGES[city.id];
+    const imgUrl = movingPhotoId
+      ? `https://images.unsplash.com/${movingPhotoId}?w=700&q=80`
+      : (CITY_IMAGES[city.id] || `https://images.unsplash.com/featured/?${encodeURIComponent(cityName)},downtown,skyline&w=700&q=80`);
     heroBg.style.backgroundImage = `url('${imgUrl}')`;
   }
 
@@ -1275,6 +1297,7 @@ async function renderMovingPage() {
   }
 
   // ── Phase 3: explore guide links ─────────────────────────────────────────
+  const cityEncoded = encodeURIComponent(city.name);
   const citySlug = cityName.toLowerCase().replace(/\s+/g, '-');
   const stateStr = city.state || city.country || '';
   const zillowLink = `https://www.zillow.com/homes/${encodeURIComponent(cityName + ', ' + stateStr)}_rb/`;
@@ -1309,7 +1332,6 @@ async function renderMovingPage() {
   const aid          = '8058275';
   const sid          = '304813083';
   const sub3         = 'D15250377';
-  const cityEncoded  = encodeURIComponent(city.name);
   const baseParams   = `Allianceid=${aid}&SID=${sid}&trip_sub1=&trip_sub3=${sub3}`;
   const isAsiaAfrica = city.region === 'asia' || city.region === 'africa';
 
@@ -1350,15 +1372,14 @@ async function renderMovingPage() {
   const viatorBody = document.getElementById('moving-viator-body');
   if (viatorBody) {
     viatorBody.innerHTML = `
-      <div class="widget-placeholder">
-        <p class="widget-placeholder-icon">🎟️</p>
-        <p class="widget-placeholder-title">Experiences in ${cityName}</p>
-        <p class="widget-placeholder-sub">Browse top-rated tours, activities and experiences.</p>
-        <a href="${viatorUrl}" target="_blank" rel="noopener" class="btn"
-           style="display:inline-block;margin-top:16px;padding:12px 28px;background:linear-gradient(135deg,#c8860a,#f0a830);color:#050810;font-weight:700;border-radius:50px;text-decoration:none;font-size:0.85rem;letter-spacing:0.05em;">
-          Browse Experiences in ${cityName} →
-        </a>
-      </div>`;
+      <a href="${viatorUrl}" target="_blank" rel="noopener" style="display:block;position:relative;border-radius:12px;overflow:hidden;text-decoration:none;min-height:200px;background-image:url('https://images.unsplash.com/photo-1533105079780-92b9be482077?w=600&q=80');background-size:cover;background-position:center;border:1px solid rgba(240,168,48,0.2);box-shadow:0 2px 12px rgba(0,0,0,0.3);">
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.54);"></div>
+        <div style="position:relative;z-index:1;padding:32px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;text-align:center;gap:16px;">
+          <p style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:#fff;margin:0;text-shadow:0 2px 6px rgba(0,0,0,0.6);">Experiences in ${cityName}</p>
+          <p style="font-size:0.78rem;color:rgba(255,255,255,0.78);margin:0;">Tours, activities, and local adventures</p>
+          <span style="display:inline-block;padding:10px 24px;background:linear-gradient(135deg,#c8860a,#f0a830);color:#050810;font-weight:800;border-radius:50px;font-size:0.78rem;letter-spacing:0.06em;text-transform:uppercase;">Book via Viator →</span>
+        </div>
+      </a>`;
   }
 
   // Trainline
@@ -1368,9 +1389,10 @@ async function renderMovingPage() {
   // ── City Snapshot ─────────────────────────────────────────────────────────
   function snapCost(c) {
     if (c.region === 'americas' && c.country === 'USA') {
-      if (['new-york','san-francisco','los-angeles','seattle','boston','honolulu'].includes(c.id)) return 'Very High';
-      if (['miami','chicago','washington-dc','denver'].includes(c.id)) return 'High';
-      return 'Moderate';
+      if (['san-francisco','los-angeles','seattle','portland','san-diego','honolulu'].includes(c.id)) return '22% above U.S. avg';
+      if (['new-york','boston','washington-dc','philadelphia','baltimore'].includes(c.id)) return '18% above U.S. avg';
+      if (['chicago','detroit','minneapolis','cleveland','columbus','indianapolis','kansas-city','st-louis','milwaukee','cincinnati','pittsburgh'].includes(c.id)) return '4% below U.S. avg';
+      return '6% below U.S. avg';
     }
     if (c.region === 'europe') {
       if (['london','zurich','oslo','amsterdam','paris'].includes(c.id)) return 'Very High';
@@ -1388,15 +1410,18 @@ async function renderMovingPage() {
     return 'Moderate';
   }
   function snapTransit(c) {
-    const transit = ['new-york','chicago','boston','washington-dc','san-francisco','philadelphia',
+    const excellent = ['new-york','chicago','boston','washington-dc','san-francisco','philadelphia',
       'toronto','montreal','london','paris','berlin','amsterdam','tokyo','seoul','singapore',
-      'hong-kong','mexico-city','buenos-aires','beijing','shanghai','seoul','madrid','barcelona',
+      'hong-kong','mexico-city','buenos-aires','beijing','shanghai','madrid','barcelona',
       'moscow','stockholm','oslo','vienna','zurich','munich','rome','milan','sydney','melbourne'];
-    if (transit.includes(c.id)) return 'Excellent Transit';
-    if (c.region === 'americas' && c.country === 'USA') return 'Car Recommended';
-    if (c.region === 'europe') return 'Good Transit';
-    if (c.region === 'asia') return 'Good Transit';
-    return 'Car + Transit';
+    const mixed = ['miami','seattle','denver','minneapolis','portland','atlanta','los-angeles',
+      'san-diego','phoenix','las-vegas','dallas','houston','san-antonio','austin'];
+    if (excellent.includes(c.id)) return 'Excellent Public Transit';
+    if (mixed.includes(c.id)) return 'Car + Transit Mix';
+    if (c.region === 'americas' && c.country === 'USA') return 'Car Required';
+    if (c.region === 'europe') return 'Good Public Transit';
+    if (c.region === 'asia') return 'Good Public Transit';
+    return 'Car + Transit Mix';
   }
   function snapBestFor(c) {
     if (c.region === 'americas' && c.country === 'USA') return 'Professionals & Families';
@@ -1408,6 +1433,20 @@ async function renderMovingPage() {
     return 'Global Professionals';
   }
   function snapClimate(c) {
+    if (['houston','dallas','san-antonio','austin','new-orleans','jacksonville','orlando','tampa','miami'].includes(c.id)) return 'Subtropical, Hot Summers';
+    if (['los-angeles','san-diego','san-francisco'].includes(c.id)) return 'Mediterranean, Mild Year-Round';
+    if (['seattle','portland'].includes(c.id)) return 'Oceanic, Rainy Winters';
+    if (['phoenix','las-vegas','albuquerque','tucson','el-paso'].includes(c.id)) return 'Desert, Extremely Hot Summers';
+    if (['denver','salt-lake-city','boise','colorado-springs'].includes(c.id)) return 'Semi-Arid, Mild Summers';
+    if (['new-york','philadelphia','boston','washington-dc','baltimore'].includes(c.id)) return 'Humid Continental, Cold Winters';
+    if (['chicago','detroit','cleveland','pittsburgh','minneapolis','milwaukee'].includes(c.id)) return 'Continental, Harsh Winters';
+    if (['atlanta','charlotte','raleigh','nashville','memphis'].includes(c.id)) return 'Humid Subtropical, Mild Winters';
+    if (['london','amsterdam','paris','dublin','brussels'].includes(c.id)) return 'Oceanic / Temperate';
+    if (['berlin','stockholm','oslo','vienna','zurich','munich'].includes(c.id)) return 'Continental / Cold Winters';
+    if (['tokyo','seoul','shanghai','beijing'].includes(c.id)) return 'Humid, Four Seasons';
+    if (['singapore','bangkok','jakarta','manila'].includes(c.id)) return 'Tropical, Hot & Humid Year-Round';
+    if (['dubai','abu-dhabi'].includes(c.id)) return 'Desert, Extreme Heat';
+    if (['sydney','melbourne'].includes(c.id)) return 'Temperate to Subtropical';
     const lat = c.lat || 0;
     if (lat > 60 || lat < -60) return 'Subarctic / Very Cold';
     if (lat > 50) return 'Cool / Cold Winters';
@@ -1431,6 +1470,10 @@ async function renderMovingPage() {
 
   function snapMedianHome(c) {
     const tier = snapCost(c);
+    if (tier === '22% above U.S. avg') return '$650K+';
+    if (tier === '18% above U.S. avg') return '$550K+';
+    if (tier === '4% below U.S. avg') return '$220K–$380K';
+    if (tier === '6% below U.S. avg') return '$230K–$400K';
     if (tier === 'Very High') return '$700K+';
     if (tier === 'High') return '$450K–$700K';
     if (tier === 'Moderate to High') return '$300K–$500K';
@@ -1438,13 +1481,36 @@ async function renderMovingPage() {
     if (tier === 'Low to Moderate') return '$30K–$100K';
     return '$200K–$400K';
   }
+  function snapPop(c) {
+    var pops = {
+      'new-york':'8.3M','los-angeles':'3.9M','chicago':'2.7M','houston':'2.3M',
+      'phoenix':'1.6M','philadelphia':'1.6M','san-antonio':'1.4M','san-diego':'1.4M',
+      'dallas':'1.3M','san-jose':'1.0M','austin':'978K','fort-worth':'960K',
+      'jacksonville':'950K','columbus':'905K','charlotte':'875K','indianapolis':'870K',
+      'san-francisco':'870K','seattle':'750K','denver':'720K','nashville':'690K',
+      'washington-dc':'690K','las-vegas':'650K','boston':'675K','portland':'630K',
+      'memphis':'620K','oklahoma-city':'580K','louisville':'640K','baltimore':'590K',
+      'milwaukee':'570K','albuquerque':'565K','tucson':'545K','fresno':'540K',
+      'sacramento':'530K','mesa':'510K','kansas-city':'500K','atlanta':'500K',
+      'miami':'460K','omaha':'485K','colorado-springs':'480K','raleigh':'468K',
+      'minneapolis':'430K','tampa':'400K','new-orleans':'370K','orlando':'310K',
+      'st-louis':'300K','pittsburgh':'300K','cleveland':'365K','detroit':'630K',
+      'honolulu':'345K','el-paso':'680K','charlotte':'875K',
+      'london':'9.0M','paris':'2.1M','berlin':'3.6M','tokyo':'13.9M',
+      'singapore':'5.9M','hong-kong':'7.4M','seoul':'9.8M','toronto':'2.9M',
+      'sydney':'5.3M','dubai':'3.6M','amsterdam':'900K','moscow':'12.5M',
+      'istanbul':'15.5M','mexico-city':'21M','buenos-aires':'15M','sao-paulo':'22M',
+    };
+    return pops[c.id] || snapScale(c);
+  }
 
   setText('snap-cost',    snapCost(city));
   setText('snap-transit', snapTransit(city));
   setText('snap-bestfor', snapBestFor(city));
-  setText('snap-price',   snapMedianHome(city));
   setText('snap-climate', snapClimate(city));
-  setText('snap-scale',   snapScale(city));
+  setText('snap-scale',   snapPop(city));
+  var snapPriceEl = document.getElementById('snap-price');
+  if (snapPriceEl) snapPriceEl.innerHTML = '<a href="https://www.zillow.com/homes/' + citySlug + '-homes/" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;font-size:0.85rem;">Research on Zillow →</a>';
 
   // ── dataLayer: city page view ─────────────────────────────────────────────
   window.dataLayer = window.dataLayer || [];

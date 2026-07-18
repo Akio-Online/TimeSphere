@@ -736,20 +736,22 @@
         <p class="section-title">Local Events in <span id="events-city-name">This City</span></p>
         <p class="section-sub" id="events-sub">Discover what's on near your new home</p>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <a href="#" id="moving-eventbrite-link" target="_blank" rel="noopener" class="hotel-affiliate-btn" style="flex-direction: row; justify-content: flex-start; gap: 16px; align-items: center;">
-          <span class="hotel-btn-icon" style="font-size: 1.6rem;">📅</span>
-          <span>
-            <span class="hotel-btn-name" id="moving-eventbrite-label">Browse Local Events on Eventbrite →</span>
-            <span class="hotel-btn-sub" id="moving-eventbrite-sub">Festivals, meetups, markets and more</span>
-          </span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <a href="#" id="moving-eventbrite-link" target="_blank" rel="noopener" style="display:block;position:relative;border-radius:12px;overflow:hidden;text-decoration:none;min-height:160px;background-image:url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500&q=80');background-size:cover;background-position:center;box-shadow:0 2px 12px rgba(0,0,0,0.3);">
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,0.55);"></div>
+          <div style="position:relative;z-index:1;padding:20px 18px;display:flex;flex-direction:column;justify-content:flex-end;min-height:160px;">
+            <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:4px;text-shadow:0 2px 4px rgba(0,0,0,0.6);">Eventbrite</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.8);margin-bottom:12px;" id="moving-eventbrite-sub">Festivals, meetups, markets and more</div>
+            <span style="display:inline-block;padding:7px 16px;background:linear-gradient(135deg,#c8860a,#f0a830);color:#050810;font-weight:800;border-radius:50px;font-size:0.7rem;letter-spacing:0.05em;text-transform:uppercase;align-self:flex-start;" id="moving-eventbrite-label">Browse Local Events →</span>
+          </div>
         </a>
-        <a href="#" id="moving-ticketmaster-link" target="_blank" rel="noopener" class="hotel-affiliate-btn" style="flex-direction: row; justify-content: flex-start; gap: 16px; align-items: center;">
-          <span class="hotel-btn-icon" style="font-size: 1.6rem;">🎫</span>
-          <span>
-            <span class="hotel-btn-name" id="moving-tm-label">Concerts &amp; Sports on Ticketmaster →</span>
-            <span class="hotel-btn-sub" id="moving-tm-sub">Live music, sports, theatre and more</span>
-          </span>
+        <a href="#" id="moving-ticketmaster-link" target="_blank" rel="noopener" style="display:block;position:relative;border-radius:12px;overflow:hidden;text-decoration:none;min-height:160px;background-image:url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=500&q=80');background-size:cover;background-position:center;box-shadow:0 2px 12px rgba(0,0,0,0.3);">
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,0.55);"></div>
+          <div style="position:relative;z-index:1;padding:20px 18px;display:flex;flex-direction:column;justify-content:flex-end;min-height:160px;">
+            <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:4px;text-shadow:0 2px 4px rgba(0,0,0,0.6);">Ticketmaster</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.8);margin-bottom:12px;" id="moving-tm-sub">Live music, sports, theatre and more</div>
+            <span style="display:inline-block;padding:7px 16px;background:linear-gradient(135deg,#c8860a,#f0a830);color:#050810;font-weight:800;border-radius:50px;font-size:0.7rem;letter-spacing:0.05em;text-transform:uppercase;align-self:flex-start;" id="moving-tm-label">Concerts &amp; Sports →</span>
+          </div>
         </a>
       </div>
     </section>
@@ -774,28 +776,28 @@
         <p class="section-sub">More resources for your move</p>
       </div>
       <div class="explore-guides-row">
-        <a href="#" class="explore-guide-card" id="explore-neighborhoods-link">
-          <div class="explore-guide-icon">🏠</div>
+        <a href="#" class="explore-guide-card" id="explore-neighborhoods-link" style="background:linear-gradient(135deg,#1a2a1a,#2d4a2d);max-height:120px;border-color:rgba(45,74,45,0.6);">
+          <div class="explore-guide-icon" style="font-size:2rem;">🏠</div>
           <div class="explore-guide-title" id="explore-neighborhoods-title">Best Neighborhoods</div>
           <div class="explore-guide-cta">View Guide →</div>
         </a>
-        <a href="#" class="explore-guide-card" id="explore-costliving-link">
-          <div class="explore-guide-icon">💰</div>
+        <a href="#" class="explore-guide-card" id="explore-costliving-link" style="background:linear-gradient(135deg,#1a1a2a,#2d2d4a);max-height:120px;border-color:rgba(45,45,74,0.6);">
+          <div class="explore-guide-icon" style="font-size:2rem;">💰</div>
           <div class="explore-guide-title" id="explore-costliving-title">Cost of Living</div>
           <div class="explore-guide-cta">View Guide →</div>
         </a>
-        <a href="#" class="explore-guide-card" id="explore-apartments-link">
-          <div class="explore-guide-icon">🏢</div>
+        <a href="#" class="explore-guide-card" id="explore-apartments-link" style="background:linear-gradient(135deg,#2a1a1a,#4a2d2d);max-height:120px;border-color:rgba(74,45,45,0.6);">
+          <div class="explore-guide-icon" style="font-size:2rem;">🏢</div>
           <div class="explore-guide-title" id="explore-apartments-title">Apartments</div>
           <div class="explore-guide-cta">View Guide →</div>
         </a>
-        <a href="#" class="explore-guide-card" id="explore-things-link">
-          <div class="explore-guide-icon">🗺️</div>
+        <a href="#" class="explore-guide-card" id="explore-things-link" style="background:linear-gradient(135deg,#1a2a2a,#2d4a4a);max-height:120px;border-color:rgba(45,74,74,0.6);">
+          <div class="explore-guide-icon" style="font-size:2rem;">🗺️</div>
           <div class="explore-guide-title" id="explore-things-title">Things To Do</div>
           <div class="explore-guide-cta">View Guide →</div>
         </a>
-        <a href="/time/houston" class="explore-guide-card" id="explore-time-link">
-          <div class="explore-guide-icon">⏰</div>
+        <a href="/time/houston" class="explore-guide-card" id="explore-time-link" style="background:linear-gradient(135deg,#2a2a1a,#4a4a2d);max-height:120px;border-color:rgba(74,74,45,0.6);">
+          <div class="explore-guide-icon" style="font-size:2rem;">⏰</div>
           <div class="explore-guide-title" id="explore-time-title">Current Time</div>
           <div class="explore-guide-cta">View Guide →</div>
         </a>
