@@ -2,6 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MV8F5SJK');</script>
+  <!-- End Google Tag Manager -->
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "xo8c0uxerk");
+  </script>
+  <!-- End Microsoft Clarity -->
   <meta name="agd-partner-manual-verification" />
   <meta name="google-site-verification" content="7TAkjreSJ9ZHpPuwU8Zjahdgqo2HbYJVoY_5FA0lPLM" />
   <meta name="impact-site-verification" value="4ec90ce3-2e1b-4a37-96dc-87716d40bc32" />
@@ -31,6 +47,10 @@
        crossorigin="anonymous"></script>
 </head>
 <body class="aurora-bg">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MV8F5SJK"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
 
   <!-- HEADER -->
   <header>
@@ -47,24 +67,24 @@
     </div>
   </header>
 
-  <!-- AD SLOT TOP -->
-  <div class="container">
-    <div class="ad-slot ad-top">Advertisement</div>
-  </div>
-
-  <!-- MOVING TO HERO BANNER -->
-  <section class="moving-hero">
-    <div class="moving-hero-bg" id="moving-hero-bg"></div>
+  <!-- ══ HERO ══ -->
+  <section class="moving-hero moving-hero-split">
     <div class="moving-hero-overlay"></div>
-    <div class="container moving-hero-content">
-      <p class="city-label" id="moving-city-label">Relocation Guide</p>
-      <h1 id="moving-page-h1">Moving to <em id="moving-city-em">This City</em></h1>
-      <p class="moving-intro" id="moving-city-intro">Your complete guide to relocating — neighborhoods, housing, moving services, and local life.</p>
-      <div class="moving-cta-row">
-        <a href="#agents" class="moving-cta-btn">🏠 Find an Agent</a>
-        <a href="#temporary-stays" class="moving-cta-btn">🏨 Temporary Stays</a>
-        <a href="#things-to-do" class="moving-cta-btn">🗺️ Explore the City</a>
-        <a href="#events" class="moving-cta-btn">📅 Local Events</a>
+    <div class="container moving-hero-two-col">
+      <div class="moving-hero-left">
+        <p class="city-label" id="moving-city-label">🇺🇸 Relocation Guide</p>
+        <h1 id="moving-page-h1">Moving to<br><em id="moving-city-em">This City</em></h1>
+        <p class="moving-intro" id="moving-city-intro">Your complete relocation guide — neighborhoods, housing, moving services, costs, and local tips to make your move simple and stress-free.</p>
+        <div class="moving-cta-row">
+          <a href="#agents"          class="moving-cta-btn">🏠 Find an Agent</a>
+          <a href="#temporary-stays" class="moving-cta-btn">🏨 Temporary Stays</a>
+          <a href="#things-to-do"    class="moving-cta-btn">🗺️ Explore the City</a>
+          <a href="#events"          class="moving-cta-btn">📅 Local Events</a>
+        </div>
+        <p class="moving-relocation-note" id="moving-relocation-note">ℹ️ This is a relocation guide for this city.</p>
+      </div>
+      <div class="moving-hero-right">
+        <div class="moving-hero-bg" id="moving-hero-bg"></div>
       </div>
     </div>
   </section>
@@ -72,58 +92,66 @@
   <!-- MAIN CONTENT -->
   <div class="container city-main">
 
-    <!-- Back link -->
-    <a href="/time/houston" id="moving-back-link" class="back-link">← Back to <span id="moving-back-city">Houston</span> Time</a>
+    <a href="/time/houston" id="moving-back-link" class="back-link">← Back to <span id="moving-back-city">City</span> Time</a>
 
     <!-- ══ CITY SNAPSHOT ══ -->
     <section class="moving-section">
       <div class="moving-section-header">
         <div class="grid-divider"></div>
-        <p class="section-title" id="snapshot-title">City Snapshot</p>
+        <p class="section-title" id="snapshot-title">At a Glance</p>
         <p class="section-sub" id="snapshot-sub">Key facts before your move</p>
       </div>
-      <div class="snapshot-grid">
-        <div class="snapshot-card">
-          <div class="snapshot-icon">💰</div>
-          <div class="snapshot-label">Cost of Living</div>
-          <div class="snapshot-value" id="snap-cost">—</div>
-          <div class="snapshot-note">vs. world average</div>
+      <div class="snapshot-inline-row">
+        <div class="snapshot-inline-item">
+          <div class="snapshot-inline-icon">💰</div>
+          <div class="snapshot-inline-body">
+            <div class="snapshot-inline-label">Cost of Living</div>
+            <div class="snapshot-inline-value" id="snap-cost">—</div>
+            <div class="snapshot-inline-note">vs. U.S. average</div>
+          </div>
         </div>
-        <div class="snapshot-card">
-          <div class="snapshot-icon">🚗</div>
-          <div class="snapshot-label">Getting Around</div>
-          <div class="snapshot-value" id="snap-transit">—</div>
-          <div class="snapshot-note">primary mode</div>
+        <div class="snapshot-inline-item">
+          <div class="snapshot-inline-icon">🚗</div>
+          <div class="snapshot-inline-body">
+            <div class="snapshot-inline-label">Commute</div>
+            <div class="snapshot-inline-value" id="snap-transit">—</div>
+            <div class="snapshot-inline-note">primary mode</div>
+          </div>
         </div>
-        <div class="snapshot-card">
-          <div class="snapshot-icon">⭐</div>
-          <div class="snapshot-label">Best For</div>
-          <div class="snapshot-value" id="snap-bestfor">—</div>
-          <div class="snapshot-note">lifestyle fit</div>
+        <div class="snapshot-inline-item">
+          <div class="snapshot-inline-icon">⭐</div>
+          <div class="snapshot-inline-body">
+            <div class="snapshot-inline-label">Best For</div>
+            <div class="snapshot-inline-value" id="snap-bestfor">—</div>
+            <div class="snapshot-inline-note">lifestyle fit</div>
+          </div>
         </div>
-        <div class="snapshot-card">
-          <div class="snapshot-icon">🏡</div>
-          <div class="snapshot-label">Median Home</div>
-          <div class="snapshot-value" id="snap-price">Research locally</div>
-          <div class="snapshot-note">check Zillow / local listings</div>
+        <div class="snapshot-inline-item">
+          <div class="snapshot-inline-icon">🏡</div>
+          <div class="snapshot-inline-body">
+            <div class="snapshot-inline-label">Median Home Price</div>
+            <div class="snapshot-inline-value" id="snap-price">—</div>
+            <div class="snapshot-inline-note">approximate</div>
+          </div>
         </div>
-        <div class="snapshot-card">
-          <div class="snapshot-icon">🌤️</div>
-          <div class="snapshot-label">Climate</div>
-          <div class="snapshot-value" id="snap-climate">—</div>
-          <div class="snapshot-note">general conditions</div>
+        <div class="snapshot-inline-item">
+          <div class="snapshot-inline-icon">🌤️</div>
+          <div class="snapshot-inline-body">
+            <div class="snapshot-inline-label">Weather</div>
+            <div class="snapshot-inline-value" id="snap-climate">—</div>
+            <div class="snapshot-inline-note">general conditions</div>
+          </div>
         </div>
-        <div class="snapshot-card">
-          <div class="snapshot-icon">👥</div>
-          <div class="snapshot-label">City Scale</div>
-          <div class="snapshot-value" id="snap-scale">—</div>
-          <div class="snapshot-note">metro area type</div>
+        <div class="snapshot-inline-item">
+          <div class="snapshot-inline-icon">👥</div>
+          <div class="snapshot-inline-body">
+            <div class="snapshot-inline-label">Population</div>
+            <div class="snapshot-inline-value" id="snap-scale">—</div>
+            <div class="snapshot-inline-note">metro area type</div>
+          </div>
         </div>
       </div>
     </section>
-
-    <!-- AD SLOT MID -->
-    <div class="ad-slot ad-top" style="margin: 0 0 16px;">Advertisement</div>
 
     <!-- ══ REAL ESTATE AGENTS ══ -->
     <section class="moving-section" id="agents">
@@ -132,159 +160,528 @@
         <p class="section-title">Featured Real-Estate Agents</p>
         <p class="section-sub" id="agents-sub">Local agents serving this city</p>
       </div>
-      <div class="agent-placeholder-card">
-        <div class="agent-placeholder-icon">🏠</div>
-        <div class="agent-placeholder-body">
-          <p class="agent-placeholder-text">
-            This section showcases up to 4 paid local real-estate agents serving <strong id="agent-city-name">this city</strong>.
-          </p>
-          <p style="margin-top: 12px;">
-            Are you an agent?
-            <a href="/contact.html?subject=Real+Estate+Agent+Advertising+Inquiry" id="agent-apply-link" class="agent-apply-link">Apply to be featured →</a>
-          </p>
-          <p class="agent-disclosure">Sponsored placements · $200/month per slot</p>
+      <div class="agent-sponsor-grid">
+
+        <div class="agent-sponsor-card" style="background-image:url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&auto=format&fit=crop')">
+          <div class="agent-sponsor-overlay"></div>
+          <span class="agent-sponsored-badge">Sponsored</span>
+          <div class="agent-sponsor-content">
+            <h3 class="agent-sponsor-headline">Reach 300+ Monthly Relocation Leads in <span class="agent-city-inject">This City</span></h3>
+            <p class="agent-sponsor-sub">Only 4 sponsored spots available · $200/month · Cancel anytime</p>
+            <ul class="agent-sponsor-bullets">
+              <li>Featured above all search results</li>
+              <li>Your photo, bio &amp; specialties displayed</li>
+              <li>Direct contact button for leads</li>
+              <li>Exclusive to your metro market</li>
+            </ul>
+            <button class="agent-sponsor-cta" onclick="openAgentModal(1)">Claim This Spot →</button>
+          </div>
         </div>
+
+        <div class="agent-sponsor-card" style="background-image:url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600&auto=format&fit=crop')">
+          <div class="agent-sponsor-overlay"></div>
+          <span class="agent-sponsored-badge">Sponsored</span>
+          <div class="agent-sponsor-content">
+            <h3 class="agent-sponsor-headline">Reach 300+ Monthly Relocation Leads in <span class="agent-city-inject">This City</span></h3>
+            <p class="agent-sponsor-sub">Only 4 sponsored spots available · $200/month · Cancel anytime</p>
+            <ul class="agent-sponsor-bullets">
+              <li>Featured above all search results</li>
+              <li>Your photo, bio &amp; specialties displayed</li>
+              <li>Direct contact button for leads</li>
+              <li>Exclusive to your metro market</li>
+            </ul>
+            <button class="agent-sponsor-cta" onclick="openAgentModal(2)">Claim This Spot →</button>
+          </div>
+        </div>
+
+        <div class="agent-sponsor-card" style="background-image:url('https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&auto=format&fit=crop')">
+          <div class="agent-sponsor-overlay"></div>
+          <span class="agent-sponsored-badge">Sponsored</span>
+          <div class="agent-sponsor-content">
+            <h3 class="agent-sponsor-headline">Reach 300+ Monthly Relocation Leads in <span class="agent-city-inject">This City</span></h3>
+            <p class="agent-sponsor-sub">Only 4 sponsored spots available · $200/month · Cancel anytime</p>
+            <ul class="agent-sponsor-bullets">
+              <li>Featured above all search results</li>
+              <li>Your photo, bio &amp; specialties displayed</li>
+              <li>Direct contact button for leads</li>
+              <li>Exclusive to your metro market</li>
+            </ul>
+            <button class="agent-sponsor-cta" onclick="openAgentModal(3)">Claim This Spot →</button>
+          </div>
+        </div>
+
+        <div class="agent-sponsor-card" style="background-image:url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&auto=format&fit=crop')">
+          <div class="agent-sponsor-overlay"></div>
+          <span class="agent-sponsored-badge">Sponsored</span>
+          <div class="agent-sponsor-content">
+            <h3 class="agent-sponsor-headline">Reach 300+ Monthly Relocation Leads in <span class="agent-city-inject">This City</span></h3>
+            <p class="agent-sponsor-sub">Only 4 sponsored spots available · $200/month · Cancel anytime</p>
+            <ul class="agent-sponsor-bullets">
+              <li>Featured above all search results</li>
+              <li>Your photo, bio &amp; specialties displayed</li>
+              <li>Direct contact button for leads</li>
+              <li>Exclusive to your metro market</li>
+            </ul>
+            <button class="agent-sponsor-cta" onclick="openAgentModal(4)">Claim This Spot →</button>
+          </div>
+        </div>
+
+      </div>
+      <p class="agent-disclosure" id="agents-sub-note">Sponsored placements · <a id="agent-apply-link" href="/contact.html?subject=Real+Estate+Agent+Advertising+Inquiry" class="agent-apply-link">Apply to be featured →</a> · <strong id="agent-city-name">This City</strong> listings · $200/month per slot</p>
+    </section>
+
+    <!-- PARTNER PLACEMENT BANNER 1 -->
+    <div class="partner-banner">
+      <span class="partner-banner-label">Sponsored</span>
+      <span>Partner Placement · 728×90 · Your ad or partner message here</span>
+    </div>
+
+    <!-- ══ NEIGHBORHOODS ══ -->
+    <section class="moving-section">
+      <div class="moving-section-header">
+        <div class="grid-divider"></div>
+        <p class="section-title" id="neighborhoods-heading">Best Neighborhoods</p>
+        <p class="section-sub" id="neighborhoods-sub">Find the right area for your lifestyle and budget.</p>
+      </div>
+      <div class="nbhd-cards">
+        <a href="#" class="nbhd-card" id="nbhd-0" target="_blank" rel="noopener">
+          <div class="nbhd-card-img" style="background-image:url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500&auto=format&fit=crop')"></div>
+          <div class="nbhd-card-body">
+            <div class="nbhd-card-title">Families</div>
+            <div class="nbhd-card-sub">Top-rated schools &amp; safe streets</div>
+            <div class="nbhd-card-link">Learn more →</div>
+          </div>
+        </a>
+        <a href="#" class="nbhd-card" id="nbhd-1" target="_blank" rel="noopener">
+          <div class="nbhd-card-img" style="background-image:url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=500&auto=format&fit=crop')"></div>
+          <div class="nbhd-card-body">
+            <div class="nbhd-card-title">Young Professionals</div>
+            <div class="nbhd-card-sub">Walkable, vibrant &amp; connected</div>
+            <div class="nbhd-card-link">Learn more →</div>
+          </div>
+        </a>
+        <a href="#" class="nbhd-card" id="nbhd-2" target="_blank" rel="noopener">
+          <div class="nbhd-card-img" style="background-image:url('https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=500&auto=format&fit=crop')"></div>
+          <div class="nbhd-card-body">
+            <div class="nbhd-card-title">Luxury Living</div>
+            <div class="nbhd-card-sub">Upscale homes &amp; amenities</div>
+            <div class="nbhd-card-link">Learn more →</div>
+          </div>
+        </a>
+        <a href="#" class="nbhd-card" id="nbhd-3" target="_blank" rel="noopener">
+          <div class="nbhd-card-img" style="background-image:url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&auto=format&fit=crop')"></div>
+          <div class="nbhd-card-body">
+            <div class="nbhd-card-title">Affordable Areas</div>
+            <div class="nbhd-card-sub">Great value for every budget</div>
+            <div class="nbhd-card-link">Learn more →</div>
+          </div>
+        </a>
+        <a href="#" class="nbhd-card" id="nbhd-4" target="_blank" rel="noopener">
+          <div class="nbhd-card-img" style="background-image:url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&auto=format&fit=crop')"></div>
+          <div class="nbhd-card-body">
+            <div class="nbhd-card-title">Commuters</div>
+            <div class="nbhd-card-sub">Easy access to major routes</div>
+            <div class="nbhd-card-link">Learn more →</div>
+          </div>
+        </a>
       </div>
     </section>
 
-    <!-- ══ BEST NEIGHBORHOODS ══ -->
-    <section class="moving-section">
-      <div class="search-section-card">
-        <div class="search-section-icon">🏘️</div>
-        <h2 id="neighborhoods-heading">Best Neighborhoods</h2>
-        <p id="neighborhoods-sub">Find the right area for your lifestyle and budget.</p>
-        <form class="moving-search-form" data-topic="best neighborhoods to live" onsubmit="return movingSearch(event)">
-          <input type="text" placeholder="Search neighborhoods…" />
-          <button type="submit">Search</button>
-        </form>
-      </div>
-    </section>
+    <!-- PARTNER PLACEMENT BANNER 2 -->
+    <div class="partner-banner">
+      <span class="partner-banner-label">Sponsored</span>
+      <span>Partner Placement · 728×90 · Your ad or partner message here</span>
+    </div>
 
     <!-- ══ MOVING SERVICES ══ -->
     <section class="moving-section">
-      <div class="search-section-card">
-        <div class="search-section-icon">📦</div>
-        <h2 id="movers-heading">Moving Services</h2>
-        <p id="movers-sub">Compare local movers, packing help, and full-service relocation companies.</p>
-        <form class="moving-search-form" data-topic="moving companies and movers" onsubmit="return movingSearch(event)">
-          <input type="text" placeholder="Search movers…" />
-          <button type="submit">Search</button>
-        </form>
-      </div>
-    </section>
-
-    <!-- ══ TRUCK RENTAL & STORAGE ══ -->
-    <section class="moving-section">
-      <div class="search-section-card">
-        <div class="search-section-icon">🚚</div>
-        <h2 id="trucks-heading">Truck Rental &amp; Storage</h2>
-        <p id="trucks-sub">Moving trucks, portable storage containers, and self-storage facilities.</p>
-        <form class="moving-search-form" data-topic="moving truck rental and storage units" onsubmit="return movingSearch(event)">
-          <input type="text" placeholder="Search truck rental &amp; storage…" />
-          <button type="submit">Search</button>
-        </form>
-      </div>
-    </section>
-
-    <!-- ══ UTILITIES & HOME SETUP ══ -->
-    <section class="moving-section">
-      <div class="search-section-card">
-        <div class="search-section-icon">💡</div>
-        <h2 id="utilities-heading">Utilities, Internet &amp; Home Setup</h2>
-        <p id="utilities-sub">Connect electricity, gas, internet, and water service for your new home.</p>
-        <form class="moving-search-form" data-topic="utilities electricity gas internet providers" onsubmit="return movingSearch(event)">
-          <input type="text" placeholder="Search utilities &amp; internet providers…" />
-          <button type="submit">Search</button>
-        </form>
-      </div>
-    </section>
-
-    <!-- ══ INSURANCE ══ -->
-    <section class="moving-section">
-      <div class="search-section-card">
-        <div class="search-section-icon">🛡️</div>
-        <h2 id="insurance-heading">Insurance &amp; Protection</h2>
-        <p id="insurance-sub">Compare home, renters, auto, and health insurance providers.</p>
-        <form class="moving-search-form" data-topic="home renters auto health insurance providers" onsubmit="return movingSearch(event)">
-          <input type="text" placeholder="Search insurance providers…" />
-          <button type="submit">Search</button>
-        </form>
-      </div>
-    </section>
-
-    <!-- ══ MOVE-IN ESSENTIALS ══ -->
-    <section class="moving-section">
-      <div class="search-section-card">
-        <div class="search-section-icon">🧹</div>
-        <h2 id="essentials-heading">Move-In Essentials</h2>
-        <p id="essentials-sub">Cleaning services, furniture delivery, handyman help, and home essentials.</p>
-        <form class="moving-search-form" data-topic="move-in cleaning service furniture delivery handyman" onsubmit="return movingSearch(event)">
-          <input type="text" placeholder="Search move-in essentials…" />
-          <button type="submit">Search</button>
-        </form>
-      </div>
-    </section>
-
-    <!-- ══ TEMPORARY HOUSING ══ -->
-    <section class="moving-section" id="temporary-stays">
       <div class="moving-section-header">
         <div class="grid-divider"></div>
-        <p class="section-title">Temporary Housing &amp; Extended Stays</p>
-        <p class="section-sub" id="hotels-sub">Extended-stay hotels and temporary housing</p>
+        <p class="section-title" id="movers-heading">Moving Services</p>
+        <p class="section-sub" id="movers-sub">Compare local movers, packing help, and full-service relocation companies.</p>
       </div>
-      <div class="hotel-btns-grid">
-        <a href="#" id="moving-trip-btn" target="_blank" rel="noopener" class="hotel-affiliate-btn">
-          <span class="hotel-btn-icon">✈️</span>
-          <span class="hotel-btn-name">Trip.com</span>
-          <span class="hotel-btn-sub">Asia's largest travel platform</span>
+      <div class="service-tile-grid">
+        <a href="#" class="service-tile">
+          <span class="service-tile-icon">🏠</span>
+          <span class="service-tile-name">Local Movers</span>
+          <span class="service-tile-sub">Professional moving within the city</span>
         </a>
-        <a href="#" id="moving-expedia-btn" target="_blank" rel="noopener" class="hotel-affiliate-btn">
-          <span class="hotel-btn-icon">🏨</span>
-          <span class="hotel-btn-name">Expedia</span>
-          <span class="hotel-btn-sub">Extended stays &amp; hotel deals</span>
+        <a href="#" class="service-tile">
+          <span class="service-tile-icon">🚚</span>
+          <span class="service-tile-name">Long-Distance Movers</span>
+          <span class="service-tile-sub">Cross-state moving made easy</span>
         </a>
-        <a href="#" id="moving-hotels-btn" target="_blank" rel="noopener" class="hotel-affiliate-btn">
-          <span class="hotel-btn-icon">🛎️</span>
-          <span class="hotel-btn-name">Hotels.com</span>
-          <span class="hotel-btn-sub">Reward nights on every booking</span>
+        <a href="#" class="service-tile">
+          <span class="service-tile-icon">💪</span>
+          <span class="service-tile-name">Labor-Only Movers</span>
+          <span class="service-tile-sub">Get help loading or unloading your truck</span>
         </a>
-        <a href="#" id="moving-booking-btn" target="_blank" rel="noopener" class="hotel-affiliate-btn">
-          <span class="hotel-btn-icon">📋</span>
-          <span class="hotel-btn-name">Booking.com</span>
-          <span class="hotel-btn-sub">Apartments, hotels &amp; extended stays</span>
+        <a href="#" class="service-tile">
+          <span class="service-tile-icon">📦</span>
+          <span class="service-tile-name">Packing Help</span>
+          <span class="service-tile-sub">Professional packing and unpacking</span>
         </a>
-        <a href="#" id="moving-agoda-btn" target="_blank" rel="noopener" class="hotel-affiliate-btn">
-          <span class="hotel-btn-icon">🌏</span>
-          <span class="hotel-btn-name">Agoda</span>
-          <span class="hotel-btn-sub">Great rates on extended stays</span>
+        <a href="#" class="service-tile service-tile-affiliate">
+          <span class="service-tile-icon">📋</span>
+          <span class="service-tile-name">Compare Moving Quotes</span>
+          <span class="service-tile-sub">Compare top movers and save</span>
+          <span class="service-aff-badge">Affiliate</span>
         </a>
       </div>
     </section>
 
-    <!-- ══ LOCAL EVENTS ══ -->
-    <section class="moving-section" id="events">
-      <div class="moving-section-header">
-        <div class="grid-divider"></div>
-        <p class="section-title">Local Events in <span id="events-city-name">This City</span></p>
-        <p class="section-sub" id="events-sub">Discover what's on near your new home</p>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <a href="#" id="moving-eventbrite-link" target="_blank" rel="noopener" class="hotel-affiliate-btn" style="flex-direction: row; justify-content: flex-start; gap: 16px; align-items: center;">
-          <span class="hotel-btn-icon" style="font-size: 1.6rem;">📅</span>
-          <span>
-            <span class="hotel-btn-name" id="moving-eventbrite-label">Browse Local Events on Eventbrite →</span>
-            <span class="hotel-btn-sub" id="moving-eventbrite-sub">Festivals, meetups, markets and more</span>
-          </span>
-        </a>
-        <a href="#" id="moving-ticketmaster-link" target="_blank" rel="noopener" class="hotel-affiliate-btn" style="flex-direction: row; justify-content: flex-start; gap: 16px; align-items: center;">
-          <span class="hotel-btn-icon" style="font-size: 1.6rem;">🎫</span>
-          <span>
-            <span class="hotel-btn-name" id="moving-tm-label">Concerts &amp; Sports on Ticketmaster →</span>
-            <span class="hotel-btn-sub" id="moving-tm-sub">Live music, sports, theatre and more</span>
-          </span>
-        </a>
-      </div>
-    </section>
+    <!-- ══ TRUCK RENTAL + UTILITIES (2-col) ══ -->
+    <div class="moving-cols-2">
+
+      <section class="moving-section">
+        <div class="moving-section-header">
+          <div class="grid-divider"></div>
+          <p class="section-title" id="trucks-heading">Truck Rental &amp; Storage</p>
+          <p class="section-sub" id="trucks-sub">Moving trucks, portable storage, and self-storage facilities.</p>
+        </div>
+        <ul class="service-list">
+          <li class="service-list-item">
+            <span class="service-list-icon">🚛</span>
+            <div class="service-list-body">
+              <strong>Truck Rental</strong>
+              <small>Rent a moving truck by the day</small>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </li>
+          <li class="service-list-item">
+            <span class="service-list-icon">📦</span>
+            <div class="service-list-body">
+              <strong>Portable Storage</strong>
+              <small>Delivered to you. Pack at your pace.</small>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </li>
+          <li class="service-list-item">
+            <span class="service-list-icon">🔒</span>
+            <div class="service-list-body">
+              <strong>Self-Storage</strong>
+              <small>Secure storage near you</small>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </li>
+          <li class="service-list-item service-list-item-affiliate">
+            <span class="service-list-icon">🛒</span>
+            <div class="service-list-body">
+              <strong>Packing Supplies</strong>
+              <small>Boxes, tape, bubble wrap &amp; more</small>
+            </div>
+            <span class="service-aff-badge">Affiliate</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="moving-section">
+        <div class="moving-section-header">
+          <div class="grid-divider"></div>
+          <p class="section-title" id="utilities-heading">Utilities, Internet &amp; Home Setup</p>
+          <p class="section-sub" id="utilities-sub">Connect electricity, gas, internet, and water service for your new home.</p>
+        </div>
+        <div class="utilities-grid">
+          <a href="#" class="utility-item">
+            <span class="utility-icon">⚡</span>
+            <div class="utility-body">
+              <strong>Electricity</strong>
+              <small>Compare plans and set up service</small>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </a>
+          <a href="#" class="utility-item">
+            <span class="utility-icon">🔥</span>
+            <div class="utility-body">
+              <strong>Water / Gas</strong>
+              <small>Set up water, sewer, and gas</small>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </a>
+          <a href="#" class="utility-item">
+            <span class="utility-icon">📡</span>
+            <div class="utility-body">
+              <strong>Internet Providers</strong>
+              <small>High-speed internet in your area</small>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </a>
+          <a href="#" class="utility-item">
+            <span class="utility-icon">📺</span>
+            <div class="utility-body">
+              <strong>TV / Mobile</strong>
+              <small>Cable, streaming, and mobile plans</small>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </a>
+          <a href="#" class="utility-item service-list-item-affiliate">
+            <span class="utility-icon">🏠</span>
+            <div class="utility-body">
+              <strong>Home Security</strong>
+              <small>Protect your new home</small>
+            </div>
+            <span class="service-aff-badge">Affiliate</span>
+          </a>
+        </div>
+      </section>
+
+    </div><!-- /moving-cols-2 -->
+
+    <!-- ══ INSURANCE + MOVE-IN ESSENTIALS (2-col) ══ -->
+    <div class="moving-cols-2">
+
+      <section class="moving-section">
+        <div class="moving-section-header">
+          <div class="grid-divider"></div>
+          <p class="section-title" id="insurance-heading">Insurance &amp; Protection</p>
+          <p class="section-sub" id="insurance-sub">Compare home, renters, auto, and health insurance providers.</p>
+        </div>
+        <ul class="service-list">
+          <li class="service-list-item">
+            <span class="service-list-icon">🏘️</span>
+            <div class="service-list-body">
+              <strong>Renters Insurance</strong>
+              <small>Affordable coverage for your belongings</small>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </li>
+          <li class="service-list-item">
+            <span class="service-list-icon">🏡</span>
+            <div class="service-list-body">
+              <strong>Homeowners Insurance</strong>
+              <small>Protect your home and investment</small>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </li>
+          <li class="service-list-item">
+            <span class="service-list-icon">🚚</span>
+            <div class="service-list-body">
+              <strong>Moving Protection</strong>
+              <small>Coverage for your move</small>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </li>
+          <li class="service-list-item service-list-item-affiliate">
+            <span class="service-list-icon">🔧</span>
+            <div class="service-list-body">
+              <strong>Home Warranty</strong>
+              <small>Repair or replace covered items</small>
+            </div>
+            <span class="service-aff-badge">Affiliate</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="moving-section" id="essentials-section">
+        <div class="moving-section-header">
+          <div class="grid-divider"></div>
+          <p class="section-title" id="essentials-heading">Move-In Essentials</p>
+          <p class="section-sub" id="essentials-sub">Everything you need to set up your new home.</p>
+        </div>
+        <div class="essentials-two-col">
+          <ul class="service-list essentials-list">
+            <li class="service-list-item">
+              <span class="service-list-icon">🧹</span>
+              <div class="service-list-body">
+                <strong>Cleaning</strong>
+                <small>Deep clean before or after you move</small>
+              </div>
+              <span class="service-list-arrow">›</span>
+            </li>
+            <li class="service-list-item service-list-item-affiliate">
+              <span class="service-list-icon">🛋️</span>
+              <div class="service-list-body">
+                <strong>Furniture</strong>
+                <small>Find furniture for every room</small>
+              </div>
+              <span class="service-aff-badge">Affiliate</span>
+            </li>
+            <li class="service-list-item service-list-item-affiliate">
+              <span class="service-list-icon">🛏️</span>
+              <div class="service-list-body">
+                <strong>Mattress</strong>
+                <small>Sleep better in your new home</small>
+              </div>
+              <span class="service-aff-badge">Affiliate</span>
+            </li>
+            <li class="service-list-item">
+              <span class="service-list-icon">🔨</span>
+              <div class="service-list-body">
+                <strong>Handyman</strong>
+                <small>Assembly, repairs, and installations</small>
+              </div>
+              <span class="service-list-arrow">›</span>
+            </li>
+            <li class="service-list-item">
+              <span class="service-list-icon">🗑️</span>
+              <div class="service-list-body">
+                <strong>Junk Removal</strong>
+                <small>Haul away what you don't need</small>
+              </div>
+              <span class="service-list-arrow">›</span>
+            </li>
+          </ul>
+          <ul class="service-list essentials-list">
+            <li class="service-list-item service-list-item-affiliate">
+              <span class="service-list-icon">🍽️</span>
+              <div class="service-list-body">
+                <strong>Kitchen &amp; Housewares</strong>
+                <small>Williams-Sonoma</small>
+              </div>
+              <span class="service-aff-badge">Affiliate</span>
+            </li>
+            <li class="service-list-item service-list-item-affiliate">
+              <span class="service-list-icon">🔌</span>
+              <div class="service-list-body">
+                <strong>Appliances</strong>
+                <small>Home Depot</small>
+              </div>
+              <span class="service-aff-badge">Affiliate</span>
+            </li>
+            <li class="service-list-item service-list-item-affiliate">
+              <span class="service-list-icon">🛁</span>
+              <div class="service-list-body">
+                <strong>Bedding &amp; Bath</strong>
+                <small>Target</small>
+              </div>
+              <span class="service-aff-badge">Affiliate</span>
+            </li>
+            <li class="service-list-item service-list-item-affiliate">
+              <span class="service-list-icon">🌿</span>
+              <div class="service-list-body">
+                <strong>Outdoor &amp; Patio</strong>
+                <small>Lowe's</small>
+              </div>
+              <span class="service-aff-badge">Affiliate</span>
+            </li>
+            <li class="service-list-item service-list-item-affiliate">
+              <span class="service-list-icon">📱</span>
+              <div class="service-list-body">
+                <strong>Smart Home</strong>
+                <small>Best Buy</small>
+              </div>
+              <span class="service-aff-badge">Affiliate</span>
+            </li>
+          </ul>
+        </div>
+        <p class="ftc-disclaimer">We may receive a referral commission from links in this guide at no extra cost to you.</p>
+      </section>
+
+    </div><!-- /moving-cols-2 -->
+
+    <!-- ══ TEMP HOUSING + LOCAL LIFE (2-col) ══ -->
+    <div class="moving-cols-2">
+
+      <section class="moving-section" id="temporary-stays">
+        <div class="moving-section-header">
+          <div class="grid-divider"></div>
+          <p class="section-title">Temporary Housing &amp; Extended Stays</p>
+          <p class="section-sub" id="hotels-sub">Extended-stay hotels and temporary housing</p>
+        </div>
+        <div class="temp-housing-list">
+          <a href="#" id="moving-trip-btn" target="_blank" rel="noopener" class="hotel-affiliate-btn">
+            <span class="hotel-btn-icon">✈️</span>
+            <div class="hotel-btn-text">
+              <span class="hotel-btn-name">Trip.com</span>
+              <span class="hotel-btn-sub">Asia's largest travel platform</span>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </a>
+          <a href="#" id="moving-expedia-btn" target="_blank" rel="noopener" class="hotel-affiliate-btn">
+            <span class="hotel-btn-icon">🏨</span>
+            <div class="hotel-btn-text">
+              <span class="hotel-btn-name">Expedia</span>
+              <span class="hotel-btn-sub">Extended stays &amp; hotel deals</span>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </a>
+          <a href="#" id="moving-hotels-btn" target="_blank" rel="noopener" class="hotel-affiliate-btn">
+            <span class="hotel-btn-icon">🛎️</span>
+            <div class="hotel-btn-text">
+              <span class="hotel-btn-name">Hotels.com</span>
+              <span class="hotel-btn-sub">Reward nights on every booking</span>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </a>
+          <a href="#" id="moving-booking-btn" target="_blank" rel="noopener" class="hotel-affiliate-btn">
+            <span class="hotel-btn-icon">📋</span>
+            <div class="hotel-btn-text">
+              <span class="hotel-btn-name">Booking.com</span>
+              <span class="hotel-btn-sub">Apartments, hotels &amp; extended stays</span>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </a>
+          <a href="#" id="moving-agoda-btn" target="_blank" rel="noopener" class="hotel-affiliate-btn">
+            <span class="hotel-btn-icon">🌏</span>
+            <div class="hotel-btn-text">
+              <span class="hotel-btn-name">Agoda</span>
+              <span class="hotel-btn-sub">Great rates on extended stays</span>
+            </div>
+            <span class="service-list-arrow">›</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="moving-section" id="locallife">
+        <div class="moving-section-header">
+          <div class="grid-divider"></div>
+          <p class="section-title">Local Life: What to Know Before Moving</p>
+          <p class="section-sub" id="locallife-sub">Essential info for new residents</p>
+        </div>
+        <ul class="locallife-list">
+          <li class="locallife-item">
+            <span class="locallife-icon">🚗</span>
+            <div class="locallife-body">
+              <strong>DMV</strong>
+              <span id="locallife-dmv">Get a local driver's license within 90 days of moving.</span>
+            </div>
+          </li>
+          <li class="locallife-item">
+            <span class="locallife-icon">🛒</span>
+            <div class="locallife-body">
+              <strong>Groceries</strong>
+              <span id="locallife-groceries">Major chains and local markets are well distributed across the metro.</span>
+            </div>
+          </li>
+          <li class="locallife-item">
+            <span class="locallife-icon">🎓</span>
+            <div class="locallife-body">
+              <strong>Schools</strong>
+              <span id="locallife-schools">Top-rated public schools vary by district — research your target neighborhood.</span>
+            </div>
+          </li>
+          <li class="locallife-item">
+            <span class="locallife-icon">🏥</span>
+            <div class="locallife-body">
+              <strong>Hospitals</strong>
+              <span id="locallife-hospitals">World-class medical centers and hospitals serve the metro area.</span>
+            </div>
+          </li>
+          <li class="locallife-item">
+            <span class="locallife-icon">🐾</span>
+            <div class="locallife-body">
+              <strong>Pet Services</strong>
+              <span id="locallife-pets">Parks, vets, groomers, and pet stores are widely available.</span>
+            </div>
+          </li>
+          <li class="locallife-item">
+            <span class="locallife-icon">🌡️</span>
+            <div class="locallife-body">
+              <strong>Weather Tips</strong>
+              <span id="locallife-weather">Research seasonal conditions and pack accordingly for your first year.</span>
+            </div>
+          </li>
+          <li class="locallife-item">
+            <span class="locallife-icon">📅</span>
+            <div class="locallife-body">
+              <strong>Best Time to Move</strong>
+              <span id="locallife-besttme">Spring (Mar–May) and Fall (Sep–Nov) offer the best moving conditions.</span>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+    </div><!-- /moving-cols-2 -->
 
     <!-- ══ THINGS TO DO ══ -->
     <section class="moving-section" id="things-to-do">
@@ -326,25 +723,28 @@
       </div>
     </section>
 
-    <!-- ══ TRANSIT & GETTING AROUND ══ -->
-    <section class="moving-section">
+    <!-- ══ LOCAL EVENTS ══ -->
+    <section class="moving-section" id="events">
       <div class="moving-section-header">
         <div class="grid-divider"></div>
-        <p class="section-title">Transit &amp; Rail</p>
-        <p class="section-sub" id="transit-sub">Getting around your new city</p>
+        <p class="section-title">Local Events in <span id="events-city-name">This City</span></p>
+        <p class="section-sub" id="events-sub">Discover what's on near your new home</p>
       </div>
-      <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-        <a href="#" id="moving-trainline-btn" target="_blank" rel="noopener" class="hotel-affiliate-btn" style="flex: 1; min-width: 200px;">
-          <span class="hotel-btn-icon">🚆</span>
-          <span class="hotel-btn-name">Trainline</span>
-          <span class="hotel-btn-sub" id="trainline-sub">Rail &amp; transit options</span>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <a href="#" id="moving-eventbrite-link" target="_blank" rel="noopener" class="hotel-affiliate-btn" style="flex-direction: row; justify-content: flex-start; gap: 16px; align-items: center;">
+          <span class="hotel-btn-icon" style="font-size: 1.6rem;">📅</span>
+          <span>
+            <span class="hotel-btn-name" id="moving-eventbrite-label">Browse Local Events on Eventbrite →</span>
+            <span class="hotel-btn-sub" id="moving-eventbrite-sub">Festivals, meetups, markets and more</span>
+          </span>
         </a>
-        <div class="search-section-card" style="flex: 2; min-width: 260px; margin: 0;">
-          <form class="moving-search-form" data-topic="public transit bus subway metro" onsubmit="return movingSearch(event)" style="margin: 0;">
-            <input type="text" placeholder="Search local transit options…" />
-            <button type="submit">Search</button>
-          </form>
-        </div>
+        <a href="#" id="moving-ticketmaster-link" target="_blank" rel="noopener" class="hotel-affiliate-btn" style="flex-direction: row; justify-content: flex-start; gap: 16px; align-items: center;">
+          <span class="hotel-btn-icon" style="font-size: 1.6rem;">🎫</span>
+          <span>
+            <span class="hotel-btn-name" id="moving-tm-label">Concerts &amp; Sports on Ticketmaster →</span>
+            <span class="hotel-btn-sub" id="moving-tm-sub">Live music, sports, theatre and more</span>
+          </span>
+        </a>
       </div>
     </section>
 
@@ -360,23 +760,38 @@
       </div>
     </section>
 
-    <!-- ══ EXPLORE MORE ══ -->
+    <!-- ══ EXPLORE MORE GUIDES ══ -->
     <section class="moving-section">
       <div class="moving-section-header">
         <div class="grid-divider"></div>
-        <p class="section-title">Explore More</p>
-        <p class="section-sub">More guides and resources</p>
+        <p class="section-title">Explore More Guides</p>
+        <p class="section-sub">More resources for your move</p>
       </div>
-      <div class="explore-grid">
-        <a href="/time/houston" id="explore-time-link" class="explore-card">
-          <div class="explore-card-icon">⏱️</div>
-          <div class="explore-card-title" id="explore-time-title">Houston Time &amp; Travel Guide</div>
-          <div class="explore-card-sub">Live clock, weather, events, restaurants and more</div>
+      <div class="explore-guides-row">
+        <a href="#" class="explore-guide-card" id="explore-neighborhoods-link">
+          <div class="explore-guide-icon">🏠</div>
+          <div class="explore-guide-title" id="explore-neighborhoods-title">Best Neighborhoods</div>
+          <div class="explore-guide-cta">View Guide →</div>
         </a>
-        <a href="/" class="explore-card">
-          <div class="explore-card-icon">🌍</div>
-          <div class="explore-card-title">World Clock</div>
-          <div class="explore-card-sub">Current local times for every major city on Earth</div>
+        <a href="#" class="explore-guide-card" id="explore-costliving-link">
+          <div class="explore-guide-icon">💰</div>
+          <div class="explore-guide-title" id="explore-costliving-title">Cost of Living</div>
+          <div class="explore-guide-cta">View Guide →</div>
+        </a>
+        <a href="#" class="explore-guide-card" id="explore-apartments-link">
+          <div class="explore-guide-icon">🏢</div>
+          <div class="explore-guide-title" id="explore-apartments-title">Apartments</div>
+          <div class="explore-guide-cta">View Guide →</div>
+        </a>
+        <a href="#" class="explore-guide-card" id="explore-things-link">
+          <div class="explore-guide-icon">🗺️</div>
+          <div class="explore-guide-title" id="explore-things-title">Things To Do</div>
+          <div class="explore-guide-cta">View Guide →</div>
+        </a>
+        <a href="/time/houston" class="explore-guide-card" id="explore-time-link">
+          <div class="explore-guide-icon">⏰</div>
+          <div class="explore-guide-title" id="explore-time-title">Current Time</div>
+          <div class="explore-guide-cta">View Guide →</div>
         </a>
       </div>
     </section>
@@ -414,17 +829,38 @@
     <h2 class="quote-modal-title">Get a Free Moving Quote</h2>
     <p class="quote-modal-sub" id="quote-modal-city">Tell us about your move and we'll connect you with top-rated movers.</p>
     <form class="quote-modal-form" id="quote-modal-form" onsubmit="return submitQuoteForm(event)">
-      <input type="text"  name="name"     placeholder="Your Name"       required />
-      <input type="email" name="email"    placeholder="Your Email"      required />
-      <input type="text"  name="from_zip" placeholder="From ZIP Code"   />
-      <input type="text"  name="to_zip"   placeholder="To ZIP / City"   />
-      <input type="text"  name="move_date" placeholder="Planned Move Date (e.g. June 2026)" />
+      <input type="text"  name="name"      placeholder="Your Name"       required />
+      <input type="email" name="email"     placeholder="Your Email"      required />
+      <input type="text"  name="from_zip"  placeholder="From ZIP Code"   />
+      <input type="text"  name="to_zip"    placeholder="To ZIP / City"   />
+      <input type="text"  name="move_date" placeholder="Planned Move Date (e.g. Aug 2026)" />
       <input type="hidden" name="_subject" id="quote-subject" value="Moving Quote Request" />
-      <input type="text"  name="_gotcha"  style="display:none" />
+      <input type="text"  name="_gotcha"   style="display:none" />
       <button type="submit" class="quote-modal-submit">Send My Request →</button>
     </form>
     <div class="quote-modal-thanks" id="quote-modal-thanks" hidden>
       <p>✅ Request received! We'll be in touch soon.</p>
+    </div>
+  </div>
+
+  <!-- AGENT INQUIRY MODAL -->
+  <div class="quote-modal-backdrop" id="agent-modal-backdrop" onclick="closeAgentModal()" hidden></div>
+  <div class="quote-modal" id="agent-modal" hidden>
+    <button class="quote-modal-close" onclick="closeAgentModal()" aria-label="Close">&times;</button>
+    <h2 class="quote-modal-title">Claim Your Sponsored Spot</h2>
+    <p class="quote-modal-sub" id="agent-modal-city">Reach active relocation leads in your market. 4 spots available · $200/month · Cancel anytime.</p>
+    <form class="quote-modal-form" id="agent-modal-form" onsubmit="return submitAgentForm(event)">
+      <input type="text"  name="name"    placeholder="Full Name"             required />
+      <input type="email" name="email"   placeholder="Email Address"         required />
+      <input type="tel"   name="phone"   placeholder="Phone Number"          />
+      <input type="text"  name="market"  placeholder="City / Metro You Serve" required />
+      <textarea name="message" placeholder="Message (optional)" rows="3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(240,168,48,0.18);border-radius:8px;padding:12px 16px;color:var(--text);font-size:0.88rem;outline:none;resize:vertical;font-family:inherit;"></textarea>
+      <input type="hidden" name="_subject" value="Real Estate Agent Spot Inquiry" />
+      <input type="text"   name="_gotcha" style="display:none" />
+      <button type="submit" class="quote-modal-submit">Send My Inquiry →</button>
+    </form>
+    <div class="quote-modal-thanks" id="agent-modal-thanks" hidden>
+      <p>✅ Inquiry sent! We'll follow up within 24 hours.</p>
     </div>
   </div>
 

@@ -1172,6 +1172,9 @@ async function renderMovingPage() {
   const cityCountry = city.state ? `${city.state}, ${city.country}` : city.country;
   const pageUrl     = `https://www.thetimesphere.com/moving-to/${city.id}`;
   const pageTitle   = `Moving to ${cityName} — The Time Sphere`;
+  // Store for global modal/tracking functions
+  window._tsCitySlug = city.id;
+  window._tsCityName = cityName;
   const pageDesc    = `Complete relocation guide for ${cityName}, ${cityCountry}. Find neighborhoods, moving services, utilities, housing, and local tips.`;
 
   // ── SEO ──────────────────────────────────────────────────────────────────
@@ -1251,6 +1254,41 @@ async function renderMovingPage() {
   setText('moving-tm-sub',       `Live music, sports, theatre and more`);
   setText('moving-viator-title', `Experiences in ${cityName}`);
   setText('viator-card-title',   `Experiences in ${cityName}`);
+
+  // ── Phase 3: agent card city name injection ───────────────────────────────
+  document.querySelectorAll('.agent-city-inject').forEach(function(el) {
+    el.textContent = cityName;
+  });
+
+  // ── Phase 3: relocation note & agent modal ───────────────────────────────
+  setText('moving-relocation-note', `ℹ️ Relocation guide for ${cityName}, ${cityCountry}`);
+  setText('agent-modal-city', `Reach active relocation leads in ${cityName}. 4 spots available · $200/month · Cancel anytime.`);
+
+  // ── Phase 3: neighborhood Zillow links ────────────────────────────────────
+  const zillowCity = encodeURIComponent(`${cityName}, ${city.state || city.country}`);
+  const nbhdQueries = ['top+schools', 'young+professionals', 'luxury', 'affordable', 'commuter'];
+  for (let ni = 0; ni < 5; ni++) {
+    const nbhdEl = document.getElementById(`nbhd-${ni}`);
+    if (nbhdEl) {
+      nbhdEl.href = `https://www.zillow.com/homes/${zillowCity}_rb/?searchQueryState=%7B%22pagination%22%3A%7B%7D%7D`;
+    }
+  }
+
+  // ── Phase 3: explore guide links ─────────────────────────────────────────
+  const citySlug = cityName.toLowerCase().replace(/\s+/g, '-');
+  const stateStr = city.state || city.country || '';
+  const zillowLink = `https://www.zillow.com/homes/${encodeURIComponent(cityName + ', ' + stateStr)}_rb/`;
+  setAttr('explore-neighborhoods-link', 'href', zillowLink);
+  setText('explore-neighborhoods-title', `Best Neighborhoods in ${cityName}`);
+  setAttr('explore-costliving-link', 'href',
+    `https://www.nerdwallet.com/cost-of-living-calculator/compare/${encodeURIComponent(citySlug)}`);
+  setText('explore-costliving-title', `Cost of Living in ${cityName}`);
+  setAttr('explore-apartments-link', 'href',
+    `https://www.apartments.com/${encodeURIComponent(citySlug)}/`);
+  setText('explore-apartments-title', `Apartments in ${cityName}`);
+  setAttr('explore-things-link', 'href',
+    `https://www.viator.com/search/${cityEncoded}?pid=P00295924&mcid=42383&medium=link`);
+  setText('explore-things-title', `Things To Do in ${cityName}`);
 
   // ── Back link & explore links ─────────────────────────────────────────────
   setAttr('moving-back-link',  'href', `/time/${city.id}`);
@@ -1407,6 +1445,57 @@ async function renderMovingPage() {
   setText('snap-price',   snapMedianHome(city));
   setText('snap-climate', snapClimate(city));
   setText('snap-scale',   snapScale(city));
+
+  // ── dataLayer: city page view ─────────────────────────────────────────────
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: 'city_page_view',
+    city_slug: city.id,
+    city_name: cityName
+  });
+
+  // ── Affiliate click tracking ──────────────────────────────────────────────
+  const _affiliatePairs = [
+    ['moving-trip-btn',           'Trip.com'],
+    ['moving-expedia-btn',        'Expedia'],
+    ['moving-hotels-btn',         'Hotels.com'],
+    ['moving-booking-btn',        'Booking.com'],
+    ['moving-agoda-btn',          'Agoda'],
+    ['moving-eventbrite-link',    'Eventbrite'],
+    ['moving-ticketmaster-link',  'Ticketmaster'],
+    ['explore-neighborhoods-link','Zillow'],
+    ['explore-costliving-link',   'NerdWallet'],
+    ['explore-apartments-link',   'Apartments.com'],
+    ['explore-things-link',       'Viator'],
+  ];
+  _affiliatePairs.forEach(([id, name]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', function() {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'affiliate_click',
+        affiliate_name: name,
+        destination_url: el.href || '',
+        city_slug: city.id
+      });
+    });
+  });
+  for (let _ni = 0; _ni < 5; _ni++) {
+    (function(slot) {
+      const nbhdEl = document.getElementById(`nbhd-${slot}`);
+      if (!nbhdEl) return;
+      nbhdEl.addEventListener('click', function() {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'affiliate_click',
+          affiliate_name: 'Zillow Neighborhoods',
+          destination_url: nbhdEl.href || '',
+          city_slug: city.id
+        });
+      });
+    })(_ni);
+  }
 
   // ── FAQ Accordion ─────────────────────────────────────────────────────────
   const faqs = [
@@ -1623,6 +1712,90 @@ async function submitQuoteForm(event) {
       const thanks = document.getElementById('quote-modal-thanks');
       if (thanks) thanks.hidden = false;
       setTimeout(closeQuoteModal, 3000);
+    }
+  } catch(e) {}
+  return false;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AGENT INQUIRY MODAL
+// ─────────────────────────────────────────────────────────────────────────────
+function openAgentModal(slot) {
+  const modal    = document.getElementById('agent-modal');
+  const backdrop = document.getElementById('agent-modal-backdrop');
+  if (!modal || !backdrop) return;
+  modal.hidden    = false;
+  backdrop.hidden = false;
+  document.body.style.overflow = 'hidden';
+  modal.dataset.slot = slot || 1;
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: 'agent_modal_opened',
+    city_slug: window._tsCitySlug || '',
+    card_slot: slot || 1
+  });
+}
+
+function closeAgentModal() {
+  const modal    = document.getElementById('agent-modal');
+  const backdrop = document.getElementById('agent-modal-backdrop');
+  if (!modal || !backdrop) return;
+  modal.hidden    = true;
+  backdrop.hidden = true;
+  document.body.style.overflow = '';
+  const thanks = document.getElementById('agent-modal-thanks');
+  const form   = document.getElementById('agent-modal-form');
+  if (thanks) thanks.hidden = true;
+  if (form)   form.hidden   = false;
+}
+
+const AGENT_LEAD_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/PLACEHOLDER';
+
+async function submitAgentForm(event) {
+  event.preventDefault();
+  const form     = event.target;
+  const data     = new FormData(form);
+  const modal    = document.getElementById('agent-modal');
+  const slot     = modal ? (parseInt(modal.dataset.slot, 10) || 1) : 1;
+  const citySlug = window._tsCitySlug || '';
+  const cityName = window._tsCityName || '';
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: 'agent_lead_submitted',
+    city_slug: citySlug,
+    card_slot: slot
+  });
+
+  const payload = {
+    name:      data.get('name'),
+    email:     data.get('email'),
+    phone:     data.get('phone'),
+    market:    data.get('market'),
+    message:   data.get('message'),
+    city_slug: citySlug,
+    city_name: cityName,
+    card_slot: slot,
+    timestamp: new Date().toISOString()
+  };
+
+  try {
+    const [fRes] = await Promise.all([
+      fetch('https://formspree.io/f/mgopzepw', {
+        method: 'POST', body: data,
+        headers: { 'Accept': 'application/json' }
+      }),
+      fetch(AGENT_LEAD_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(() => {})
+    ]);
+    if (fRes && fRes.ok) {
+      form.hidden = true;
+      const thanks = document.getElementById('agent-modal-thanks');
+      if (thanks) thanks.hidden = false;
+      setTimeout(closeAgentModal, 3000);
     }
   } catch(e) {}
   return false;
