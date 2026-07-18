@@ -2305,6 +2305,16 @@ footer a:hover { color: var(--gold); }
   z-index: 0;
 }
 
+.hero-city-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
+  display: block;
+  filter: contrast(1.05) saturate(1.1) brightness(0.85);
+}
+
 .city-label {
   font-family: 'Exo 2', sans-serif;
   font-size: 0.72rem;
@@ -2385,19 +2395,26 @@ footer a:hover { color: var(--gold); }
 
 .snapshot-inline-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 18px 16px;
-  background: linear-gradient(145deg, var(--bg2), var(--bg3));
-  transition: background 0.18s;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px 12px;
+  text-align: center;
+  border-left: 3px solid #f0a830;
+  transition: filter 0.18s;
 }
-.snapshot-inline-item:hover {
-  background: linear-gradient(145deg, rgba(240,168,48,0.06), rgba(200,134,10,0.04));
-}
+.snapshot-inline-item:hover { filter: brightness(1.12); }
+.snapshot-inline-item:nth-child(1) { background: linear-gradient(135deg, #1a2a1a, #2a3d2a); }
+.snapshot-inline-item:nth-child(2) { background: linear-gradient(135deg, #1a1a2a, #2a2a3d); }
+.snapshot-inline-item:nth-child(3) { background: linear-gradient(135deg, #2a1a2a, #3d2a3d); }
+.snapshot-inline-item:nth-child(4) { background: linear-gradient(135deg, #2a2a1a, #3d3d1a); }
+.snapshot-inline-item:nth-child(5) { background: linear-gradient(135deg, #1a2a2a, #1a3d3d); }
+.snapshot-inline-item:nth-child(6) { background: linear-gradient(135deg, #2a1a1a, #3d2a2a); }
 
-.snapshot-inline-icon { font-size: 1.5rem; flex-shrink: 0; }
+.snapshot-inline-icon { font-size: 28px; line-height: 1; }
 
-.snapshot-inline-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.snapshot-inline-body { display: flex; flex-direction: column; gap: 2px; align-items: center; }
 
 .snapshot-inline-label {
   font-size: 0.64rem;
@@ -2865,7 +2882,7 @@ footer a:hover { color: var(--gold); }
 }
 .locallife-item:hover { border-color: rgba(240,168,48,0.25); }
 
-.locallife-icon { font-size: 1.15rem; flex-shrink: 0; margin-top: 1px; }
+.locallife-icon { font-size: 22px; flex-shrink: 0; line-height: 1; }
 
 .locallife-body {
   display: flex;
@@ -3136,12 +3153,13 @@ footer a:hover { color: var(--gold); }
 /* ── Horizontal Photo Cards (truck / utilities / insurance / essentials) ── */
 .photo-h-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 .photo-h-card {
   display: flex;
-  align-items: stretch;
+  align-items: center;
+  min-height: 90px;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -3160,14 +3178,14 @@ footer a:hover { color: var(--gold); }
 .photo-h-card-aff { border-color: rgba(240,168,48,0.2); }
 .photo-h-card-wide { grid-column: span 2; }
 .photo-h-img {
-  width: 100px;
-  max-width: 100px;
-  max-height: 80px;
+  width: 110px;
+  min-width: 110px;
+  height: 90px;
   object-fit: cover;
   object-position: center;
   flex-shrink: 0;
   display: block;
-  align-self: stretch;
+  border-radius: 8px 0 0 8px;
 }
 .photo-h-body {
   flex: 1;
@@ -3179,33 +3197,40 @@ footer a:hover { color: var(--gold); }
   min-width: 0;
 }
 .photo-h-body strong {
-  font-size: 0.86rem;
-  color: var(--text);
+  font-size: 0.95rem;
+  color: #fff;
   font-weight: 600;
   line-height: 1.3;
 }
 .photo-h-body small {
-  font-size: 0.68rem;
-  color: var(--text-dim);
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.65);
   line-height: 1.4;
 }
 .photo-h-arrow {
   font-size: 0.85rem;
-  color: var(--text-dim);
-  margin-top: 5px;
+  color: #f0a830;
+  margin-left: auto;
+  align-self: flex-end;
+  padding-right: 4px;
 }
 
 @media (max-width: 768px) {
   .photo-h-grid { grid-template-columns: 1fr; }
   .photo-h-card-wide { grid-column: 1; }
-  .photo-h-img { width: 100px; }
+  .photo-h-img { width: 110px; min-width: 110px; }
 }
 
 /* ── Temporary Housing: photo-top cards in 2-col grid ── */
 .temp-hotel-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.temp-hotel-card:last-child {
+  grid-column: 1 / -1;
+  max-width: calc(50% - 8px);
+  margin: 0 auto;
 }
 .temp-hotel-card {
   display: flex;

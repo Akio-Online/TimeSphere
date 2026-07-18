@@ -1227,10 +1227,10 @@ async function renderMovingPage() {
   }
 
   // ── Hero image ─────────────────────────────────────────────────────────────
-  const heroBg = document.getElementById('moving-hero-bg');
-  if (heroBg) {
-    const imgUrl = CITY_IMAGES[city.id] || CITY_IMAGES['default'];
-    heroBg.style.backgroundImage = `url('${imgUrl}')`;
+  const heroImg = document.getElementById('hero-city-img');
+  if (heroImg) {
+    const imgUrl = (CITY_IMAGES[city.id] || CITY_IMAGES['default']).replace(/\?.*$/, '?w=800&q=80');
+    heroImg.src = imgUrl;
   }
 
   // ── Inline text tokens ────────────────────────────────────────────────────
