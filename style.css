@@ -2968,48 +2968,72 @@ footer a:hover { color: var(--gold); }
 }
 
 .explore-guide-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 22px 14px 18px;
-  background: linear-gradient(145deg, var(--bg2), var(--bg3));
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 12px;
+  min-height: 130px;
+  max-height: 130px;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(255,255,255,0.08);
   text-decoration: none;
-  color: inherit;
   text-align: center;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, filter 0.2s, box-shadow 0.2s;
+}
+.explore-guide-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 0;
 }
 .explore-guide-card:hover {
-  border-color: rgba(240,168,48,0.4);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(240,168,48,0.1);
+  transform: scale(1.02);
+  filter: brightness(1.15);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.5);
 }
 
-.explore-guide-icon { font-size: 1.8rem; }
+.explore-guide-icon {
+  position: relative;
+  z-index: 1;
+  font-size: 1.4rem;
+  line-height: 1;
+}
 
 .explore-guide-title {
+  position: relative;
+  z-index: 1;
   font-family: 'Playfair Display', serif;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  color: var(--text);
+  color: #fff;
   line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
 
 .explore-guide-cta {
-  font-size: 0.68rem;
+  position: relative;
+  z-index: 1;
+  font-size: 0.65rem;
   color: var(--gold);
-  font-weight: 600;
-  margin-top: auto;
-  padding-top: 6px;
+  font-weight: 700;
+  margin-top: 4px;
+  letter-spacing: 0.03em;
 }
 
-@media (max-width: 800px) {
-  .explore-guides-row { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .explore-guides-row { grid-template-columns: repeat(2, 1fr); }
+  .explore-guide-card:last-child {
+    grid-column: 1 / -1;
+    width: calc(50% - 7px);
+    margin: 0 auto;
+  }
 }
 
 /* ── Agent Modal (reuses quote-modal styles) ── */
@@ -3024,7 +3048,6 @@ footer a:hover { color: var(--gold); }
   .nbhd-cards         { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 480px) {
-  .explore-guides-row { grid-template-columns: repeat(2, 1fr); }
   .snapshot-inline-row { grid-template-columns: repeat(2, 1fr); }
 }
 
