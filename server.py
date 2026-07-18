@@ -83,9 +83,7 @@ def _fetch_ticketmaster(city_name):
     """Ticketmaster Discovery API — free tier, 5000 calls/day.
     Key: developer.ticketmaster.com → 'My Apps' → 'API Key'
     Env var: TICKETMASTER_API_KEY"""
-    api_key = os.environ.get('TICKETMASTER_API_KEY', '')
-    if not api_key:
-        return []
+    api_key = os.environ.get('TICKETMASTER_API_KEY', 'oU45aN6HSWpgHLNGHJNJe7tz0870uGGj')
     url = ('https://app.ticketmaster.com/discovery/v2/events.json'
            '?city=' + urllib.parse.quote(city_name) +
            '&size=3&sort=date%2Casc&apikey=' + api_key)
@@ -114,9 +112,7 @@ def _fetch_eventbrite(city_name):
     """Eventbrite API — free public token, 1000 calls/hour.
     Key: eventbrite.com/account-settings/apps → 'Create API Key'
     Env var: EVENTBRITE_API_KEY"""
-    api_key = os.environ.get('EVENTBRITE_API_KEY', '')
-    if not api_key:
-        return []
+    api_key = os.environ.get('EVENTBRITE_API_KEY', 'SBQORL5REUVO342LNKQ5')
     url = ('https://www.eventbriteapi.com/v3/events/search/'
            '?location.address=' + urllib.parse.quote(city_name) +
            '&expand=venue,logo&sort_by=date&token=' + api_key)
