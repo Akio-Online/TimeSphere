@@ -3248,3 +3248,91 @@ footer a:hover { color: var(--gold); }
   .temp-hotel-grid { grid-template-columns: 1fr; }
   .temp-hotel-img { height: 160px; }
 }
+
+/* ── Skeleton loading cards ── */
+@keyframes skeleton-pulse {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+}
+.skeleton-img {
+  height: 100px;
+  background: linear-gradient(90deg, #141929 25%, #1e2640 50%, #141929 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+.skeleton-body { padding: 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.skeleton-line {
+  height: 11px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #141929 25%, #1e2640 50%, #141929 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+.skeleton-line.short { width: 55%; }
+
+/* ── Dynamic event / experience cards (from API) ── */
+.event-dynamic-card {
+  display: block;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  min-height: 160px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.event-dynamic-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+}
+.event-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.56);
+}
+.event-card-body {
+  position: relative;
+  z-index: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 160px;
+}
+.event-meta {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 5px;
+}
+.event-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+  line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+.event-cta {
+  display: inline-block;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, var(--gold-deep), var(--gold));
+  color: #050810;
+  font-weight: 800;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  align-self: flex-start;
+}

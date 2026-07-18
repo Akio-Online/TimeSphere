@@ -1,4 +1,5 @@
-import http.server, socketserver, os, re, urllib.parse
+import http.server, socketserver, os, re, urllib.parse, json, time
+import urllib.request
 from datetime import date
 
 PORT = int(os.environ.get("PORT", 8080))
@@ -60,6 +61,139 @@ def generate_sitemap():
     sitemap += '\n'.join(urls)
     sitemap += '\n</urlset>'
     return sitemap
+
+# ── API key cache (in-memory, 1-hour TTL) ─────────────────────────────────────
+_api_cache = {}
+CACHE_TTL = 3600
+
+def _cached(key, fetch_fn):
+    now = time.time()
+    entry = _api_cache.get(key)
+    if entry and now < entry['exp']:
+        return entry['data']
+    data = fetch_fn()
+    _api_cache[key] = {'data': data, 'exp': now + CACHE_TTL}
+    return data
+
+def _slug_to_name(slug):
+    """Convert city-slug to Title Case city name for API queries."""
+    return slug.replace('-', ' ').title()
+
+def _fetch_ticketmaster(city_name):
+    """Ticketmaster Discovery API — free tier, 5000 calls/day.
+    Key: developer.ticketmaster.com → 'My Apps' → 'API Key'
+    Env var: TICKETMASTER_API_KEY"""
+    api_key = os.environ.get('TICKETMASTER_API_KEY', '')
+    if not api_key:
+        return []
+    url = ('https://app.ticketmaster.com/discovery/v2/events.json'
+           '?city=' + urllib.parse.quote(city_name) +
+           '&size=3&sort=date%2Casc&apikey=' + api_key)
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'TimeSphere/1.0'})
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode())
+        events = data.get('_embedded', {}).get('events', [])
+        out = []
+        for ev in events[:3]:
+            imgs = sorted(ev.get('images', []), key=lambda x: x.get('width', 0), reverse=True)
+            venues = ev.get('_embedded', {}).get('venues', [{}])
+            out.append({
+                'name':   ev.get('name', ''),
+                'date':   ev.get('dates', {}).get('start', {}).get('localDate', ''),
+                'venue':  venues[0].get('name', '') if venues else '',
+                'image':  imgs[0]['url'] if imgs else '',
+                'url':    ev.get('url', ''),
+                'source': 'ticketmaster',
+            })
+        return out
+    except Exception:
+        return []
+
+def _fetch_eventbrite(city_name):
+    """Eventbrite API — free public token, 1000 calls/hour.
+    Key: eventbrite.com/account-settings/apps → 'Create API Key'
+    Env var: EVENTBRITE_API_KEY"""
+    api_key = os.environ.get('EVENTBRITE_API_KEY', '')
+    if not api_key:
+        return []
+    url = ('https://www.eventbriteapi.com/v3/events/search/'
+           '?location.address=' + urllib.parse.quote(city_name) +
+           '&expand=venue,logo&sort_by=date&token=' + api_key)
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'TimeSphere/1.0'})
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode())
+        events = data.get('events', [])
+        out = []
+        for ev in events[:3]:
+            logo = ev.get('logo') or {}
+            orig = logo.get('original') or {}
+            venue = ev.get('venue') or {}
+            out.append({
+                'name':   (ev.get('name') or {}).get('text', ''),
+                'date':   (ev.get('start') or {}).get('local', '')[:10],
+                'venue':  venue.get('name', ''),
+                'image':  orig.get('url', ''),
+                'url':    ev.get('url', ''),
+                'source': 'eventbrite',
+            })
+        return out
+    except Exception:
+        return []
+
+def _fetch_viator(city_name):
+    """Viator Partner API — requires separate partner API key (different from affiliate pid).
+    Key: partnerapi.viator.com → request access at partners.viator.com
+    Env var: VIATOR_API_KEY
+    POST https://api.viator.com/partner/products/search"""
+    api_key = os.environ.get('VIATOR_API_KEY', '')
+    if not api_key:
+        return []
+    payload = json.dumps({
+        'filtering': {'destination': city_name},
+        'sorting':   {'sort': 'TRAVELER_RATING', 'order': 'DESCENDING'},
+        'pagination': {'start': 1, 'count': 3},
+        'currency':  'USD',
+    }).encode()
+    try:
+        req = urllib.request.Request(
+            'https://api.viator.com/partner/products/search',
+            data=payload, method='POST')
+        req.add_header('Content-Type', 'application/json')
+        req.add_header('exp-api-key', api_key)
+        req.add_header('Accept', 'application/json;version=2.0')
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode())
+        products = data.get('products', [])
+        out = []
+        for p in products[:3]:
+            imgs = p.get('images', [])
+            img_url = ''
+            if imgs:
+                variants = imgs[0].get('variants', [])
+                img_url = variants[0].get('url', '') if variants else ''
+            code = p.get('productCode', '')
+            out.append({
+                'name':   p.get('title', ''),
+                'rating': (p.get('reviews') or {}).get('combinedAverageRating', 0),
+                'price':  (p.get('pricing', {}).get('summary') or {}).get('fromPrice', ''),
+                'image':  img_url,
+                'url':    'https://www.viator.com/tours/' + code + '?pid=P00295924&mcid=42383',
+            })
+        return out
+    except Exception:
+        return []
+
+def _json_response(handler, data):
+    body = json.dumps(data).encode()
+    handler.send_response(200)
+    handler.send_header('Content-Type', 'application/json; charset=utf-8')
+    handler.send_header('Content-Length', len(body))
+    handler.send_header('Cache-Control', 'public, max-age=3600')
+    handler.end_headers()
+    if handler.command != 'HEAD':
+        handler.wfile.write(body)
 
 def serve_html(handler, filepath):
     try:
@@ -173,6 +307,32 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             return True
         if path == '/privacy':
             serve_html(self, 'privacy.html')
+            return True
+
+        # ── API: Events (Ticketmaster + Eventbrite, cached 1h) ───────────────
+        if path == '/api/events':
+            slug = qs.get('city', [''])[0]
+            city_name = _slug_to_name(slug) if slug else ''
+            if not city_name:
+                _json_response(self, {'events': []})
+                return True
+            def _fetch_events():
+                tm = _fetch_ticketmaster(city_name)
+                eb = _fetch_eventbrite(city_name)
+                return (tm + eb)[:6]
+            events = _cached('events:' + slug, _fetch_events)
+            _json_response(self, {'events': events})
+            return True
+
+        # ── API: Experiences (Viator partner API, cached 1h) ─────────────────
+        if path == '/api/experiences':
+            slug = qs.get('city', [''])[0]
+            city_name = _slug_to_name(slug) if slug else ''
+            if not city_name:
+                _json_response(self, {'experiences': []})
+                return True
+            exps = _cached('exps:' + slug, lambda: _fetch_viator(city_name))
+            _json_response(self, {'experiences': exps})
             return True
 
         return False  # fall through to SimpleHTTPRequestHandler

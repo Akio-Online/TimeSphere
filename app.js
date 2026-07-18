@@ -879,27 +879,22 @@ const CITY_IMAGES = {
   'yangon':          'https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?w=1600&q=80',
   'phnom-penh':      'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1600&q=80',
   'vientiane':       'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1600&q=80',
+  // Major US cities — added to replace generic fallback
+  'houston':         'https://images.unsplash.com/photo-1548618635-bde35df8f6de?w=1600&q=80',
+  'miami':           'https://images.unsplash.com/photo-1533106418989-52240bc3f9b1?w=1600&q=80',
+  'seattle':         'https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=1600&q=80',
+  'denver':          'https://images.unsplash.com/photo-1546156929-a4c0ac411f47?w=1600&q=80',
+  'phoenix':         'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80',
+  'atlanta':         'https://images.unsplash.com/photo-1575917649705-5b59aaa12e6b?w=1600&q=80',
+  'boston':          'https://images.unsplash.com/photo-1501979376754-1ff209e77968?w=1600&q=80',
+  'philadelphia':    'https://images.unsplash.com/photo-1569761316261-9a8696fa2ca3?w=1600&q=80',
+  'dallas':          'https://images.unsplash.com/photo-1545194445-dddb8f4487c6?w=1600&q=80',
+  'san-diego':       'https://images.unsplash.com/photo-1538964173425-93884d739596?w=1600&q=80',
+  'san-francisco':   'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1600&q=80',
+  'washington-dc':   'https://images.unsplash.com/photo-1501466044931-62695aada8e9?w=1600&q=80',
+  'portland':        'https://images.unsplash.com/photo-1544512798-93c1b28049ec?w=1600&q=80',
   // fallback
   'default':         'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
-};
-
-// --- Curated city photos for Moving-To hero (w=700 for faster load) ---
-const MOVING_CITY_IMAGES = {
-  'houston':       'photo-1548618635-bde35df8f6de',
-  'new-york':      'photo-1485871981521-5b1fd3805eee',
-  'los-angeles':   'photo-1534430480872-3498386e7856',
-  'chicago':       'photo-1477959858617-67f85cf4f1df',
-  'phoenix':       'photo-1558618666-fcd25c85cd64',
-  'philadelphia':  'photo-1569761316261-9a8696fa2ca3',
-  'san-antonio':   'photo-1531218150217-54595bc2b934',
-  'san-diego':     'photo-1538964173425-93884d739596',
-  'dallas':        'photo-1545194445-dddb8f4487c6',
-  'seattle':       'photo-1502175353174-a7a70e73b362',
-  'denver':        'photo-1546156929-a4c0ac411f47',
-  'boston':        'photo-1501979376754-1ff209e77968',
-  'miami':         'photo-1533106418989-52240bc3f9b1',
-  'atlanta':       'photo-1575917649705-5b59aaa12e6b',
-  'portland':      'photo-1477959858617-67f85cf4f1df',
 };
 
 // --- Weather (Open-Meteo — free, no API key needed) ---
@@ -1231,13 +1226,10 @@ async function renderMovingPage() {
     navLink.classList.add('nav-active');
   }
 
-  // ── Hero image (curated map → CITY_IMAGES → Unsplash featured fallback) ──
+  // ── Hero image ─────────────────────────────────────────────────────────────
   const heroBg = document.getElementById('moving-hero-bg');
   if (heroBg) {
-    const movingPhotoId = MOVING_CITY_IMAGES[city.id];
-    const imgUrl = movingPhotoId
-      ? `https://images.unsplash.com/${movingPhotoId}?w=700&q=80`
-      : (CITY_IMAGES[city.id] || `https://images.unsplash.com/featured/?${encodeURIComponent(cityName)},downtown,skyline&w=700&q=80`);
+    const imgUrl = CITY_IMAGES[city.id] || CITY_IMAGES['default'];
     heroBg.style.backgroundImage = `url('${imgUrl}')`;
   }
 
@@ -1619,6 +1611,62 @@ async function renderMovingPage() {
   if (quoteToZip && !quoteToZip.value) quoteToZip.placeholder = `To: ${cityName} (ZIP or city)`;
   const quoteModalCity = document.getElementById('quote-modal-city');
   if (quoteModalCity) quoteModalCity.textContent = `Tell us about your move to ${cityName} and we'll connect you with top-rated movers.`;
+
+  // ── Dynamic Events (shows skeleton → live Ticketmaster/Eventbrite cards, or static fallback) ──
+  (function() {
+    var evGrid = document.getElementById('events-cards-grid');
+    if (!evGrid) return;
+    var fallbackHtml = evGrid.innerHTML;
+    evGrid.innerHTML =
+      '<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>' +
+      '<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>';
+    fetch('/api/events?city=' + city.id)
+      .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function(data) {
+        var evs = data && data.events && data.events.length ? data.events.slice(0, 3) : null;
+        if (!evs) { evGrid.innerHTML = fallbackHtml; return; }
+        evGrid.style.gridTemplateColumns = 'repeat(' + Math.min(evs.length, 3) + ', 1fr)';
+        evGrid.innerHTML = evs.map(function(ev) {
+          var dateStr = '';
+          try { if (ev.date) dateStr = new Date(ev.date + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}); } catch(e) {}
+          var imgStyle = ev.image ? 'background-image:url(\'' + ev.image.replace(/'/g, '%27') + '\')' : 'background:linear-gradient(135deg,#1a1a2a,#2d2d4a)';
+          var meta = [dateStr, ev.venue].filter(Boolean).join(' · ');
+          return '<a href="' + (ev.url || '#') + '" target="_blank" rel="noopener" class="event-dynamic-card" style="' + imgStyle + '">' +
+            '<div class="event-overlay"></div><div class="event-card-body">' +
+            (meta ? '<div class="event-meta">' + meta + '</div>' : '') +
+            '<div class="event-name">' + ev.name + '</div>' +
+            '<span class="event-cta">Get Tickets →</span>' +
+            '</div></a>';
+        }).join('');
+      })
+      .catch(function() { evGrid.innerHTML = fallbackHtml; });
+  })();
+
+  // ── Dynamic Experiences (silent upgrade if Viator API key configured) ──────
+  (function() {
+    fetch('/api/experiences?city=' + city.id)
+      .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function(data) {
+        var exps = data && data.experiences && data.experiences.length ? data.experiences.slice(0, 3) : null;
+        if (!exps) return;
+        var container = document.getElementById('moving-viator-body');
+        if (!container) return;
+        container.innerHTML = '<div style="display:grid;grid-template-columns:repeat(' + Math.min(exps.length, 3) + ',1fr);gap:12px;">' +
+          exps.map(function(ex) {
+            var imgStyle = ex.image ? 'background-image:url(\'' + ex.image.replace(/'/g, '%27') + '\')' : 'background:linear-gradient(135deg,#1a2a2a,#2d4a4a)';
+            var rating = ex.rating ? '★ ' + Number(ex.rating).toFixed(1) : '';
+            var price = ex.price ? 'From $' + ex.price : '';
+            var meta = [rating, price].filter(Boolean).join(' · ');
+            return '<a href="' + (ex.url || '#') + '" target="_blank" rel="noopener" class="event-dynamic-card" style="' + imgStyle + ';min-height:180px;">' +
+              '<div class="event-overlay"></div><div class="event-card-body" style="min-height:180px;">' +
+              (meta ? '<div class="event-meta">' + meta + '</div>' : '') +
+              '<div class="event-name">' + ex.name + '</div>' +
+              '<span class="event-cta">Book Now →</span>' +
+              '</div></a>';
+          }).join('') + '</div>';
+      })
+      .catch(function() {});
+  })();
 }
 
 // ── FAQ toggle ────────────────────────────────────────────────────────────────
