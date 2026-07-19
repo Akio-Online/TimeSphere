@@ -42,10 +42,12 @@ def get_or_create_product(name, description):
 def get_or_create_price(product_id, unit_amount, currency, interval, interval_count, nickname):
     prices = stripe.Price.list(product=product_id, active=True, limit=20)
     for price in prices['data']:
-        rec = price.get('recurring') or {}
-        if (price['unit_amount'] == unit_amount and
-                rec.get('interval') == interval and
-                rec.get('interval_count') == interval_count):
+        rec = getattr(price, 'recurring', None)
+        if not rec:
+            continue
+        if (getattr(price, 'unit_amount', None) == unit_amount and
+                getattr(rec, 'interval', None) == interval and
+                getattr(rec, 'interval_count', None) == interval_count):
             print(f"    Found existing price: {price['id']} — {nickname}")
             return price['id']
     p = stripe.Price.create(

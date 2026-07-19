@@ -14,16 +14,21 @@ except ImportError:
 PORT = int(os.environ.get("PORT", 8080))
 
 # ── Stripe price tier helpers ──────────────────────────────────────────────────
+_PRICE_PRO_MONTHLY  = 'price_1Tv1JKBjMZ2hkqTMfzHkMIhS'
+_PRICE_PRO_ANNUAL   = 'price_1Tv1JuBjMZ2hkqTMrKQjFYbX'
+_PRICE_ELITE_MONTHLY = 'price_1Tv1JvBjMZ2hkqTMHyaaUNgW'
+_PRICE_ELITE_ANNUAL  = 'price_1Tv1JwBjMZ2hkqTMxcM2z9M7'
+
 def _get_pro_prices():
     return [
-        os.environ.get('STRIPE_PRO_MONTHLY_PRICE_ID', ''),
-        os.environ.get('STRIPE_PRO_ANNUAL_PRICE_ID', ''),
+        os.environ.get('STRIPE_PRO_MONTHLY_PRICE_ID', _PRICE_PRO_MONTHLY),
+        os.environ.get('STRIPE_PRO_ANNUAL_PRICE_ID',  _PRICE_PRO_ANNUAL),
     ]
 
 def _get_elite_prices():
     return [
-        os.environ.get('STRIPE_ELITE_MONTHLY_PRICE_ID', ''),
-        os.environ.get('STRIPE_ELITE_ANNUAL_PRICE_ID', ''),
+        os.environ.get('STRIPE_ELITE_MONTHLY_PRICE_ID', _PRICE_ELITE_MONTHLY),
+        os.environ.get('STRIPE_ELITE_ANNUAL_PRICE_ID',  _PRICE_ELITE_ANNUAL),
     ]
 
 def _get_trial_days(price_id):
@@ -349,10 +354,10 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             config = {
                 'clerkPublishableKey': os.environ.get('CLERK_PUBLISHABLE_KEY', ''),
                 'stripe': {
-                    'proMonthly':    os.environ.get('STRIPE_PRO_MONTHLY_PRICE_ID', ''),
-                    'proAnnual':     os.environ.get('STRIPE_PRO_ANNUAL_PRICE_ID', ''),
-                    'eliteMonthly':  os.environ.get('STRIPE_ELITE_MONTHLY_PRICE_ID', ''),
-                    'eliteAnnual':   os.environ.get('STRIPE_ELITE_ANNUAL_PRICE_ID', ''),
+                    'proMonthly':    os.environ.get('STRIPE_PRO_MONTHLY_PRICE_ID',  _PRICE_PRO_MONTHLY),
+                    'proAnnual':     os.environ.get('STRIPE_PRO_ANNUAL_PRICE_ID',   _PRICE_PRO_ANNUAL),
+                    'eliteMonthly':  os.environ.get('STRIPE_ELITE_MONTHLY_PRICE_ID', _PRICE_ELITE_MONTHLY),
+                    'eliteAnnual':   os.environ.get('STRIPE_ELITE_ANNUAL_PRICE_ID',  _PRICE_ELITE_ANNUAL),
                 },
             }
             _json_response(self, config, cache_max_age=0)
