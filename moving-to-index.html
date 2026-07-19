@@ -268,13 +268,17 @@
   <!-- HEADER -->
   <header>
     <div class="container">
-      <nav>
+      <nav id="main-nav">
         <a href="/" class="logo">The <span>Time</span> Sphere</a>
-        <ul>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul id="nav-menu">
           <li><a href="/">World Clock</a></li>
           <li><a href="/moving-to/" class="nav-active">Moving To</a></li>
           <li><a href="/about">About</a></li>
           <li><a href="/contact">Contact</a></li>
+          <li><a href="/upgrade" class="nav-upgrade">Upgrade</a></li>
         </ul>
       </nav>
     </div>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MV8F5SJK');</script>
+  <!-- End Google Tag Manager -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome — The Time Sphere</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MV8F5SJK"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <header>
+    <div class="container">
+      <nav id="main-nav">
+        <a href="/" class="logo">The <span>Time</span> Sphere</a>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul id="nav-menu">
+          <li><a href="/">World Clock</a></li>
+          <li><a href="/moving-to/">Moving To</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/upgrade" class="nav-upgrade">Upgrade</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="success-hero">
+    <div class="container">
+      <div class="success-checkmark">✓</div>
+
+      <div id="tier-badge-wrap"></div>
+
+      <h1 id="success-heading">Welcome to<br><em id="success-tier-name">The Time Sphere</em></h1>
+      <p id="success-subhead" style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--text-mid);max-width:500px;margin:12px auto 0;line-height:1.7;">
+        Your subscription is active. Here's what you've unlocked.
+      </p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="success-features-grid" id="success-features-grid">
+      <!-- populated by JS -->
+    </div>
+
+    <div style="text-align:center;margin-bottom:80px;">
+      <div id="success-cta-area">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="/">World Clock</a>
+        <a href="/moving-to/">Moving To</a>
+        <a href="/upgrade">Upgrade</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/privacy">Privacy Policy</a>
+      </div>
+      <p>© 2026 The Time Sphere · thetimesphere.com · All rights reserved.</p>
+      <p style="margin-top: 6px; font-size: 0.72rem; opacity: 0.5;">The Time Sphere · A Division of Online Marketing Dynamics LLC · 732 S 6th St #6971, Las Vegas, NV 89101</p>
+    </div>
+  </footer>
+
+  <script>
+  var PRO_FEATURES = [
+    { icon: '🚫', label: 'Ad-free experience' },
+    { icon: '🌍', label: 'Unlimited Time Zone Converter' },
+    { icon: '📅', label: 'Meeting Planner (multi-city)' },
+    { icon: '⭐', label: 'Save favorite cities' },
+    { icon: '🌐', label: 'Unlimited World Clock cities' },
+    { icon: '🎯', label: 'Priority support' },
+  ];
+  var ELITE_FEATURES = [
+    { icon: '✈️', label: 'Charter Flight Finder' },
+    { icon: '🗺️', label: 'Executive Route Builder' },
+    { icon: '🤖', label: 'AI Venue &amp; Event Picks' },
+    { icon: '🌑', label: 'Sanctum Mode UI' },
+    { icon: '📞', label: 'Concierge onboarding call' },
+    { icon: '⚡', label: 'Early access features' },
+  ];
+
+  function renderSuccess(tier, email) {
+    var tierName = tier === 'elite' ? 'The Time Sphere Elite' : 'The Time Sphere Pro';
+    var badgeClass = tier === 'elite' ? 'tier-badge-elite' : 'tier-badge-pro';
+    var badgeText  = tier === 'elite' ? 'Elite Member' : 'Pro Member';
+    var features   = tier === 'elite' ? PRO_FEATURES.concat(ELITE_FEATURES) : PRO_FEATURES;
+
+    document.getElementById('success-tier-name').textContent = tierName;
+    document.getElementById('success-heading').innerHTML = 'Welcome to<br><em>' + tierName + '</em>';
+
+    var badgeWrap = document.getElementById('tier-badge-wrap');
+    badgeWrap.innerHTML = '<span class="account-tier-badge ' + badgeClass + '">' + badgeText + '</span>';
+
+    var grid = document.getElementById('success-features-grid');
+    grid.innerHTML = features.map(function(f) {
+      return '<div class="success-feature-card"><div class="icon">' + f.icon + '</div><div class="label">' + f.label + '</div></div>';
+    }).join('');
+
+    var ctaArea = document.getElementById('success-cta-area');
+    var emailNote = email ? '<p style="color:var(--text-mid);font-size:0.85rem;margin-bottom:20px;">Confirmation sent to <strong>' + email + '</strong></p>' : '';
+    ctaArea.innerHTML = emailNote +
+      '<a href="/account" class="btn" style="margin-right:16px;">Go to Dashboard</a>' +
+      '<a href="/" style="color:var(--text-mid);font-size:0.88rem;margin-left:8px;">Start Exploring →</a>';
+
+    // GTM conversion event
+    if (window.dataLayer) {
+      window.dataLayer.push({ event: 'subscription_started', tier: tier, email: email });
+    }
+  }
+
+  // Read session_id from URL
+  var params = new URLSearchParams(window.location.search);
+  var sessionId = params.get('session_id');
+
+  if (sessionId) {
+    fetch('/api/upgrade/verify?session_id=' + encodeURIComponent(sessionId))
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        renderSuccess(data.tier || 'pro', data.email || '');
+      })
+      .catch(function() {
+        renderSuccess('pro', '');
+      });
+  } else {
+    renderSuccess('pro', '');
+  }
+
+  // Nav hamburger
+  (function() {
+    var hamburger = document.getElementById('nav-hamburger');
+    var nav = document.getElementById('main-nav');
+    if (!hamburger || !nav) return;
+    hamburger.addEventListener('click', function() {
+      var isOpen = nav.classList.toggle('mobile-open');
+      hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+    document.addEventListener('click', function(e) {
+      if (nav.classList.contains('mobile-open') && !nav.contains(e.target)) {
+        nav.classList.remove('mobile-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

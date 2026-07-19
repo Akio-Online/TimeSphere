@@ -1957,3 +1957,45 @@ async function submitAgentForm(event) {
   } catch(e) {}
   return false;
 }
+
+// ── Hamburger Nav Toggle ────────────────────────────────────────────────────
+(function() {
+  'use strict';
+  const hamburger = document.getElementById('nav-hamburger');
+  const navMenu   = document.getElementById('nav-menu');
+  const nav       = document.getElementById('main-nav');
+  if (!hamburger || !nav) return;
+
+  hamburger.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const isOpen = nav.classList.toggle('mobile-open');
+    hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  document.addEventListener('click', function(e) {
+    if (nav.classList.contains('mobile-open') && !nav.contains(e.target)) {
+      nav.classList.remove('mobile-open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+  });
+
+  if (navMenu) {
+    navMenu.querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', function() {
+        nav.classList.remove('mobile-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      });
+    });
+  }
+})();
+
+// ── Upgrade gate stubs (overridden inline on time.html + moving-to.html) ────
+if (typeof window.showUpgradeGate === 'undefined') {
+  window.showUpgradeGate = function() {};
+}
+if (typeof window.closeUpgradeGate === 'undefined') {
+  window.closeUpgradeGate = function() {};
+}

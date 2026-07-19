@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MV8F5SJK');</script>
+  <!-- End Google Tag Manager -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account — The Time Sphere</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MV8F5SJK"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <header>
+    <div class="container">
+      <nav id="main-nav">
+        <a href="/" class="logo">The <span>Time</span> Sphere</a>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul id="nav-menu">
+          <li><a href="/">World Clock</a></li>
+          <li><a href="/moving-to/">Moving To</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/upgrade" class="nav-upgrade">Upgrade</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="account-hero">
+    <div class="container">
+      <h1>My Account</h1>
+    </div>
+  </section>
+
+  <div class="container">
+    <!-- Not signed in state -->
+    <div id="account-not-signed-in" class="account-not-signed-in" style="display:none;">
+      <div style="font-size:2.5rem;margin-bottom:20px;">🔒</div>
+      <h2>Sign In to Your Account</h2>
+      <p>Access your subscription, manage billing, and unlock your pro features.</p>
+      <div id="clerk-sign-in-mount"></div>
+      <p style="margin-top:24px;font-size:0.85rem;color:var(--text-dim);">
+        Don't have an account? <a href="/upgrade">Start a free trial →</a>
+      </p>
+    </div>
+
+    <!-- Signed in state -->
+    <div id="account-signed-in" class="account-grid" style="display:none;">
+      <!-- Sidebar -->
+      <aside class="account-sidebar">
+        <div id="account-tier-badge-wrap"></div>
+        <p id="account-email" class="account-email"></p>
+        <div id="clerk-user-button"></div>
+        <div class="account-sidebar-actions" id="account-actions" style="margin-top:20px;"></div>
+      </aside>
+
+      <!-- Main content -->
+      <main class="account-main">
+        <h2 id="account-features-heading">Your Features</h2>
+        <div class="account-features-grid" id="account-features-grid"></div>
+
+        <div id="account-upgrade-prompt" style="display:none;margin-top:16px;padding:24px;background:rgba(240,168,48,0.05);border:1px solid rgba(240,168,48,0.2);border-radius:12px;text-align:center;">
+          <p style="color:var(--text-mid);margin-bottom:16px;font-size:0.9rem;">You're on the Free plan. Upgrade to unlock ad-free, Meeting Planner, and more.</p>
+          <a href="/upgrade" class="btn">View Plans →</a>
+        </div>
+      </main>
+    </div>
+
+    <!-- Loading state -->
+    <div id="account-loading" style="text-align:center;padding:80px 20px;color:var(--text-dim);">
+      Loading your account…
+    </div>
+  </div>
+
+  <div style="padding-bottom:60px;"></div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="/">World Clock</a>
+        <a href="/moving-to/">Moving To</a>
+        <a href="/upgrade">Upgrade</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/privacy">Privacy Policy</a>
+      </div>
+      <p>© 2026 The Time Sphere · thetimesphere.com · All rights reserved.</p>
+      <p style="margin-top: 6px; font-size: 0.72rem; opacity: 0.5;">The Time Sphere · A Division of Online Marketing Dynamics LLC · 732 S 6th St #6971, Las Vegas, NV 89101</p>
+    </div>
+  </footer>
+
+  <script>
+  var FREE_FEATURES = [
+    { icon: '🕐', label: 'Live world clock', tier: 'free' },
+    { icon: '🏙️', label: 'City pages & guides', tier: 'free' },
+    { icon: '📦', label: 'Moving-To guides', tier: 'free' },
+    { icon: '✈️', label: 'Affiliate travel links', tier: 'free' },
+  ];
+  var PRO_FEATURES = [
+    { icon: '🚫', label: 'Ad-free experience', tier: 'pro' },
+    { icon: '🌍', label: 'Time Zone Converter', tier: 'pro' },
+    { icon: '📅', label: 'Meeting Planner', tier: 'pro' },
+    { icon: '⭐', label: 'Save favorite cities', tier: 'pro' },
+    { icon: '🌐', label: 'Unlimited World Clock', tier: 'pro' },
+    { icon: '🎯', label: 'Priority support', tier: 'pro' },
+  ];
+  var ELITE_FEATURES = [
+    { icon: '🛩️', label: 'Charter Flight Finder', tier: 'elite' },
+    { icon: '🗺️', label: 'Executive Route Builder', tier: 'elite' },
+    { icon: '🤖', label: 'AI Venue Recommendations', tier: 'elite' },
+    { icon: '🌑', label: 'Sanctum Mode UI', tier: 'elite' },
+    { icon: '📞', label: 'Concierge onboarding', tier: 'elite' },
+    { icon: '⚡', label: 'Early access features', tier: 'elite' },
+  ];
+
+  function tierRank(t) { return t === 'elite' ? 2 : t === 'pro' ? 1 : 0; }
+
+  function renderAccount(email, tier) {
+    document.getElementById('account-loading').style.display = 'none';
+    document.getElementById('account-signed-in').style.display = '';
+
+    var rank = tierRank(tier);
+
+    // Badge
+    var badgeClass = tier === 'elite' ? 'tier-badge-elite' : tier === 'pro' ? 'tier-badge-pro' : 'tier-badge-free';
+    var badgeText  = tier === 'elite' ? 'Elite Member' : tier === 'pro' ? 'Pro Member' : 'Free Plan';
+    document.getElementById('account-tier-badge-wrap').innerHTML =
+      '<span class="account-tier-badge ' + badgeClass + '">' + badgeText + '</span>';
+    document.getElementById('account-email').textContent = email;
+
+    // Features grid
+    var allFeatures = FREE_FEATURES.concat(rank >= 1 ? PRO_FEATURES : []).concat(rank >= 2 ? ELITE_FEATURES : []);
+    var lockedPro   = rank < 1 ? PRO_FEATURES   : [];
+    var lockedElite = rank < 2 ? ELITE_FEATURES : [];
+    var locked = lockedPro.concat(lockedElite);
+
+    var grid = document.getElementById('account-features-grid');
+    grid.innerHTML = allFeatures.map(function(f) {
+      return '<div class="account-feature-item"><span class="account-feature-icon">' + f.icon + '</span>' + f.label + '</div>';
+    }).join('') + locked.map(function(f) {
+      return '<div class="account-feature-item locked" title="Requires ' + (f.tier === 'elite' ? 'Elite' : 'Pro') + '"><span class="account-feature-icon">🔒</span>' + f.label + '</div>';
+    }).join('');
+
+    // Sidebar actions
+    var actions = document.getElementById('account-actions');
+    var btns = '';
+    if (rank > 0) {
+      btns += '<button class="account-sidebar-btn account-sidebar-btn-billing" onclick="openBillingPortal()">Manage Billing</button>';
+    }
+    if (rank === 0) {
+      btns += '<a href="/upgrade" class="account-sidebar-btn account-sidebar-btn-upgrade">Upgrade Plan</a>';
+      document.getElementById('account-upgrade-prompt').style.display = '';
+    } else if (rank === 1) {
+      btns += '<a href="/upgrade" class="account-sidebar-btn account-sidebar-btn-upgrade" style="background:linear-gradient(135deg,#003a4f,#0099cc);color:#fff;">Upgrade to Elite</a>';
+    }
+    actions.innerHTML = btns;
+    document.getElementById('account-features-heading').textContent =
+      rank === 0 ? 'Your Free Features' : rank === 1 ? 'Your Pro Features' : 'Your Elite Features';
+  }
+
+  function openBillingPortal() {
+    var email = document.getElementById('account-email').textContent;
+    if (!email) return;
+    fetch('/api/upgrade/portal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, returnUrl: window.location.href }),
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.url) window.location.href = data.url;
+      else alert(data.error || 'Unable to open billing portal.');
+    })
+    .catch(function() { alert('Network error. Please try again.'); });
+  }
+
+  // ── Clerk integration ──────────────────────────────────────────────────────
+  var clerkReady = false;
+
+  function initClerk(publishableKey) {
+    if (!publishableKey || clerkReady) return;
+    clerkReady = true;
+
+    var script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js';
+    script.dataset.clerkPublishableKey = publishableKey;
+    script.onload = function() {
+      var clerk = window.Clerk;
+      if (!clerk) {
+        showNotSignedIn();
+        return;
+      }
+      clerk.load().then(function() {
+        if (clerk.user) {
+          var email = (clerk.user.emailAddresses[0] || {}).emailAddress || '';
+          // Mount UserButton in sidebar
+          clerk.mountUserButton(document.getElementById('clerk-user-button'), {
+            afterSignOutUrl: '/',
+          });
+          // Check tier via Stripe
+          fetch('/api/upgrade/status?email=' + encodeURIComponent(email))
+            .then(function(r) { return r.json(); })
+            .then(function(data) { renderAccount(email, data.tier || 'free'); })
+            .catch(function() { renderAccount(email, 'free'); });
+        } else {
+          showNotSignedIn(clerk, publishableKey);
+        }
+      }).catch(function() { showNotSignedIn(); });
+    };
+    document.head.appendChild(script);
+  }
+
+  function showNotSignedIn(clerk, key) {
+    document.getElementById('account-loading').style.display = 'none';
+    document.getElementById('account-not-signed-in').style.display = '';
+    if (clerk) {
+      clerk.mountSignIn(document.getElementById('clerk-sign-in-mount'), {
+        afterSignInUrl: '/account',
+      });
+    }
+  }
+
+  // Load config and init Clerk
+  fetch('/api/config')
+    .then(function(r) { return r.json(); })
+    .then(function(cfg) {
+      if (cfg.clerkPublishableKey) {
+        initClerk(cfg.clerkPublishableKey);
+      } else {
+        // No Clerk configured — show a placeholder signed-in view for testing
+        document.getElementById('account-loading').style.display = 'none';
+        document.getElementById('account-not-signed-in').style.display = '';
+        document.getElementById('clerk-sign-in-mount').innerHTML =
+          '<p style="color:var(--text-dim);font-size:0.85rem;margin-top:12px;">Authentication not configured. Set CLERK_PUBLISHABLE_KEY in Railway to enable sign-in.</p>' +
+          '<p style="margin-top:16px;"><a href="/upgrade" class="btn">View Plans</a></p>';
+      }
+    })
+    .catch(function() {
+      document.getElementById('account-loading').style.display = 'none';
+      document.getElementById('account-not-signed-in').style.display = '';
+    });
+
+  // ── Nav hamburger ──────────────────────────────────────────────────────────
+  (function() {
+    var hamburger = document.getElementById('nav-hamburger');
+    var nav = document.getElementById('main-nav');
+    if (!hamburger || !nav) return;
+    hamburger.addEventListener('click', function() {
+      var isOpen = nav.classList.toggle('mobile-open');
+      hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+    document.addEventListener('click', function(e) {
+      if (nav.classList.contains('mobile-open') && !nav.contains(e.target)) {
+        nav.classList.remove('mobile-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+    });
+    document.getElementById('nav-menu').querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', function() {
+        nav.classList.remove('mobile-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      });
+    });
+  })();
+  </script>
+</body>
+</html>

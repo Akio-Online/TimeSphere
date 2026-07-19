@@ -65,13 +65,17 @@
   <!-- HEADER -->
   <header>
     <div class="container">
-      <nav>
+      <nav id="main-nav">
         <a href="/" class="logo">The <span>Time</span> Sphere</a>
-        <ul>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul id="nav-menu">
           <li><a href="/">World Clock</a></li>
-          <li><a href="/moving-to/houston" id="nav-moving-to">Moving To</a></li>
-          <li><a href="/about.html">About</a></li>
-          <li><a href="/contact.html">Contact</a></li>
+          <li><a href="/moving-to/" id="nav-moving-to" class="nav-active">Moving To</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/upgrade" class="nav-upgrade">Upgrade</a></li>
         </ul>
       </nav>
     </div>
@@ -889,6 +893,36 @@
     </div>
   </div>
 
+  <!-- UPGRADE GATE MODAL -->
+  <div id="upgrade-gate-backdrop">
+    <div id="upgrade-gate-modal">
+      <button class="upgrade-gate-close" onclick="closeUpgradeGate()">×</button>
+      <div class="upgrade-gate-icon">🔒</div>
+      <h3 class="upgrade-gate-title" id="upgrade-gate-title">Pro Feature</h3>
+      <p class="upgrade-gate-desc" id="upgrade-gate-desc">Upgrade to Pro to access this feature.</p>
+      <a class="upgrade-gate-cta" id="upgrade-gate-btn" href="/upgrade">Upgrade to Pro — $12/mo</a>
+      <br>
+      <button class="upgrade-gate-dismiss" onclick="closeUpgradeGate()">Maybe later</button>
+    </div>
+  </div>
+
   <script src="/app.js"></script>
+  <script>
+  function showUpgradeGate(title, desc, plan) {
+    plan = plan || 'pro';
+    var price = plan === 'elite' ? '$69/mo' : '$12/mo';
+    document.getElementById('upgrade-gate-title').textContent = (plan === 'elite' ? 'Elite' : 'Pro') + ' Feature';
+    document.getElementById('upgrade-gate-desc').textContent = desc || 'Upgrade to unlock this feature.';
+    var btn = document.getElementById('upgrade-gate-btn');
+    btn.textContent = 'Upgrade to ' + (plan === 'elite' ? 'Elite' : 'Pro') + ' — ' + price;
+    document.getElementById('upgrade-gate-backdrop').classList.add('open');
+  }
+  function closeUpgradeGate() {
+    document.getElementById('upgrade-gate-backdrop').classList.remove('open');
+  }
+  document.getElementById('upgrade-gate-backdrop').addEventListener('click', function(e) {
+    if (e.target === this) closeUpgradeGate();
+  });
+  </script>
 </body>
 </html>
