@@ -1755,7 +1755,10 @@ footer a:hover { color: var(--gold); }
 }
 
 .moving-cta-btn {
-  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px 8px 8px;
   background: rgba(240,168,48,0.12);
   border: 1px solid rgba(240,168,48,0.35);
   border-radius: 50px;
@@ -1768,6 +1771,14 @@ footer a:hover { color: var(--gold); }
   text-decoration: none;
   transition: background var(--transition), border-color var(--transition), color var(--transition);
   backdrop-filter: blur(8px);
+}
+.moving-cta-btn-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(240,168,48,0.3);
 }
 
 .moving-cta-btn:hover {
