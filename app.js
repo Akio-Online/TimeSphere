@@ -1623,7 +1623,7 @@ async function renderMovingPage() {
     const REST_PHOTOS = [
       'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80',
       'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=80',
-      'https://images.unsplash.com/photo-1552566626-52f8b828a9b4?w=400&q=80'
+      'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80'
     ];
     const genericRests = [
       { name: 'Fine Dining', desc: 'Upscale cuisine and elegant atmosphere' },
