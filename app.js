@@ -609,19 +609,19 @@ function renderCityPage() {
   if (reserveBtn) {
     const r = city.region;
     if (r === 'americas') {
-      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table — OpenTable';
+      reserveBtn.href = '#'; reserveBtn.textContent = 'Reserve a Table — OpenTable';
     } else if (r === 'europe') {
-      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table — TheFork';
+      reserveBtn.href = '#'; reserveBtn.textContent = 'Reserve a Table — TheFork';
     } else if (r === 'asia' && ['singapore','kuala-lumpur','bangkok','jakarta','manila','ho-chi-minh','hanoi'].includes(city.id)) {
-      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table — Eatigo';
+      reserveBtn.href = '#'; reserveBtn.textContent = 'Reserve a Table — Eatigo';
     } else if (r === 'asia' && ['mumbai','delhi','bangalore','karachi','lahore','tehran','baghdad','riyadh','kuwait-city','doha','abu-dhabi','muscat','beirut','amman'].includes(city.id)) {
-      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table — Zomato';
+      reserveBtn.href = '#'; reserveBtn.textContent = 'Reserve a Table — Zomato';
     } else if (r === 'asia') {
-      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table — Quandoo';
+      reserveBtn.href = '#'; reserveBtn.textContent = 'Reserve a Table — Quandoo';
     } else if (r === 'africa') {
-      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table — Zomato';
+      reserveBtn.href = '#'; reserveBtn.textContent = 'Reserve a Table — Zomato';
     } else {
-      reserveBtn.href = '#'; reserveBtn.textContent = '🍴 Reserve a Table';
+      reserveBtn.href = '#'; reserveBtn.textContent = 'Reserve a Table';
     }
   }
 
@@ -1309,7 +1309,7 @@ async function renderMovingPage() {
   setAttr('moving-back-link',  'href', `/time/${city.id}`);
   setAttr('explore-time-link', 'href', `/time/${city.id}`);
   setAttr('agent-apply-link',  'href',
-    `/contact.html?subject=${encodeURIComponent(`Real Estate Agent Advertising Inquiry - ${cityName}`)}`);
+    `/contact?subject=${encodeURIComponent(`Real Estate Agent Advertising Inquiry - ${cityName}`)}`);
 
   // ── Set data-city on all search forms ────────────────────────────────────
   document.querySelectorAll('.moving-search-form').forEach(f => {
