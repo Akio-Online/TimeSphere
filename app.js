@@ -1604,6 +1604,49 @@ async function renderMovingPage() {
   ];
   renderItems(todoEl, (cityData && cityData.todo && cityData.todo.length) ? cityData.todo : genericTodo);
 
+  // ── Top Restaurants (TripAdvisor affiliate via TravelPayouts Drive) ───────
+  const TA_GEO_IDS = {
+    'houston': 'g56003', 'new-york': 'g60763', 'los-angeles': 'g32655',
+    'chicago': 'g35805', 'phoenix': 'g31310', 'philadelphia': 'g60795',
+    'san-antonio': 'g60956', 'san-diego': 'g60750', 'dallas': 'g55711',
+    'seattle': 'g60878', 'denver': 'g33388', 'boston': 'g60745',
+    'miami': 'g34438', 'atlanta': 'g60898', 'portland': 'g52024'
+  };
+  const restCityNameEl = document.getElementById('moving-rest-city-name');
+  if (restCityNameEl) restCityNameEl.textContent = cityName;
+  const restGrid = document.getElementById('moving-rest-grid');
+  if (restGrid) {
+    const geoId = TA_GEO_IDS[city.id];
+    const taUrl = geoId
+      ? `https://www.tripadvisor.com/Restaurants-${geoId}-${cityName.replace(/\s+/g, '_')}.html`
+      : `https://www.tripadvisor.com/Search?q=restaurants+${encodeURIComponent(cityName)}`;
+    const REST_PHOTOS = [
+      'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80',
+      'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=80',
+      'https://images.unsplash.com/photo-1552566626-52f8b828a9b4?w=400&q=80'
+    ];
+    const genericRests = [
+      { name: 'Fine Dining', desc: 'Upscale cuisine and elegant atmosphere' },
+      { name: 'Local Favorites', desc: 'Neighborhood classics loved by residents' },
+      { name: 'Casual Eats', desc: 'Relaxed dining for everyday meals' }
+    ];
+    const baseRests = (cityData && cityData.restaurants && cityData.restaurants.length)
+      ? cityData.restaurants
+      : genericRests;
+    const restData = [...baseRests, ...genericRests].slice(0, 3);
+    const dlPush = `window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:'affiliate_click',affiliate_name:'tripadvisor',city:'${city.id}'})`;
+    restGrid.innerHTML = restData.map((r, i) => `
+      <a class="moving-rest-card" href="${taUrl}" target="_blank" rel="noopener" onclick="${dlPush}">
+        <img class="moving-rest-card-photo" src="${REST_PHOTOS[i]}" alt="${r.name}" loading="lazy" />
+        <div class="moving-rest-card-body">
+          <div class="moving-rest-card-name">${r.name}</div>
+          <div class="moving-rest-card-cuisine">${r.desc}</div>
+          <span class="moving-rest-card-btn">View on TripAdvisor →</span>
+        </div>
+      </a>
+    `).join('');
+  }
+
   // ── Quote modal: pre-fill city and subject ───────────────────────────────
   const quoteSubject = document.getElementById('quote-subject');
   if (quoteSubject) quoteSubject.value = `Moving Quote Request — ${cityName}`;

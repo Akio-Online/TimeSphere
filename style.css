@@ -3418,3 +3418,72 @@ footer a:hover { color: var(--gold); }
   text-transform: uppercase;
   align-self: flex-start;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   TOP RESTAURANTS — moving-to.html
+   ══════════════════════════════════════════════════════════════════ */
+.moving-rest-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.moving-rest-card {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(145deg, var(--bg2), var(--bg3));
+  border: 1px solid var(--card-border, var(--border));
+  border-radius: var(--radius);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.moving-rest-card:hover {
+  border-color: rgba(240,168,48,0.45);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+}
+.moving-rest-card-photo {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+}
+.moving-rest-card-body {
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.moving-rest-card-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.moving-rest-card-cuisine {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+  flex: 1;
+}
+.moving-rest-card-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 7px 16px;
+  background: linear-gradient(135deg, #c8860a, #f0a830);
+  color: #050810;
+  font-weight: 800;
+  font-size: 0.72rem;
+  border-radius: 50px;
+  letter-spacing: 0.04em;
+  align-self: flex-start;
+}
+@media (max-width: 768px) {
+  .moving-rest-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .moving-rest-grid { grid-template-columns: 1fr; }
+}
