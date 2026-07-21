@@ -612,7 +612,7 @@ function renderCityPage() {
       {
         category: 'RESTAURANT GUIDE',
         title: 'Best Restaurants in Miami',
-        excerpt: 'Wynwood, Brickell, South Beach — the restaurants defining Miami's food scene.',
+        excerpt: "Wynwood, Brickell, South Beach — the restaurants defining Miami's food scene.",
         url: 'https://www.tripadvisor.com/Restaurants-g34438-Miami_Florida.html',
         photo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80',
         label: 'Explore on TripAdvisor →'
@@ -626,7 +626,7 @@ function renderCityPage() {
         label: 'Explore on TripAdvisor →'
       }
     ],
-    'new-york-city': [
+    'new-york': [
       {
         category: 'VACATION GUIDE',
         title: 'The Best Time to Visit New York City',
