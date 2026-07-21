@@ -319,6 +319,19 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             serve_html(self, 'account.html')
             return True
 
+        # ── Blog routes ───────────────────────────────────────────────────────
+        if path in ('/blog', '/blog/'):
+            serve_html(self, 'blog.html')
+            return True
+        m_blog = re.match(r'^/blog/([a-z0-9][a-z0-9-]*)$', path)
+        if m_blog:
+            article = 'blog/' + m_blog.group(1) + '.html'
+            if os.path.exists(article):
+                serve_html(self, article)
+            else:
+                self.send_error(404)
+            return True
+
         # ── Static clean routes ───────────────────────────────────────────────
         if path == '/about':
             serve_html(self, 'about.html')
