@@ -1631,7 +1631,11 @@ footer a:hover { color: var(--gold); }
   display: flex;
   flex-direction: column;
   gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--transition), transform .15s;
 }
+.blog-post-card:hover { border-color: var(--gold); transform: translateY(-2px); }
 .blog-post-photo {
   width: calc(100% + 56px);
   margin: -28px -28px 4px;

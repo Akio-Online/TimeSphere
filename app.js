@@ -545,12 +545,142 @@ function renderCityPage() {
   // Blog section titles
   const blogSectionTitle = document.getElementById('blog-section-title');
   if (blogSectionTitle) blogSectionTitle.textContent = `${city.name} Travel Journal`;
-  const blogTitle1 = document.getElementById('blog-title-1');
-  if (blogTitle1) blogTitle1.textContent = `Best Time to Visit ${city.name}`;
-  const blogTitle2 = document.getElementById('blog-title-2');
-  if (blogTitle2) blogTitle2.textContent = `Where to Eat in ${city.name}`;
-  const blogTitle3 = document.getElementById('blog-title-3');
-  if (blogTitle3) blogTitle3.textContent = `Top Attractions in ${city.name}`;
+
+  // City-specific blog card data
+  const BLOG_CARDS = {
+    'houston': [
+      {
+        category: 'MOVING GUIDE',
+        title: 'The Complete Guide to Moving to Houston in 2026',
+        excerpt: 'Neighborhoods, cost of living, job market, and everything nobody tells you before the move.',
+        url: '/blog/moving-to-houston-guide',
+        photo: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80',
+        label: 'Read Guide →'
+      },
+      {
+        category: 'RESTAURANT GUIDE',
+        title: 'Best Restaurants in Houston by Neighborhood',
+        excerpt: 'From Montrose to The Heights — the definitive dining guide for new Houston residents.',
+        url: 'https://www.tripadvisor.com/Restaurants-g56003-Houston_Texas.html',
+        photo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80',
+        label: 'Explore on TripAdvisor →'
+      },
+      {
+        category: 'THINGS TO DO',
+        title: 'Top Attractions in Houston',
+        excerpt: 'Museums, Space Center, Hermann Park, and the experiences that define this city.',
+        url: 'https://www.tripadvisor.com/Attractions-g56003-Activities-Houston_Texas.html',
+        photo: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=600&q=80',
+        label: 'Explore on TripAdvisor →'
+      }
+    ],
+    'austin': [
+      {
+        category: 'MOVING GUIDE',
+        title: 'Moving to Austin in 2026: What Nobody Tells You',
+        excerpt: 'Cost of living, neighborhoods, the tech scene, and what life actually looks like after the move.',
+        url: '/blog/moving-to-austin-guide',
+        photo: 'https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=600&q=80',
+        label: 'Read Guide →'
+      },
+      {
+        category: 'RESTAURANT GUIDE',
+        title: 'Best Restaurants in Austin',
+        excerpt: 'From East 6th BBQ joints to South Congress bistros — the Austin dining guide.',
+        url: 'https://www.tripadvisor.com/Restaurants-g30196-Austin_Texas.html',
+        photo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80',
+        label: 'Explore on TripAdvisor →'
+      },
+      {
+        category: 'THINGS TO DO',
+        title: 'Top Attractions in Austin',
+        excerpt: 'Live music, Barton Springs, Sixth Street, and what keeps people coming back.',
+        url: 'https://www.tripadvisor.com/Attractions-g30196-Activities-Austin_Texas.html',
+        photo: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=600&q=80',
+        label: 'Explore on TripAdvisor →'
+      }
+    ],
+    'miami': [
+      {
+        category: 'MOVING GUIDE',
+        title: 'Moving to Miami in 2026: The Complete Guide',
+        excerpt: 'Neighborhoods, humidity, no state income tax, and everything to know before you relocate.',
+        url: '/blog/moving-to-miami-guide',
+        photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
+        label: 'Read Guide →'
+      },
+      {
+        category: 'RESTAURANT GUIDE',
+        title: 'Best Restaurants in Miami',
+        excerpt: 'Wynwood, Brickell, South Beach — the restaurants defining Miami's food scene.',
+        url: 'https://www.tripadvisor.com/Restaurants-g34438-Miami_Florida.html',
+        photo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80',
+        label: 'Explore on TripAdvisor →'
+      },
+      {
+        category: 'THINGS TO DO',
+        title: 'Top Attractions in Miami',
+        excerpt: 'Art Basel, the Everglades, South Beach, and the best of Miami beyond the beach.',
+        url: 'https://www.tripadvisor.com/Attractions-g34438-Activities-Miami_Florida.html',
+        photo: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=600&q=80',
+        label: 'Explore on TripAdvisor →'
+      }
+    ],
+    'new-york-city': [
+      {
+        category: 'VACATION GUIDE',
+        title: 'The Best Time to Visit New York City',
+        excerpt: 'Season-by-season breakdown of weather, crowds, costs, and what makes each time of year worth it.',
+        url: '/blog/best-time-to-visit-new-york',
+        photo: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&q=80',
+        label: 'Read Guide →'
+      },
+      {
+        category: 'RESTAURANT GUIDE',
+        title: 'Best Restaurants in New York City',
+        excerpt: 'From dollar-slice pizza to Michelin-starred tasting menus — the definitive NYC dining guide.',
+        url: 'https://www.tripadvisor.com/Restaurants-g60763-New_York_City_New_York.html',
+        photo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80',
+        label: 'Explore on TripAdvisor →'
+      },
+      {
+        category: 'THINGS TO DO',
+        title: 'Top Attractions in New York City',
+        excerpt: 'Central Park, the Met, Brooklyn Bridge, and the boroughs beyond Manhattan.',
+        url: 'https://www.tripadvisor.com/Attractions-g60763-Activities-New_York_City_New_York.html',
+        photo: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=600&q=80',
+        label: 'Explore on TripAdvisor →'
+      }
+    ]
+  };
+
+  // Determine city key for BLOG_CARDS lookup
+  const cityKey = city.slug || city.name.toLowerCase().replace(/\s+/g, '-');
+  const cityCards = BLOG_CARDS[cityKey] || null;
+
+  // Update blog cards: use city-specific data if available, else generic titles
+  for (let i = 1; i <= 3; i++) {
+    const card = document.getElementById('blog-card-' + i);
+    const typeEl = document.getElementById('blog-type-' + i);
+    const titleEl = document.getElementById('blog-title-' + i);
+    const excerptEl = document.getElementById('blog-excerpt-' + i);
+    const dateEl = document.getElementById('blog-date-' + i);
+    const photoEl = document.getElementById('blog-photo-' + i);
+    const data = cityCards ? cityCards[i - 1] : null;
+    if (data) {
+      if (card) card.href = data.url;
+      if (typeEl) typeEl.textContent = data.category;
+      if (titleEl) titleEl.textContent = data.title;
+      if (excerptEl) excerptEl.textContent = data.excerpt;
+      if (dateEl) dateEl.textContent = data.label;
+      if (photoEl) photoEl.style.backgroundImage = "url('" + data.photo + "')";
+    } else {
+      const genericTitles = ['Best Time to Visit ' + city.name, 'Where to Eat in ' + city.name, 'Top Attractions in ' + city.name];
+      if (titleEl) titleEl.textContent = genericTitles[i - 1];
+      if (card) card.href = 'https://www.tripadvisor.com/Search?q=' + encodeURIComponent(city.name);
+      if (dateEl) dateEl.textContent = 'Explore on TripAdvisor →';
+    }
+  }
 
   // Travel card heading
   const travelHeading = document.getElementById('travel-heading');
