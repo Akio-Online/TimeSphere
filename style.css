@@ -2431,6 +2431,7 @@ footer a:hover { color: var(--gold); }
   text-align: center;
   border-left: 3px solid #f0a830;
   transition: filter 0.18s;
+  min-width: 0;
 }
 .snapshot-inline-item:hover { filter: brightness(1.12); }
 .snapshot-inline-item:nth-child(1) { background: linear-gradient(135deg, #1a2a1a, #2a3d2a); }
@@ -2448,7 +2449,7 @@ footer a:hover { color: var(--gold); }
   flex-shrink: 0;
 }
 
-.snapshot-inline-body { display: flex; flex-direction: column; gap: 2px; align-items: center; }
+.snapshot-inline-body { display: flex; flex-direction: column; gap: 2px; align-items: center; min-width: 0; max-width: 100%; }
 
 .snapshot-inline-label {
   font-size: 0.64rem;
@@ -2471,6 +2472,9 @@ footer a:hover { color: var(--gold); }
   font-size: 0.6rem;
   color: var(--text-dim);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 @media (max-width: 1024px) {
