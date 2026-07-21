@@ -46,62 +46,114 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1746427124448734"
        crossorigin="anonymous"></script>
   <style>
+    /* ── Blog index hero banner ── */
+    .blog-hero-banner {
+      background: linear-gradient(135deg, #050810 0%, #0a1020 60%, #0d1428 100%);
+      border-bottom: 1px solid rgba(240,168,48,0.18);
+      padding: 64px 24px 56px;
+      text-align: center;
+    }
+    .blog-hero-eyebrow {
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #f0a830;
+      margin-bottom: 16px;
+    }
+    .blog-hero-banner h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.9rem, 5vw, 3.2rem);
+      color: #fff;
+      margin-bottom: 16px;
+      line-height: 1.18;
+    }
+    .blog-hero-banner h1 em { color: #f0a830; font-style: italic; }
+    .blog-hero-sub {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.58);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.65;
+    }
+
+    /* ── Blog index card grid ── */
     .blog-index-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
-      margin: 48px 0;
+      gap: 24px;
+      margin: 48px 0 56px;
     }
     .blog-index-card {
       background: linear-gradient(145deg, var(--bg2), var(--bg3));
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 28px;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      transition: border-color var(--transition), box-shadow var(--transition);
+      text-decoration: none;
+      color: inherit;
+      transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
     }
     .blog-index-card:hover {
-      border-color: rgba(240,168,48,0.4);
+      border-color: rgba(240,168,48,0.45);
       box-shadow: var(--glow-gold);
+      transform: translateY(-2px);
     }
-    .blog-index-card__tag {
-      font-size: 0.63rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold);
+    .blog-card-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      border-radius: 0;
     }
-    .blog-index-card__title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.12rem;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.35;
-    }
-    .blog-index-card__date {
-      font-size: 0.72rem;
-      color: var(--gold-deep, var(--text-dim));
-      opacity: 0.8;
-    }
-    .blog-index-card__excerpt {
-      font-size: 0.84rem;
-      color: var(--text-dim);
-      line-height: 1.65;
+    .blog-card-body {
+      padding: 20px 22px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
       flex: 1;
     }
-    .blog-index-card__link {
+    .blog-card-tag {
+      font-size: 0.61rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #f0a830;
+      font-weight: 700;
+    }
+    .blog-card-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.06rem;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text);
+    }
+    .blog-card-meta {
+      display: flex;
+      gap: 14px;
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      opacity: 0.65;
+    }
+    .blog-card-excerpt {
+      font-size: 0.83rem;
+      line-height: 1.66;
+      color: var(--text-dim);
+      flex: 1;
+    }
+    .blog-card-cta {
       display: inline-block;
       font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--cyan, #0099cc);
-      text-decoration: none;
+      font-weight: 700;
+      color: #f0a830;
       margin-top: 6px;
-      transition: color var(--transition);
+      letter-spacing: 0.02em;
+      transition: opacity 0.15s;
     }
-    .blog-index-card__link:hover { color: var(--gold); }
+    .blog-index-card:hover .blog-card-cta { opacity: 0.75; }
+
     @media (max-width: 900px) { .blog-index-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 600px) { .blog-index-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 580px) { .blog-index-grid { grid-template-columns: 1fr; } .blog-card-img { height: 200px; } }
   </style>
 </head>
 <body class="aurora-bg">
@@ -133,61 +185,105 @@
     <div class="ad-slot ad-top">Advertisement</div>
   </div>
 
-  <section class="page-hero container">
-    <h1>The Time Sphere <span class="text-gold">Travel Blog</span></h1>
-    <p>City relocation guides, time zone strategies, and destination deep-dives for the globally minded.</p>
-  </section>
+  <!-- HERO BANNER -->
+  <div class="blog-hero-banner">
+    <span class="blog-hero-eyebrow">The Time Sphere</span>
+    <h1>Travel <em>Journal</em></h1>
+    <p class="blog-hero-sub">Destination guides, moving tips, and time zone intelligence for the modern traveler.</p>
+  </div>
 
   <div class="container">
     <div class="blog-index-grid">
 
-      <div class="blog-index-card">
-        <span class="blog-index-card__tag">Relocation · Houston</span>
-        <div class="blog-index-card__title">The Complete Guide to Moving to Houston in 2026</div>
-        <div class="blog-index-card__date">July 15, 2026</div>
-        <p class="blog-index-card__excerpt">Houston offers no state income tax, affordable housing, and a thriving energy and tech job market — but the summer heat and sprawling layout require real preparation before you move.</p>
-        <a href="/blog/moving-to-houston-guide" class="blog-index-card__link">Read More →</a>
-      </div>
+      <!-- 1. Houston -->
+      <a href="/blog/moving-to-houston-guide" class="blog-index-card">
+        <img class="blog-card-img"
+             src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80"
+             alt="Houston skyline"
+             loading="lazy" />
+        <div class="blog-card-body">
+          <span class="blog-card-tag">Relocation · Houston</span>
+          <div class="blog-card-title">The Complete Guide to Moving to Houston in 2026</div>
+          <div class="blog-card-meta"><span>July 15, 2026</span><span>7 min read</span></div>
+          <p class="blog-card-excerpt">Houston offers no state income tax, affordable housing, and a thriving job market — but the summer heat and sprawling layout demand real preparation before you sign a lease.</p>
+          <span class="blog-card-cta">Read Article →</span>
+        </div>
+      </a>
 
-      <div class="blog-index-card">
-        <span class="blog-index-card__tag">Travel · New York City</span>
-        <div class="blog-index-card__title">Best Time to Visit New York City: A Month-by-Month Guide</div>
-        <div class="blog-index-card__date">July 10, 2026</div>
-        <p class="blog-index-card__excerpt">New York rewards every season differently — rooftop bars in summer, foliage in fall, holiday magic in winter. Knowing when to go can save you hundreds and spare you the worst crowds.</p>
-        <a href="/blog/best-time-to-visit-new-york" class="blog-index-card__link">Read More →</a>
-      </div>
+      <!-- 2. New York -->
+      <a href="/blog/best-time-to-visit-new-york" class="blog-index-card">
+        <img class="blog-card-img"
+             src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&q=80"
+             alt="New York City skyline"
+             loading="lazy" />
+        <div class="blog-card-body">
+          <span class="blog-card-tag">Travel · New York City</span>
+          <div class="blog-card-title">Best Time to Visit New York City: A Month-by-Month Guide</div>
+          <div class="blog-card-meta"><span>July 10, 2026</span><span>6 min read</span></div>
+          <p class="blog-card-excerpt">New York rewards every season differently — rooftop bars in summer, foliage in fall, holiday magic in winter. Timing your visit saves money and saves your sanity.</p>
+          <span class="blog-card-cta">Read Article →</span>
+        </div>
+      </a>
 
-      <div class="blog-index-card">
-        <span class="blog-index-card__tag">Relocation · Austin</span>
-        <div class="blog-index-card__title">Moving to Austin in 2026: What Nobody Tells You</div>
-        <div class="blog-index-card__date">July 8, 2026</div>
-        <p class="blog-index-card__excerpt">Austin's booming tech scene and live music culture make it one of America's most desirable cities — but rapid growth has changed the playbook on affordability, traffic, and neighborhood feel.</p>
-        <a href="/blog/moving-to-austin-guide" class="blog-index-card__link">Read More →</a>
-      </div>
+      <!-- 3. Austin -->
+      <a href="/blog/moving-to-austin-guide" class="blog-index-card">
+        <img class="blog-card-img"
+             src="https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=800&q=80"
+             alt="Austin cityscape"
+             loading="lazy" />
+        <div class="blog-card-body">
+          <span class="blog-card-tag">Relocation · Austin</span>
+          <div class="blog-card-title">Moving to Austin in 2026: What Nobody Tells You</div>
+          <div class="blog-card-meta"><span>July 8, 2026</span><span>7 min read</span></div>
+          <p class="blog-card-excerpt">Austin's booming tech scene and live music culture make it one of America's most desirable cities — but rapid growth has changed the playbook on affordability and traffic.</p>
+          <span class="blog-card-cta">Read Article →</span>
+        </div>
+      </a>
 
-      <div class="blog-index-card">
-        <span class="blog-index-card__tag">Remote Work · Time Zones</span>
-        <div class="blog-index-card__title">How to Manage World Time Zones as a Remote Worker</div>
-        <div class="blog-index-card__date">July 5, 2026</div>
-        <p class="blog-index-card__excerpt">Scheduling across continents is the invisible tax of remote work. Master the right tools and overlap windows and you can collaborate seamlessly from anywhere on Earth.</p>
-        <a href="/blog/world-time-zones-for-remote-workers" class="blog-index-card__link">Read More →</a>
-      </div>
+      <!-- 4. Remote Work Time Zones -->
+      <a href="/blog/world-time-zones-for-remote-workers" class="blog-index-card">
+        <img class="blog-card-img"
+             src="https://images.unsplash.com/photo-1587560699334-cc4ff634909a?w=800&q=80"
+             alt="Person working remotely with world map"
+             loading="lazy" />
+        <div class="blog-card-body">
+          <span class="blog-card-tag">Remote Work · Time Zones</span>
+          <div class="blog-card-title">How to Manage World Time Zones as a Remote Worker</div>
+          <div class="blog-card-meta"><span>July 5, 2026</span><span>6 min read</span></div>
+          <p class="blog-card-excerpt">Scheduling across continents is the invisible tax of remote work. Master the right overlap windows and async strategies and you can collaborate from anywhere on Earth.</p>
+          <span class="blog-card-cta">Read Article →</span>
+        </div>
+      </a>
 
-      <div class="blog-index-card">
-        <span class="blog-index-card__tag">Relocation · Miami</span>
-        <div class="blog-index-card__title">Moving to Miami: Neighborhoods, Cost of Living &amp; What to Expect</div>
-        <div class="blog-index-card__date">July 1, 2026</div>
-        <p class="blog-index-card__excerpt">Miami delivers year-round sunshine, a vibrant cultural scene, and no state income tax — but rising costs, humidity, and hurricane season are factors every new resident must plan for.</p>
-        <a href="/blog/moving-to-miami-guide" class="blog-index-card__link">Read More →</a>
-      </div>
+      <!-- 5. Miami -->
+      <a href="/blog/moving-to-miami-guide" class="blog-index-card">
+        <img class="blog-card-img"
+             src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80"
+             alt="Miami beach aerial view"
+             loading="lazy" />
+        <div class="blog-card-body">
+          <span class="blog-card-tag">Relocation · Miami</span>
+          <div class="blog-card-title">Moving to Miami: Neighborhoods, Cost of Living &amp; What to Expect</div>
+          <div class="blog-card-meta"><span>July 1, 2026</span><span>7 min read</span></div>
+          <p class="blog-card-excerpt">Miami delivers year-round sunshine and no state income tax — but rising costs, humidity, and hurricane season are factors every new resident must plan for seriously.</p>
+          <span class="blog-card-cta">Read Article →</span>
+        </div>
+      </a>
 
-      <div class="blog-index-card">
-        <span class="blog-index-card__tag">Digital Nomad · Global</span>
-        <div class="blog-index-card__title">The 10 Best Cities for Digital Nomads in 2026</div>
-        <div class="blog-index-card__date">June 28, 2026</div>
-        <p class="blog-index-card__excerpt">Whether you want beach vibes, mountain air, or pulsing city energy, the global nomad lifestyle has never offered more viable options — here are the top 10 for 2026.</p>
-        <a href="/blog/best-cities-for-digital-nomads-2026" class="blog-index-card__link">Read More →</a>
-      </div>
+      <!-- 6. Digital Nomads -->
+      <a href="/blog/best-cities-for-digital-nomads-2026" class="blog-index-card">
+        <img class="blog-card-img"
+             src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=80"
+             alt="Coworking space digital nomads"
+             loading="lazy" />
+        <div class="blog-card-body">
+          <span class="blog-card-tag">Digital Nomad · Global</span>
+          <div class="blog-card-title">The 10 Best Cities for Digital Nomads in 2026</div>
+          <div class="blog-card-meta"><span>June 28, 2026</span><span>8 min read</span></div>
+          <p class="blog-card-excerpt">Whether you want beach vibes, mountain air, or pulsing city energy, the global nomad lifestyle has never offered more viable options — here are the top 10 for 2026.</p>
+          <span class="blog-card-cta">Read Article →</span>
+        </div>
+      </a>
 
     </div>
   </div>
