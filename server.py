@@ -71,6 +71,13 @@ def generate_sitemap():
         ('/about', '0.5', 'monthly'),
         ('/contact', '0.5', 'monthly'),
         ('/privacy', '0.3', 'monthly'),
+        ('/blog', '0.7', 'weekly'),
+        ('/blog/moving-to-houston-guide', '0.7', 'weekly'),
+        ('/blog/best-time-to-visit-new-york', '0.7', 'weekly'),
+        ('/blog/moving-to-austin-guide', '0.7', 'weekly'),
+        ('/blog/world-time-zones-for-remote-workers', '0.7', 'weekly'),
+        ('/blog/moving-to-miami-guide', '0.7', 'weekly'),
+        ('/blog/best-cities-for-digital-nomads-2026', '0.7', 'weekly'),
     ]
     for path, priority, freq in static_pages:
         urls.append(f"""  <url>
