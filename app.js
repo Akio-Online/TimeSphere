@@ -952,7 +952,7 @@ const CITY_IMAGES = {
   'vientiane':       'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1600&q=80',
   // Major US cities
   'houston':         'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80',
-  'miami':           'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80',
+  'miami':           'https://images.unsplash.com/photo-1589083130544-0d6a2926e519?w=1600&q=80',
   'seattle':         'https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=1600&q=80',
   'denver':          'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1600&q=80',
   'phoenix':         'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80',
@@ -1031,7 +1031,7 @@ const CITY_ARTICLE_CARDS = {
     title: 'Moving to Miami: Neighborhoods, Cost of Living & What to Expect',
     excerpt: 'Year-round sunshine, no state income tax — but rising costs and hurricane season require planning.',
     url: '/blog/moving-to-miami-guide',
-    photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
+    photo: 'https://images.unsplash.com/photo-1589083130544-0d6a2926e519?w=600&q=80',
     label: 'Read Guide →'
   },
   'new-york': {
