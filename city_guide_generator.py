@@ -81,7 +81,7 @@ MOVING_TO_CITIES = {'houston', 'austin', 'miami', 'new-york'}
 # ─── Curated Unsplash photo IDs (static, no source.unsplash.com) ───────────────
 CITY_PHOTO_IDS = {
     'houston':     {'hero':'photo-1600596542815-ffad4c1539a9','neighborhood':'photo-1558618666-fcd25c85cd64','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1519331379826-f10be5486c6f'},
-    'new-york':    {'hero':'photo-1496442226666-8d4d0e62e6e9','neighborhood':'photo-1534430480872-3498386e7856','food':'photo-1414235077428-338989a2e8c0','events':'photo-1499092346302-b8d7adcb2ac5','outdoors':'photo-1534430480872-3498386e7856'},
+    'new-york':    {'hero':'photo-1496442226666-8d4d0e62e6e9','neighborhood':'photo-1534430480872-3498386e7856','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1534430480872-3498386e7856'},
     'chicago':     {'hero':'photo-1494522855154-9297ac14b55f','neighborhood':'photo-1477959858617-67f85cf4f1df','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1507525428034-b723cf961d3e'},
     'los-angeles': {'hero':'photo-1444723121867-7a241cacace9','neighborhood':'photo-1510519138101-570d1dca3d66','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1501179691627-eeaa65ea017c'},
     'miami':       {'hero':'photo-1589083130544-0d6a2926e519','neighborhood':'photo-1535498730771-e735b998cd64','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1507525428034-b723cf961d3e'},
