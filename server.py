@@ -331,7 +331,10 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
 
         # ── Blog routes ───────────────────────────────────────────────────────
         if path in ('/blog', '/blog/'):
-            serve_html(self, 'blog.html')
+            self.send_response(301)
+            self.send_header('Location', '/')
+            self.send_header('Content-Length', '0')
+            self.end_headers()
             return True
         m_blog = re.match(r'^/blog/([a-z0-9][a-z0-9.-]*)$', path)
         if m_blog:
