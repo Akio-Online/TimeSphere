@@ -78,6 +78,16 @@ def generate_sitemap():
         ('/blog/world-time-zones-for-remote-workers', '0.7', 'weekly'),
         ('/blog/moving-to-miami-guide', '0.7', 'weekly'),
         ('/blog/best-cities-for-digital-nomads-2026', '0.7', 'weekly'),
+        ('/blog/houston-july-2026', '0.7', 'weekly'),
+        ('/blog/chicago-july-2026', '0.7', 'weekly'),
+        ('/blog/new-york-july-2026', '0.7', 'weekly'),
+        ('/blog/los-angeles-july-2026', '0.7', 'weekly'),
+        ('/blog/miami-july-2026', '0.7', 'weekly'),
+        ('/blog/austin-july-2026', '0.7', 'weekly'),
+        ('/blog/denver-july-2026', '0.7', 'weekly'),
+        ('/blog/seattle-july-2026', '0.7', 'weekly'),
+        ('/blog/atlanta-july-2026', '0.7', 'weekly'),
+        ('/blog/nashville-july-2026', '0.7', 'weekly'),
     ]
     for path, priority, freq in static_pages:
         urls.append(f"""  <url>
