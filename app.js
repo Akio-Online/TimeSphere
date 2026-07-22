@@ -546,140 +546,81 @@ function renderCityPage() {
   const blogSectionTitle = document.getElementById('blog-section-title');
   if (blogSectionTitle) blogSectionTitle.textContent = `${city.name} Travel Journal`;
 
-  // City-specific blog card data
-  const BLOG_CARDS = {
-    'houston': [
-      {
-        category: 'MOVING GUIDE',
-        title: 'The Complete Guide to Moving to Houston in 2026',
-        excerpt: 'Neighborhoods, cost of living, job market, and everything nobody tells you before the move.',
-        url: '/blog/moving-to-houston-guide',
-        photo: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80',
-        label: 'Read Guide →'
-      },
-      {
-        category: 'RESTAURANT GUIDE',
-        title: 'Best Restaurants in Houston by Neighborhood',
-        excerpt: 'From Montrose to The Heights — the definitive dining guide for new Houston residents.',
-        url: 'https://www.tripadvisor.com/Restaurants-g56003-Houston_Texas.html',
-        photo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80',
-        label: 'Explore on TripAdvisor →'
-      },
-      {
-        category: 'THINGS TO DO',
-        title: 'Top Attractions in Houston',
-        excerpt: 'Museums, Space Center, Hermann Park, and the experiences that define this city.',
-        url: 'https://www.tripadvisor.com/Attractions-g56003-Activities-Houston_Texas.html',
-        photo: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=600&q=80',
-        label: 'Explore on TripAdvisor →'
-      }
-    ],
-    'austin': [
-      {
-        category: 'MOVING GUIDE',
-        title: 'Moving to Austin in 2026: What Nobody Tells You',
-        excerpt: 'Cost of living, neighborhoods, the tech scene, and what life actually looks like after the move.',
-        url: '/blog/moving-to-austin-guide',
-        photo: 'https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=600&q=80',
-        label: 'Read Guide →'
-      },
-      {
-        category: 'RESTAURANT GUIDE',
-        title: 'Best Restaurants in Austin',
-        excerpt: 'From East 6th BBQ joints to South Congress bistros — the Austin dining guide.',
-        url: 'https://www.tripadvisor.com/Restaurants-g30196-Austin_Texas.html',
-        photo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80',
-        label: 'Explore on TripAdvisor →'
-      },
-      {
-        category: 'THINGS TO DO',
-        title: 'Top Attractions in Austin',
-        excerpt: 'Live music, Barton Springs, Sixth Street, and what keeps people coming back.',
-        url: 'https://www.tripadvisor.com/Attractions-g30196-Activities-Austin_Texas.html',
-        photo: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=600&q=80',
-        label: 'Explore on TripAdvisor →'
-      }
-    ],
-    'miami': [
-      {
-        category: 'MOVING GUIDE',
-        title: 'Moving to Miami in 2026: The Complete Guide',
-        excerpt: 'Neighborhoods, humidity, no state income tax, and everything to know before you relocate.',
-        url: '/blog/moving-to-miami-guide',
-        photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
-        label: 'Read Guide →'
-      },
-      {
-        category: 'RESTAURANT GUIDE',
-        title: 'Best Restaurants in Miami',
-        excerpt: "Wynwood, Brickell, South Beach — the restaurants defining Miami's food scene.",
-        url: 'https://www.tripadvisor.com/Restaurants-g34438-Miami_Florida.html',
-        photo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80',
-        label: 'Explore on TripAdvisor →'
-      },
-      {
-        category: 'THINGS TO DO',
-        title: 'Top Attractions in Miami',
-        excerpt: 'Art Basel, the Everglades, South Beach, and the best of Miami beyond the beach.',
-        url: 'https://www.tripadvisor.com/Attractions-g34438-Activities-Miami_Florida.html',
-        photo: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=600&q=80',
-        label: 'Explore on TripAdvisor →'
-      }
-    ],
-    'new-york': [
-      {
-        category: 'VACATION GUIDE',
-        title: 'The Best Time to Visit New York City',
-        excerpt: 'Season-by-season breakdown of weather, crowds, costs, and what makes each time of year worth it.',
-        url: '/blog/best-time-to-visit-new-york',
-        photo: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&q=80',
-        label: 'Read Guide →'
-      },
-      {
-        category: 'RESTAURANT GUIDE',
-        title: 'Best Restaurants in New York City',
-        excerpt: 'From dollar-slice pizza to Michelin-starred tasting menus — the definitive NYC dining guide.',
-        url: 'https://www.tripadvisor.com/Restaurants-g60763-New_York_City_New_York.html',
-        photo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80',
-        label: 'Explore on TripAdvisor →'
-      },
-      {
-        category: 'THINGS TO DO',
-        title: 'Top Attractions in New York City',
-        excerpt: 'Central Park, the Met, Brooklyn Bridge, and the boroughs beyond Manhattan.',
-        url: 'https://www.tripadvisor.com/Attractions-g60763-Activities-New_York_City_New_York.html',
-        photo: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=600&q=80',
-        label: 'Explore on TripAdvisor →'
-      }
-    ]
+  // ── City Travel Journal cards ─────────────────────────────────────────────
+  // Card 1 = current monthly guide, Card 2 = static article or TripAdvisor, Card 3 = TripAdvisor
+  const _bNow = new Date();
+  const _bMonthSlugs  = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+  const _bMonthLabels = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const _bCm     = _bMonthSlugs[_bNow.getMonth()];
+  const _bCmName = _bMonthLabels[_bNow.getMonth()];
+  const _bCy     = _bNow.getFullYear();
+  const _bTaGeos = {
+    'houston':'g56003', 'new-york':'g60763', 'los-angeles':'g32655',
+    'chicago':'g35805', 'phoenix':'g31310',  'philadelphia':'g60795',
+    'san-antonio':'g60956', 'san-diego':'g60750', 'dallas':'g55711',
+    'seattle':'g60878', 'denver':'g33388',   'boston':'g60745',
+    'miami':'g34438',   'atlanta':'g60898',  'portland':'g52024',
+    'austin':'g30196',  'nashville':'g55229'
   };
-
-  // Determine city key for BLOG_CARDS lookup
-  const cityKey = city.slug || city.name.toLowerCase().replace(/\s+/g, '-');
-  const cityCards = BLOG_CARDS[cityKey] || null;
-
-  // Update blog cards: use city-specific data if available, else generic titles
-  for (let i = 1; i <= 3; i++) {
-    const card = document.getElementById('blog-card-' + i);
-    const typeEl = document.getElementById('blog-type-' + i);
-    const titleEl = document.getElementById('blog-title-' + i);
-    const excerptEl = document.getElementById('blog-excerpt-' + i);
-    const dateEl = document.getElementById('blog-date-' + i);
-    const photoEl = document.getElementById('blog-photo-' + i);
-    const data = cityCards ? cityCards[i - 1] : null;
-    if (data) {
-      if (card) card.href = data.url;
-      if (typeEl) typeEl.textContent = data.category;
-      if (titleEl) titleEl.textContent = data.title;
-      if (excerptEl) excerptEl.textContent = data.excerpt;
-      if (dateEl) dateEl.textContent = data.label;
-      if (photoEl) photoEl.style.backgroundImage = "url('" + data.photo + "')";
-    } else {
-      const genericTitles = ['Best Time to Visit ' + city.name, 'Where to Eat in ' + city.name, 'Top Attractions in ' + city.name];
-      if (titleEl) titleEl.textContent = genericTitles[i - 1];
-      if (card) card.href = 'https://www.tripadvisor.com/Search?q=' + encodeURIComponent(city.name);
-      if (dateEl) dateEl.textContent = 'Explore on TripAdvisor →';
+  const _bGeo  = _bTaGeos[city.id];
+  const _bSlug = city.name.replace(/\s+/g, '_');
+  const _bTaRest = _bGeo
+    ? 'https://www.tripadvisor.com/Restaurants-' + _bGeo + '-' + _bSlug + '.html'
+    : 'https://www.tripadvisor.com/Search?q=restaurants+' + encodeURIComponent(city.name);
+  const _bTaAttr = _bGeo
+    ? 'https://www.tripadvisor.com/Attractions-' + _bGeo + '-Activities-' + _bSlug + '.html'
+    : 'https://www.tripadvisor.com/Search?q=attractions+' + encodeURIComponent(city.name);
+  const _bStatic = CITY_ARTICLE_CARDS[city.id] || null;
+  const _bCards  = [
+    {
+      category: 'CITY GUIDE',
+      title:    city.name + ' in ' + _bCmName + ' ' + _bCy + ' — Things To Do, Eat & See',
+      excerpt:  'Your monthly local\'s guide to ' + city.name + ' — current events, best restaurants, neighborhoods, and hidden gems for ' + _bCmName + '.',
+      url:      '/blog/' + city.id + '-' + _bCm + '-' + _bCy + '.html',
+      photo:    'https://source.unsplash.com/600x400/?' + encodeURIComponent(city.name) + ',skyline',
+      label:    'Read ' + _bCmName + ' Guide →'
+    },
+    _bStatic || {
+      category: 'RESTAURANT GUIDE',
+      title:    'Best Restaurants in ' + city.name,
+      excerpt:  'Top-rated local spots and must-try dining experiences in ' + city.name + '.',
+      url:      _bTaRest,
+      photo:    'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80',
+      label:    'Explore on TripAdvisor →'
+    },
+    {
+      category: 'THINGS TO DO',
+      title:    'Top Attractions in ' + city.name,
+      excerpt:  'Museums, landmarks, outdoor adventures, and local experiences that define ' + city.name + '.',
+      url:      _bTaAttr,
+      photo:    'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=600&q=80',
+      label:    'Explore on TripAdvisor →'
     }
+  ];
+  for (let i = 0; i < 3; i++) {
+    const _bIdx     = i + 1;
+    const _bCard    = document.getElementById('blog-card-' + _bIdx);
+    const _bTypeEl  = document.getElementById('blog-type-' + _bIdx);
+    const _bTitleEl = document.getElementById('blog-title-' + _bIdx);
+    const _bExcEl   = document.getElementById('blog-excerpt-' + _bIdx);
+    const _bDateEl  = document.getElementById('blog-date-' + _bIdx);
+    const _bPhotoEl = document.getElementById('blog-photo-' + _bIdx);
+    const _bD = _bCards[i];
+    if (_bCard)    _bCard.href = _bD.url;
+    if (_bTypeEl)  _bTypeEl.textContent  = _bD.category;
+    if (_bTitleEl) _bTitleEl.textContent = _bD.title;
+    if (_bExcEl)   _bExcEl.textContent   = _bD.excerpt;
+    if (_bDateEl)  _bDateEl.textContent  = _bD.label;
+    if (_bPhotoEl) _bPhotoEl.style.backgroundImage = "url('" + _bD.photo + "')";
+  }
+  // Update Blog nav link → current month's city guide
+  const _bNavLink = document.getElementById('nav-blog-link');
+  if (_bNavLink) _bNavLink.href = '/blog/' + city.id + '-' + _bCm + '-' + _bCy + '.html';
+  // Update "See More" link
+  const _bSeeMore = document.getElementById('blog-see-more-link');
+  if (_bSeeMore) {
+    _bSeeMore.href        = '/blog/?city=' + city.id;
+    _bSeeMore.textContent = 'See All ' + city.name + ' Guides →';
   }
 
   // Travel card heading
@@ -1025,6 +966,43 @@ const CITY_IMAGES = {
   'portland':        'https://images.unsplash.com/photo-1544512798-93c1b28049ec?w=1600&q=80',
   // fallback
   'default':         'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
+};
+
+// Article cards per city — used as Card 2 in the City Travel Journal
+// Card 1 is always the current monthly guide; Card 3 is TripAdvisor attractions
+const CITY_ARTICLE_CARDS = {
+  'houston': {
+    category: 'MOVING GUIDE',
+    title: 'The Complete Guide to Moving to Houston in 2026',
+    excerpt: 'Neighborhoods, cost of living, job market, and everything nobody tells you before the move.',
+    url: '/blog/moving-to-houston-guide',
+    photo: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80',
+    label: 'Read Guide →'
+  },
+  'austin': {
+    category: 'MOVING GUIDE',
+    title: 'Moving to Austin in 2026: What Nobody Tells You',
+    excerpt: 'Tech scene, live music culture, and what nobody tells you before the move to Austin.',
+    url: '/blog/moving-to-austin-guide',
+    photo: 'https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=600&q=80',
+    label: 'Read Guide →'
+  },
+  'miami': {
+    category: 'MOVING GUIDE',
+    title: 'Moving to Miami: Neighborhoods, Cost of Living & What to Expect',
+    excerpt: 'Year-round sunshine, no state income tax — but rising costs and hurricane season require planning.',
+    url: '/blog/moving-to-miami-guide',
+    photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
+    label: 'Read Guide →'
+  },
+  'new-york': {
+    category: 'VACATION GUIDE',
+    title: 'Best Time to Visit New York City: A Month-by-Month Guide',
+    excerpt: 'Season-by-season breakdown of weather, crowds, costs, and what makes each time of year worth it.',
+    url: '/blog/best-time-to-visit-new-york',
+    photo: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&q=80',
+    label: 'Read Guide →'
+  }
 };
 
 // --- Weather (Open-Meteo — free, no API key needed) ---
