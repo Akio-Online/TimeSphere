@@ -490,7 +490,7 @@ function renderCityPage() {
   // Set city-specific night photo
   const overlay = document.querySelector('.city-banner-overlay');
   if (overlay) {
-    const imgUrl = CITY_IMAGES[city.id] || CITY_IMAGES['default'];
+    const imgUrl = CITY_IMAGES[city.id] || REGION_DEFAULTS[city.region] || CITY_IMAGES['default'];
     overlay.style.backgroundImage = `url('${imgUrl}')`;
   }
 
@@ -577,7 +577,7 @@ function renderCityPage() {
       title:    city.name + ' in ' + _bCmName + ' ' + _bCy + ' — Things To Do, Eat & See',
       excerpt:  'Your monthly local\'s guide to ' + city.name + ' — current events, best restaurants, neighborhoods, and hidden gems for ' + _bCmName + '.',
       url:      '/blog/' + city.id + '-' + _bCm + '-' + _bCy + '.html',
-      photo:    CITY_IMAGES[city.id] || CITY_IMAGES['default'],
+      photo:    CITY_IMAGES[city.id] || REGION_DEFAULTS[city.region] || CITY_IMAGES['default'],
       label:    'Read ' + _bCmName + ' Guide →'
     },
     _bStatic || {
@@ -950,11 +950,11 @@ const CITY_IMAGES = {
   'yangon':          'https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?w=1600&q=80',
   'phnom-penh':      'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1600&q=80',
   'vientiane':       'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1600&q=80',
-  // Major US cities — added to replace generic fallback
-  'houston':         'https://images.unsplash.com/photo-1746311528667-1038fe0c8c46?w=1600&q=80',
+  // Major US cities
+  'houston':         'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80',
   'miami':           'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80',
   'seattle':         'https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=1600&q=80',
-  'denver':          'https://images.unsplash.com/photo-1546156929-a4c0ac411f47?w=1600&q=80',
+  'denver':          'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1600&q=80',
   'phoenix':         'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80',
   'atlanta':         'https://images.unsplash.com/photo-1575917649705-5b59aaa12e6b?w=1600&q=80',
   'boston':          'https://images.unsplash.com/photo-1501979376754-1ff209e77968?w=1600&q=80',
@@ -964,8 +964,47 @@ const CITY_IMAGES = {
   'san-francisco':   'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1600&q=80',
   'washington-dc':   'https://images.unsplash.com/photo-1501466044931-62695aada8e9?w=1600&q=80',
   'portland':        'https://images.unsplash.com/photo-1544512798-93c1b28049ec?w=1600&q=80',
+  // Europe — top traffic cities added
+  'amsterdam':       'https://images.unsplash.com/photo-1576924542622-772281b13ab5?w=1600&q=80',
+  'barcelona':       'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=1600&q=80',
+  'vienna':          'https://images.unsplash.com/photo-1516550135131-fe3dcb0bedc4?w=1600&q=80',
+  'prague':          'https://images.unsplash.com/photo-1541849546-216549ae216d?w=1600&q=80',
+  'stockholm':       'https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=1600&q=80',
+  'lisbon':          'https://images.unsplash.com/photo-1588867702719-969c8ac536b4?w=1600&q=80',
+  'zurich':          'https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=1600&q=80',
+  'brussels':        'https://images.unsplash.com/photo-1559561853-08451507cbe7?w=1600&q=80',
+  // Asia — top traffic cities added
+  'bangkok':         'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1600&q=80',
+  'kuala-lumpur':    'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=1600&q=80',
+  'beijing':         'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=1600&q=80',
+  'shanghai':        'https://images.unsplash.com/photo-1548919973-5cef591cdbc9?w=1600&q=80',
+  'jakarta':         'https://images.unsplash.com/photo-1555899434-94d1368aa7af?w=1600&q=80',
+  'manila':          'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=1600&q=80',
+  'ho-chi-minh':     'https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=1600&q=80',
+  'hanoi':           'https://images.unsplash.com/photo-1510236602782-0e4f99bcb9b3?w=1600&q=80',
+  'taipei':          'https://images.unsplash.com/photo-1470093851219-69951fcbb533?w=1600&q=80',
+  'osaka':           'https://images.unsplash.com/photo-1590559899731-a382839e5549?w=1600&q=80',
+  'karachi':         'https://images.unsplash.com/photo-1569021795135-81ef1a90c95f?w=1600&q=80',
+  // Americas — top traffic cities added
+  'buenos-aires':    'https://images.unsplash.com/photo-1531233084875-9a5e1dfe5b5a?w=1600&q=80',
+  'santiago':        'https://images.unsplash.com/photo-1513626185-76bb5a9fc6f4?w=1600&q=80',
+  'lima':            'https://images.unsplash.com/photo-1538599702924-a013cef3b8b0?w=1600&q=80',
+  'bogota':          'https://images.unsplash.com/photo-1572443490709-e57452e5d3d7?w=1600&q=80',
+  // Africa — top traffic cities added
+  'nairobi':         'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=1600&q=80',
+  'lagos':           'https://images.unsplash.com/photo-1600431521340-491eca880813?w=1600&q=80',
+  'accra':           'https://images.unsplash.com/photo-1563716684748-0fe5b5f54fe7?w=1600&q=80',
+  'casablanca':      'https://images.unsplash.com/photo-1559336197-ded8aaa244bc?w=1600&q=80',
   // fallback
   'default':         'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
+};
+
+// Regional photo fallbacks — used when a city has no explicit CITY_IMAGES entry
+const REGION_DEFAULTS = {
+  'americas': 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1600&q=80',
+  'europe':   'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=1600&q=80',
+  'asia':     'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1600&q=80',
+  'africa':   'https://images.unsplash.com/photo-1577948000111-9c970dfe3743?w=1600&q=80',
 };
 
 // Article cards per city — used as Card 2 in the City Travel Journal
@@ -1337,7 +1376,7 @@ async function renderMovingPage() {
   // ── Hero image ─────────────────────────────────────────────────────────────
   const heroImg = document.getElementById('hero-city-img');
   if (heroImg) {
-    const imgUrl = (CITY_IMAGES[city.id] || CITY_IMAGES['default']).replace(/\?.*$/, '?w=800&q=80');
+    const imgUrl = (CITY_IMAGES[city.id] || REGION_DEFAULTS[city.region] || CITY_IMAGES['default']).replace(/\?.*$/, '?w=800&q=80');
     heroImg.src = imgUrl;
   }
 
