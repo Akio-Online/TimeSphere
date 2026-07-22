@@ -333,9 +333,10 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
         if path in ('/blog', '/blog/'):
             serve_html(self, 'blog.html')
             return True
-        m_blog = re.match(r'^/blog/([a-z0-9][a-z0-9-]*)$', path)
+        m_blog = re.match(r'^/blog/([a-z0-9][a-z0-9.-]*)$', path)
         if m_blog:
-            article = 'blog/' + m_blog.group(1) + '.html'
+            slug = m_blog.group(1)
+            article = 'blog/' + slug if slug.endswith('.html') else 'blog/' + slug + '.html'
             if os.path.exists(article):
                 serve_html(self, article)
             else:

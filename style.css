@@ -2463,17 +2463,18 @@ footer a:hover { color: var(--gold); }
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--gold);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 100%;
 }
 
 .snapshot-inline-note {
   font-size: 0.6rem;
   color: var(--text-dim);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   max-width: 100%;
 }
 
