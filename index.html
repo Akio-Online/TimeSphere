@@ -107,7 +107,7 @@
         <ul id="nav-menu">
           <li><a href="/">World Clock</a></li>
           <li><a href="/moving-to/" id="nav-moving-to">Moving To</a></li>
-          <li><a href="/blog">Blog</a></li>
+          <li><a href="/blog" id="nav-blog-index">Blog</a></li>
           <li><a href="/about">About</a></li>
           <li><a href="/contact">Contact</a></li>
           <li><a href="/upgrade" class="nav-upgrade">Upgrade</a></li>
@@ -206,14 +206,70 @@
     </div>
   </footer>
 
+  <!-- Blog City Search Overlay -->
+  <div id="blog-city-overlay" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(5,8,16,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-56%);background:#0a1020;border:1px solid rgba(240,168,48,.28);border-radius:14px;padding:32px 28px 24px;max-width:460px;width:92%;box-shadow:0 8px 48px rgba(0,0,0,.7)">
+      <button onclick="document.getElementById('blog-city-overlay').style.display='none'" aria-label="Close"
+              style="position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.45);font-size:1.3rem;cursor:pointer;line-height:1">&#x2715;</button>
+      <p style="font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#f0a830;margin:0 0 10px">The Time Sphere</p>
+      <h3 style="font-family:'Playfair Display',Georgia,serif;font-size:1.28rem;color:#fff;margin:0 0 18px;line-height:1.25">Search <em style="color:#f0a830;font-style:italic">City Guides</em></h3>
+      <input id="blog-overlay-input" type="text" placeholder="Type a city — Houston, Chicago, Miami..."
+             autocomplete="off"
+             style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:12px 16px;font-size:.9rem;color:#fff;outline:none;font-family:inherit;transition:border-color .15s"
+             onfocus="this.style.borderColor='rgba(240,168,48,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.16)'" />
+      <div id="blog-overlay-results" style="margin-top:6px;max-height:230px;overflow-y:auto;border-radius:6px"></div>
+      <div style="margin-top:16px">
+        <a href="/blog" style="display:block;background:rgba(240,168,48,.1);border:1px solid rgba(240,168,48,.3);border-radius:8px;padding:11px;text-align:center;font-size:.82rem;font-weight:700;color:#f0a830;text-decoration:none;transition:background .15s" onmouseover="this.style.background='rgba(240,168,48,.18)'" onmouseout="this.style.background='rgba(240,168,48,.1)'">Browse All Articles &#x2192;</a>
+      </div>
+    </div>
+  </div>
+
   <script src="/app.js"></script>
   <script src="/hero-canvas.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const countEl = document.getElementById('city-count');
-      if (countEl && typeof CITIES !== 'undefined') {
-        const count = CITIES.length;
-        countEl.textContent = '215+';
+    document.addEventListener('DOMContentLoaded', function() {
+      var countEl = document.getElementById('city-count');
+      if (countEl && typeof CITIES !== 'undefined') countEl.textContent = '215+';
+
+      // Blog nav → city search overlay
+      var navBlog   = document.getElementById('nav-blog-index');
+      var overlay   = document.getElementById('blog-city-overlay');
+      var oInput    = document.getElementById('blog-overlay-input');
+      var oResults  = document.getElementById('blog-overlay-results');
+      if (navBlog && overlay) {
+        navBlog.addEventListener('click', function(e) {
+          e.preventDefault();
+          overlay.style.display = 'block';
+          setTimeout(function() { if (oInput) oInput.focus(); }, 60);
+        });
+        overlay.addEventListener('click', function(e) {
+          if (e.target === overlay) overlay.style.display = 'none';
+        });
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') overlay.style.display = 'none';
+        });
+      }
+      if (oInput && oResults) {
+        oInput.addEventListener('input', function() {
+          var q = oInput.value.toLowerCase().trim();
+          if (!q || typeof CITIES === 'undefined') { oResults.innerHTML = ''; return; }
+          var hits = CITIES.filter(function(c) { return c.name.toLowerCase().indexOf(q) !== -1; }).slice(0, 9);
+          oResults.innerHTML = hits.map(function(c) {
+            return '<a href="/blog/?city=' + c.id + '" style="display:flex;align-items:center;gap:8px;padding:9px 12px;color:inherit;text-decoration:none;border-radius:5px;font-size:.88rem;transition:background .1s" onmouseover="this.style.background=\'rgba(240,168,48,.08)\'" onmouseout="this.style.background=\'none\'">'
+              + '<span style="font-size:1.1rem">' + c.flag + '</span>'
+              + '<span>' + c.name + '</span>'
+              + '<span style="margin-left:auto;font-size:.7rem;color:rgba(255,255,255,.3)">' + (c.region || '') + '</span>'
+              + '</a>';
+          }).join('') || '<p style="padding:10px 12px;font-size:.82rem;color:rgba(255,255,255,.35)">No cities found</p>';
+        });
+        oInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            var q = oInput.value.toLowerCase().trim();
+            if (!q) { window.location.href = '/blog'; return; }
+            var match = typeof CITIES !== 'undefined' && CITIES.find(function(c) { return c.name.toLowerCase() === q || c.id === q; });
+            window.location.href = match ? '/blog/?city=' + match.id : '/blog/?city=' + encodeURIComponent(q.replace(/\s+/g, '-'));
+          }
+        });
       }
     });
   </script>

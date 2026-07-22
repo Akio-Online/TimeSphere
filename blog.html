@@ -193,10 +193,21 @@
   </div>
 
   <div class="container">
+
+    <!-- Search & Filter Bar -->
+    <div style="display:flex;gap:12px;align-items:center;margin:28px 0 0;flex-wrap:wrap">
+      <input type="text" id="blog-search" placeholder="Search city guides..."
+             autocomplete="off"
+             style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:10px 16px;font-size:.86rem;color:inherit;width:280px;max-width:100%;outline:none;transition:border-color .15s"
+             onfocus="this.style.borderColor='rgba(240,168,48,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.15)'" />
+      <span id="blog-filter-clear" style="display:none;font-size:.78rem;color:#f0a830;cursor:pointer;font-weight:600">&#10005; Clear</span>
+      <span id="blog-filter-count" style="font-size:.75rem;color:rgba(255,255,255,.35)"></span>
+    </div>
+
     <div class="blog-index-grid">
 
       <!-- 1. Houston -->
-      <a href="/blog/moving-to-houston-guide" class="blog-index-card">
+      <a href="/blog/moving-to-houston-guide" class="blog-index-card" data-city="houston" data-tags="houston texas relocation moving cost of living neighborhoods">
         <img class="blog-card-img"
              src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80"
              alt="Houston skyline"
@@ -211,7 +222,7 @@
       </a>
 
       <!-- 2. New York -->
-      <a href="/blog/best-time-to-visit-new-york" class="blog-index-card">
+      <a href="/blog/best-time-to-visit-new-york" class="blog-index-card" data-city="new-york" data-tags="new york city nyc manhattan brooklyn vacation travel visit">
         <img class="blog-card-img"
              src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&q=80"
              alt="New York City skyline"
@@ -226,7 +237,7 @@
       </a>
 
       <!-- 3. Austin -->
-      <a href="/blog/moving-to-austin-guide" class="blog-index-card">
+      <a href="/blog/moving-to-austin-guide" class="blog-index-card" data-city="austin" data-tags="austin texas relocation moving tech music">
         <img class="blog-card-img"
              src="https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=800&q=80"
              alt="Austin cityscape"
@@ -241,7 +252,7 @@
       </a>
 
       <!-- 4. Remote Work Time Zones -->
-      <a href="/blog/world-time-zones-for-remote-workers" class="blog-index-card">
+      <a href="/blog/world-time-zones-for-remote-workers" class="blog-index-card" data-city="" data-tags="remote work time zones digital nomad schedule teams global">
         <img class="blog-card-img"
              src="https://images.unsplash.com/photo-1587560699334-cc4ff634909a?w=800&q=80"
              alt="Person working remotely with world map"
@@ -256,7 +267,7 @@
       </a>
 
       <!-- 5. Miami -->
-      <a href="/blog/moving-to-miami-guide" class="blog-index-card">
+      <a href="/blog/moving-to-miami-guide" class="blog-index-card" data-city="miami" data-tags="miami florida relocation moving beach sunshine neighborhoods">
         <img class="blog-card-img"
              src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80"
              alt="Miami beach aerial view"
@@ -271,7 +282,7 @@
       </a>
 
       <!-- 6. Digital Nomads -->
-      <a href="/blog/best-cities-for-digital-nomads-2026" class="blog-index-card">
+      <a href="/blog/best-cities-for-digital-nomads-2026" class="blog-index-card" data-city="" data-tags="digital nomad global cities lisbon bali chiang mai medellin cape town travel">
         <img class="blog-card-img"
              src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=80"
              alt="Coworking space digital nomads"
@@ -310,5 +321,38 @@
   </footer>
 
   <script src="/app.js"></script>
+  <script>
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    var cityParam = params.get('city') || '';
+    var searchInput = document.getElementById('blog-search');
+    var clearBtn    = document.getElementById('blog-filter-clear');
+    var countEl     = document.getElementById('blog-filter-count');
+    var cards       = document.querySelectorAll('.blog-index-card');
+
+    function filterCards(query) {
+      var q = query.toLowerCase().trim();
+      var visible = 0;
+      cards.forEach(function(card) {
+        var city  = (card.getAttribute('data-city') || '').toLowerCase();
+        var tags  = (card.getAttribute('data-tags') || '').toLowerCase();
+        var title = (card.querySelector('.blog-card-title') ? card.querySelector('.blog-card-title').textContent : '').toLowerCase();
+        var match = !q || city.indexOf(q) !== -1 || tags.indexOf(q) !== -1 || title.indexOf(q) !== -1;
+        card.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      clearBtn.style.display = q ? 'inline' : 'none';
+      countEl.textContent    = q ? visible + ' article' + (visible !== 1 ? 's' : '') : '';
+    }
+
+    if (cityParam) {
+      searchInput.value = cityParam.replace(/-/g, ' ');
+      filterCards(cityParam.replace(/-/g, ' '));
+    }
+
+    searchInput.addEventListener('input', function() { filterCards(searchInput.value); });
+    clearBtn.addEventListener('click', function() { searchInput.value = ''; filterCards(''); searchInput.focus(); });
+  })();
+  </script>
 </body>
 </html>
