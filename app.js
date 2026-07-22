@@ -577,7 +577,7 @@ function renderCityPage() {
       title:    city.name + ' in ' + _bCmName + ' ' + _bCy + ' — Things To Do, Eat & See',
       excerpt:  'Your monthly local\'s guide to ' + city.name + ' — current events, best restaurants, neighborhoods, and hidden gems for ' + _bCmName + '.',
       url:      '/blog/' + city.id + '-' + _bCm + '-' + _bCy + '.html',
-      photo:    'https://source.unsplash.com/600x400/?' + encodeURIComponent(city.name) + ',skyline',
+      photo:    CITY_IMAGES[city.id] || CITY_IMAGES['default'],
       label:    'Read ' + _bCmName + ' Guide →'
     },
     _bStatic || {

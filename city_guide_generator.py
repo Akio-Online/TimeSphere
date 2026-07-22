@@ -78,6 +78,21 @@ TA_GEO = {
 # Cities with dedicated Moving To pages
 MOVING_TO_CITIES = {'houston', 'austin', 'miami', 'new-york'}
 
+# ─── Curated Unsplash photo IDs (static, no source.unsplash.com) ───────────────
+CITY_PHOTO_IDS = {
+    'houston':     {'hero':'photo-1600596542815-ffad4c1539a9','neighborhood':'photo-1558618666-fcd25c85cd64','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1519331379826-f10be5486c6f'},
+    'new-york':    {'hero':'photo-1496442226666-8d4d0e62e6e9','neighborhood':'photo-1534430480872-3498386e7856','food':'photo-1414235077428-338989a2e8c0','events':'photo-1499092346302-b8d7adcb2ac5','outdoors':'photo-1534430480872-3498386e7856'},
+    'chicago':     {'hero':'photo-1494522855154-9297ac14b55f','neighborhood':'photo-1477959858617-67f85cf4f1df','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1507525428034-b723cf961d3e'},
+    'los-angeles': {'hero':'photo-1534430480872-3498386e7856','neighborhood':'photo-1510519138101-570d1dca3d66','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1501179691627-eeaa65ea017c'},
+    'miami':       {'hero':'photo-1506905925346-21bda4d32df4','neighborhood':'photo-1535498730771-e735b998cd64','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1507525428034-b723cf961d3e'},
+    'austin':      {'hero':'photo-1531218150217-54595bc2b934','neighborhood':'photo-1558492426-df04a45c5efc','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1504280390367-361c6d9f38f4'},
+    'denver':      {'hero':'photo-1501594907352-04cda38ebc29','neighborhood':'photo-1546422401-68b415cbf8de','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1464822759023-fed622ff2c3b'},
+    'seattle':     {'hero':'photo-1502175353174-a7a70e73b362','neighborhood':'photo-1574515944794-d6dedc7150de','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1507525428034-b723cf961d3e'},
+    'atlanta':     {'hero':'photo-1575917649705-5b59aaa12e6b','neighborhood':'photo-1569761316261-9a8696fa2ca3','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1504280390367-361c6d9f38f4'},
+    'nashville':   {'hero':'photo-1514320291840-2e0a9bf2a9ae','neighborhood':'photo-1558618047-3c8c76ca7d13','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1504280390367-361c6d9f38f4'},
+    'default':     {'hero':'photo-1477959858617-67f85cf4f1df','neighborhood':'photo-1569761316261-9a8696fa2ca3','food':'photo-1414235077428-338989a2e8c0','events':'photo-1492684223066-81342ee5ff30','outdoors':'photo-1504280390367-361c6d9f38f4'},
+}
+
 # ─── 10-city test batch ────────────────────────────────────────────────────────
 BATCH_10 = [
     {'id':'houston',     'name':'Houston',     'tz':'America/Chicago',     'state':'Texas',       'country':'USA'},
@@ -180,14 +195,14 @@ def ta_urls(city_id, city_name):
 
 
 def build_images(city_id, city_name):
-    """Return 5 Unsplash source URLs for the article."""
-    q = urllib.parse.quote_plus(city_name)
+    """Return 5 static Unsplash image URLs using curated photo IDs."""
+    ids = CITY_PHOTO_IDS.get(city_id) or CITY_PHOTO_IDS['default']
     return {
-        'hero':         f"https://source.unsplash.com/1600x900/?{q},skyline,city",
-        'neighborhood': f"https://source.unsplash.com/800x500/?{q},neighborhood,street",
-        'events':       f"https://source.unsplash.com/800x500/?{q},festival,event,park",
-        'food':         f"https://source.unsplash.com/800x500/?{q},food,restaurant",
-        'outdoors':     f"https://source.unsplash.com/800x500/?{q},outdoors,nature",
+        'hero':         f"https://images.unsplash.com/{ids['hero']}?w=1600&q=80",
+        'neighborhood': f"https://images.unsplash.com/{ids['neighborhood']}?w=800&q=80",
+        'events':       f"https://images.unsplash.com/{ids['events']}?w=800&q=80",
+        'food':         f"https://images.unsplash.com/{ids['food']}?w=800&q=80",
+        'outdoors':     f"https://images.unsplash.com/{ids['outdoors']}?w=800&q=80",
     }
 
 
