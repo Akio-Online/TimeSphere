@@ -3993,7 +3993,7 @@ nav.mobile-open .nav-hamburger span:nth-child(3) { transform: translateY(-8px) r
   overflow: hidden;
   transition: max-height 0.3s ease, padding 0.3s ease;
 }
-.faq-item.open .faq-answer { max-height: 300px; }
+.faq-item.open .faq-answer { max-height: 2000px; }
 .faq-answer-inner {
   padding: 0 24px 18px;
   font-size: 0.88rem;

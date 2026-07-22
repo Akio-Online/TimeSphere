@@ -1863,9 +1863,11 @@ async function renderMovingPage() {
 function toggleFaq(i) {
   const btn = document.querySelector(`#faq-item-${i} .faq-question`);
   const ans = document.getElementById(`faq-answer-${i}`);
+  const item = document.getElementById(`faq-item-${i}`);
   if (!btn || !ans) return;
   const isOpen = !ans.hidden;
   ans.hidden = isOpen;
+  if (item) item.classList.toggle('open', !isOpen);
   btn.setAttribute('aria-expanded', String(!isOpen));
   btn.querySelector('.faq-chevron').textContent = isOpen ? '▾' : '▴';
 }
