@@ -1456,13 +1456,33 @@ async function renderMovingPage() {
   setText('moving-relocation-note', `ℹ️ Relocation guide for ${cityName}, ${cityCountry}`);
   setText('agent-modal-city', `Reach active relocation leads in ${cityName}. 4 spots available · $200/month · Cancel anytime.`);
 
-  // ── Phase 3: neighborhood Zillow links ────────────────────────────────────
-  const zillowCity = encodeURIComponent(`${cityName}, ${city.state || city.country}`);
-  const nbhdQueries = ['top+schools', 'young+professionals', 'luxury', 'affordable', 'commuter'];
-  for (let ni = 0; ni < 5; ni++) {
-    const nbhdEl = document.getElementById(`nbhd-${ni}`);
-    if (nbhdEl) {
-      nbhdEl.href = `https://www.zillow.com/homes/${zillowCity}_rb/?searchQueryState=%7B%22pagination%22%3A%7B%7D%7D`;
+  // ── Region flags ──────────────────────────────────────────────────────────
+  const isUSA        = city.country === 'USA';
+  const isCanada     = city.country === 'Canada';
+  const isUK         = city.country === 'United Kingdom';
+  const isIreland    = city.country === 'Ireland';
+  const isEurope     = city.region  === 'europe';
+  const isAsia       = city.region  === 'asia';
+  const MIDDLE_EAST_CTRY = { 'UAE':1,'Saudi Arabia':1,'Qatar':1,'Kuwait':1,'Oman':1,'Jordan':1,'Lebanon':1,'Israel':1,'Iraq':1,'Iran':1,'Turkey':1,'Egypt':1 };
+  const isMiddleEast = city.region  === 'africa' && !!MIDDLE_EAST_CTRY[city.country];
+  const isSubSaharan = city.region  === 'africa' && !isMiddleEast;
+
+  // Numbeo city slug (title-case city.id; three cities need an override)
+  const NUMBEO_SLUG_MAP = { 'ho-chi-minh':'Ho-Chi-Minh-City', 'tel-aviv':'Tel-Aviv-Yafo', 'san-jose-cr':'San-Jose-Costa-Rica' };
+  const nSlug = (c) => NUMBEO_SLUG_MAP[c.id] || c.id.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('-');
+
+  // ── Phase 3: neighborhood links ───────────────────────────────────────────
+  if (isUSA) {
+    const zillowCity = encodeURIComponent(`${cityName}, ${city.state || city.country}`);
+    for (let ni = 0; ni < 5; ni++) {
+      const nbhdEl = document.getElementById(`nbhd-${ni}`);
+      if (nbhdEl) nbhdEl.href = `https://www.zillow.com/homes/${zillowCity}_rb/?searchQueryState=%7B%22pagination%22%3A%7B%7D%7D`;
+    }
+  } else {
+    const numbeoQoL = `https://www.numbeo.com/quality-of-life/in/${nSlug(city)}`;
+    for (let ni = 0; ni < 5; ni++) {
+      const nbhdEl = document.getElementById(`nbhd-${ni}`);
+      if (nbhdEl) nbhdEl.href = numbeoQoL;
     }
   }
 
@@ -1470,17 +1490,37 @@ async function renderMovingPage() {
   const cityEncoded = encodeURIComponent(city.name);
   const citySlug = cityName.toLowerCase().replace(/\s+/g, '-');
   const stateStr = city.state || city.country || '';
-  const zillowLink = `https://www.zillow.com/homes/${encodeURIComponent(cityName + ', ' + stateStr)}_rb/`;
-  setAttr('explore-neighborhoods-link', 'href', zillowLink);
-  setText('explore-neighborhoods-title', `Best Neighborhoods in ${cityName}`);
-  setAttr('explore-costliving-link', 'href',
-    `https://www.nerdwallet.com/cost-of-living-calculator/compare/${encodeURIComponent(citySlug)}`);
+
+  // Neighborhoods card
+  if (isUSA) {
+    setAttr('explore-neighborhoods-link', 'href', `https://www.zillow.com/homes/${encodeURIComponent(cityName + ', ' + stateStr)}_rb/`);
+    setText('explore-neighborhoods-title', `Best Neighborhoods in ${cityName}`);
+  } else {
+    setAttr('explore-neighborhoods-link', 'href', `https://www.numbeo.com/quality-of-life/in/${nSlug(city)}`);
+    setText('explore-neighborhoods-title', `Quality of Life in ${cityName}`);
+  }
+
+  // Cost of Living card
+  if (isUSA) {
+    setAttr('explore-costliving-link', 'href', `https://www.nerdwallet.com/cost-of-living-calculator/compare/${encodeURIComponent(citySlug)}`);
+  } else {
+    setAttr('explore-costliving-link', 'href', `https://www.numbeo.com/cost-of-living/in/${nSlug(city)}`);
+  }
   setText('explore-costliving-title', `Cost of Living in ${cityName}`);
-  setAttr('explore-apartments-link', 'href',
-    `https://www.apartments.com/${encodeURIComponent(citySlug)}/`);
-  setText('explore-apartments-title', `Apartments in ${cityName}`);
-  setAttr('explore-things-link', 'href',
-    `https://www.viator.com/search/${cityEncoded}?pid=P00295924&mcid=42383&medium=link`);
+
+  // Apartments card: US → apartments.com, Europe → Spotahome, elsewhere → hide
+  if (isUSA) {
+    setAttr('explore-apartments-link', 'href', `https://www.apartments.com/${encodeURIComponent(citySlug)}/`);
+    setText('explore-apartments-title', `Apartments in ${cityName}`);
+  } else if (isEurope) {
+    setAttr('explore-apartments-link', 'href', `https://www.spotahome.com/s/${encodeURIComponent(city.name)}`);
+    setText('explore-apartments-title', `Rentals in ${cityName}`);
+  } else {
+    const aptsEl = document.getElementById('explore-apartments-link');
+    if (aptsEl) aptsEl.style.display = 'none';
+  }
+
+  setAttr('explore-things-link', 'href', `https://www.viator.com/search/${cityEncoded}?pid=P00295924&mcid=42383&medium=link`);
   setText('explore-things-title', `Things To Do in ${cityName}`);
 
   // ── Back link & explore links ─────────────────────────────────────────────
@@ -1529,13 +1569,45 @@ async function renderMovingPage() {
   setAttr('moving-agoda-btn', 'href',
     `https://www.agoda.com/search?city=${cityEncoded}&checkIn=&checkOut=&rooms=1`);
 
-  // Eventbrite
-  setAttr('moving-eventbrite-link', 'href',
-    `https://www.eventbrite.com/d/${cityEncoded}/events/`);
+  // Eventbrite: Americas + Europe + Middle East → show; Asia + Sub-Saharan Africa → hide
+  const ebEl = document.getElementById('moving-eventbrite-link');
+  if (ebEl) {
+    if (isAsia || isSubSaharan) {
+      ebEl.style.display = 'none';
+    } else if (isUSA) {
+      ebEl.href = `https://www.eventbrite.com/d/${cityEncoded}/events/`;
+    } else {
+      const EB_CTRY_ALIAS = { 'UAE': 'united-arab-emirates', 'Trinidad': 'trinidad-and-tobago' };
+      const ebCountry = EB_CTRY_ALIAS[city.country] || city.country.toLowerCase().replace(/\s+/g, '-');
+      const ebCity    = city.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '-');
+      ebEl.href = `https://www.eventbrite.com/d/${ebCountry}--${ebCity}/events/`;
+    }
+  }
 
-  // Ticketmaster
-  setAttr('moving-ticketmaster-link', 'href',
-    `https://www.ticketmaster.com/search?q=${cityEncoded}`);
+  // Ticketmaster: US + Canada → ticketmaster.com, UK/Ireland → ticketmaster.co.uk, elsewhere → hide
+  const tmEl = document.getElementById('moving-ticketmaster-link');
+  if (tmEl) {
+    if (isUSA || isCanada) {
+      tmEl.href = `https://www.ticketmaster.com/search?q=${cityEncoded}`;
+    } else if (isUK || isIreland) {
+      tmEl.href = `https://www.ticketmaster.co.uk/search?q=${cityEncoded}`;
+    } else {
+      tmEl.style.display = 'none';
+    }
+  }
+
+  // Collapse events grid when one or both cards hidden
+  const evGrid = document.getElementById('events-cards-grid');
+  if (evGrid) {
+    const ebHidden = ebEl && ebEl.style.display === 'none';
+    const tmHidden = tmEl && tmEl.style.display === 'none';
+    if (ebHidden && tmHidden) {
+      const evSection = evGrid.closest('section');
+      if (evSection) evSection.style.display = 'none';
+    } else if (ebHidden || tmHidden) {
+      evGrid.style.gridTemplateColumns = '1fr';
+    }
+  }
 
   // Viator
   const viatorUrl = `https://www.viator.com/search/${cityEncoded}?pid=${VIATOR_PID}&mcid=${VIATOR_MCID}&medium=link&medium_version=selector`;
@@ -1552,9 +1624,6 @@ async function renderMovingPage() {
       </a>`;
   }
 
-  // Trainline
-  setAttr('moving-trainline-btn', 'href',
-    `https://www.thetrainline.com/`);
 
   // ── City Snapshot ─────────────────────────────────────────────────────────
   function snapCost(c) {
@@ -1679,8 +1748,14 @@ async function renderMovingPage() {
   setText('snap-bestfor', snapBestFor(city));
   setText('snap-climate', snapClimate(city));
   setText('snap-scale',   snapPop(city));
-  var snapPriceEl = document.getElementById('snap-price');
-  if (snapPriceEl) snapPriceEl.innerHTML = '<a href="https://www.zillow.com/homes/' + citySlug + '-homes/" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;font-size:0.85rem;">Research on Zillow →</a>';
+  const snapPriceEl = document.getElementById('snap-price');
+  if (snapPriceEl) {
+    if (isUSA) {
+      snapPriceEl.innerHTML = `<a href="https://www.zillow.com/homes/${citySlug}-homes/" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;font-size:0.85rem;">Research on Zillow →</a>`;
+    } else {
+      snapPriceEl.textContent = snapMedianHome(city);
+    }
+  }
 
   // ── dataLayer: city page view ─────────────────────────────────────────────
   window.dataLayer = window.dataLayer || [];
