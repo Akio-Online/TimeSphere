@@ -126,8 +126,26 @@ def load_env():
 def parse_cities_from_appjs():
     """Extract all cities from app.js CITIES array."""
     text = APPJS_PATH.read_text(encoding='utf-8')
-    pattern = r"id:\s*'([^']+)',\s*name:\s*'([^']+)',\s*tz:\s*'([^']+)'"
-    return [{'id': m[0], 'name': m[1], 'tz': m[2]} for m in re.findall(pattern, text)]
+    # Each city is a single-line object: { id: '...', name: '...', ..., tz: '...', ... }
+    rows = re.findall(r'\{[^}]+\}', text)
+    cities = []
+    for row in rows:
+        id_m  = re.search(r"id:\s*'([^']+)'", row)
+        nm_m  = re.search(r"name:\s*'([^']+)'", row)
+        tz_m  = re.search(r"tz:\s*'([^']+)'", row)
+        st_m  = re.search(r"state:\s*'([^']+)'", row)
+        co_m  = re.search(r"country:\s*'([^']+)'", row)
+        rg_m  = re.search(r"region:\s*'([^']+)'", row)
+        if id_m and nm_m and tz_m:
+            cities.append({
+                'id':      id_m.group(1),
+                'name':    nm_m.group(1),
+                'tz':      tz_m.group(1),
+                'state':   st_m.group(1)   if st_m  else '',
+                'country': co_m.group(1)   if co_m  else 'USA',
+                'region':  rg_m.group(1)   if rg_m  else '',
+            })
+    return cities
 
 
 def get_utc_offset_str(tz_name):
@@ -269,16 +287,129 @@ def research_city(city, month_name, year, api_key):
     return '\n\n'.join(parts)
 
 
+VARIANT_STRUCTURES = {
+    0: {
+        'label':      'Events roundup',
+        'word_range': '680-720',
+        'structure': """ARTICLE STRUCTURE — exactly 3 sections, ~700 words total:
+<p>[Opening hook: drop the reader into the most exciting thing happening in {name} this {month_name}]</p>
+
+<h2>What's On in {name} — {month_name} {year}</h2>
+<p>[5-7 specific events with dates, venues, and why each one is worth attending. Ticket prices if known.]</p>
+<!-- IMG_EVENTS -->
+
+<h2>Where to Be</h2>
+<p>[The 2-3 best districts or venues anchoring this month's events. Walking distance between them? Free or ticketed access? Transit stops nearby.]</p>
+
+<h2>Practical Notes</h2>
+<p>[Parking, transit lines, booking lead times, weather contingency, best arrival window. Concrete numbers, not adjectives.]</p>
+<!-- IMG_OUTDOORS -->""",
+        'tip_anchor': r'<h2[^>]*>Practical Notes',
+        'img_count':  2,
+    },
+    1: {
+        'label':      'Food-led',
+        'word_range': '880-920',
+        'structure': """ARTICLE STRUCTURE — exactly 4 sections, ~900 words total:
+<p>[Opening hook: one specific dish, ingredient, or culinary moment that defines {name} right now in {month_name}]</p>
+
+<h2>The {month_name} Food Scene in {name}</h2>
+<p>[What's in season, what chefs are doing right now, any new openings or seasonal menus worth knowing about]</p>
+<!-- IMG_FOOD -->
+
+<h2>Where to Eat by Neighborhood</h2>
+<p>[3-4 neighborhoods used purely as dining contexts — for each: name, vibe, 1-2 specific restaurants, what to order]</p>
+<!-- IMG_NEIGHBORHOODS -->
+
+<h2>One Thing Beyond the Table</h2>
+<p>[A single non-food experience that pairs well with a food-focused trip to {name} this {month_name}]</p>
+
+<h2>Timing Notes</h2>
+<p>[Reservation lead times for popular spots, happy hour culture, farmers market days, any food festival dates, summer or seasonal hours to know]</p>""",
+        'tip_anchor': r'<h2[^>]*>Timing Notes',
+        'img_count':  2,
+    },
+    2: {
+        'label':      'Neighborhood deep-dive',
+        'word_range': '1080-1120',
+        'structure': """ARTICLE STRUCTURE — exactly 5 sections, ~1100 words total:
+<p>[Opening hook: put the reader on a specific street corner in {name}'s most interesting neighborhood right now]</p>
+
+<h2>[Name of the Anchor Neighborhood]</h2>
+<p>[Full neighborhood portrait: character, street-level detail, recent changes, what makes {month_name} a particularly good time to be here. 200-250 words. Bold street or landmark names with <strong>.]</p>
+<!-- IMG_NEIGHBORHOODS -->
+
+<h2>The Surrounding Context</h2>
+<p>[2 adjacent or complementary neighborhoods — how they contrast with the anchor, what draws people there, how locals move between them]</p>
+
+<h2>Events in the Area This {month_name}</h2>
+<p>[Specific events, markets, or gatherings happening in or near these neighborhoods this month. Dates and venues.]</p>
+<!-- IMG_EVENTS -->
+
+<h2>Eat, Drink, and Stay</h2>
+<p>[3-4 food and drink spots specific to these neighborhoods. If accommodation context is relevant to these streets, include it.]</p>
+<!-- IMG_FOOD -->
+
+<h2>Getting There and Getting Around</h2>
+<p>[Transit from the city's main hubs, typical ride-share cost, walkability, parking reality, any seasonal transit changes]</p>""",
+        'tip_anchor': r'<h2[^>]*>Getting There',
+        'img_count':  3,
+    },
+    3: {
+        'label':      'Seasonal orientation',
+        'word_range': '780-820',
+        'structure': """ARTICLE STRUCTURE — exactly 4 sections, ~800 words total:
+<p>[Opening hook: the weather or seasonal reality on day 1 of {month_name} in {name} — be accurate, not promotional]</p>
+
+<h2>What {month_name} Is Actually Like in {name}</h2>
+<p>[Temperature range with real numbers, humidity if relevant, average rainfall, daylight hours, typical crowd and price levels vs. other months. No vague adjectives — use data from the research.]</p>
+<!-- IMG_OUTDOORS -->
+
+<h2>How Locals Handle It</h2>
+<p>[What residents actually do this time of year — AC havens, early-morning routines, rooftop culture, rainy-day defaults, wherever locals go when tourists don't know]</p>
+
+<h2>What's Worth It Given the Conditions</h2>
+<p>[3-4 activities that specifically suit this month's weather and season in {name} — not a generic attractions list, but things that are meaningfully better or only possible in {month_name}]</p>
+<!-- IMG_EVENTS -->
+
+<h2>Logistics for {month_name}</h2>
+<p>[Packing specifics, best arrival time of day, anything worth skipping until a different season, any weather-driven booking advice]</p>""",
+        'tip_anchor': r'<h2[^>]*>Logistics',
+        'img_count':  2,
+    },
+}
+
+SOURCES_INSTRUCTION = """
+After the final section, append exactly:
+<h2 class="sources-heading">Sources</h2>
+<ul class="sources-list">
+<li><a href="URL_1" rel="nofollow">Source description 1</a></li>
+<li><a href="URL_2" rel="nofollow">Source description 2</a></li>
+<li><a href="URL_3" rel="nofollow">Source description 3</a></li>
+</ul>
+Replace URL_1/2/3 and descriptions with real URLs from the research context. Use official tourism boards, local press, or event venue pages — not Wikipedia or generic travel aggregators."""
+
+
+def article_variant(city_id):
+    """Deterministic variant selection: same city always gets same structure."""
+    return hash(city_id) % 4
+
+
 def generate_article(city, month_name, year, research_ctx, api_key):
     """Generate article title, description, and HTML body."""
     name = city['name']
     state = city.get('state', '')
     loc = f"{name}, {state}" if state else name
-    utc_offset = get_utc_offset_str(city.get('tz', 'UTC'))
+
+    variant_num = article_variant(city['id'])
+    variant     = VARIANT_STRUCTURES[variant_num]
+    structure   = variant['structure'].format(name=name, month_name=month_name, year=year)
+    word_range  = variant['word_range']
 
     system = f"""You are a professional travel writer for The Time Sphere (thetimesphere.com), a world clock and city guide website.
 
-Write a 950-1050 word monthly city guide about {loc} for {month_name} {year}.
+Write a {word_range} word monthly city guide about {loc} for {month_name} {year}.
+Article type: {variant['label']}.
 
 REQUIRED OUTPUT FORMAT — start your response with exactly these 3 lines then "---":
 TITLE: [Engaging article title, 55-75 chars, include city and month/year]
@@ -286,38 +417,16 @@ DESCRIPTION: [SEO meta description, 140-160 chars, include city and month]
 ---
 [Article HTML body below]
 
-ARTICLE STRUCTURE — use exactly these HTML tags and markers:
-<p>[Opening hook: vivid, specific, makes the reader want to visit {name} this {month_name}]</p>
-
-<h2>{month_name} Highlights in {name}</h2>
-<p>[Current month events, seasonal happenings, what makes {month_name} special here]</p>
-<!-- IMG_NEIGHBORHOODS -->
-
-<h2>Best Neighborhoods to Explore</h2>
-<p>[2-3 specific neighborhoods with authentic character. Bold neighborhood names with <strong>.]</p>
-
-<h2>Cost of Living Snapshot</h2>
-<p>[Rent ranges, meal costs, transport costs, relative affordability vs. other cities]</p>
-
-<h2>Things To Do in {month_name}</h2>
-<p>[5-7 specific activities unique to this city and this month]</p>
-<!-- IMG_EVENTS -->
-
-<h2>Local Food Scene</h2>
-<p>[3-4 restaurant or cuisine recommendations with personality]</p>
-<!-- IMG_FOOD -->
-
-<h2>Before You Go</h2>
-<p>[2-3 practical tips specific to {month_name}: weather, what to pack, booking advice]</p>
-<!-- IMG_OUTDOORS -->
+{structure}
 
 RULES:
 - Output ONLY the 3-line header + "---" + article HTML. No extra prose.
-- Use only <h2>, <p>, <strong>, <ul>, <li> tags in the body.
-- Insert the 4 image markers exactly as shown — they will be replaced with real photos.
+- Use only <h2>, <p>, <strong>, <ul>, <li> tags (plus the image markers and sources block).
+- Insert image markers exactly as shown — they will be replaced with real photos.
 - Be specific to this city and this month. No generic filler.
 - DO NOT use: {', '.join(BANNED)}
-- DO NOT include a <h1> tag — the page template provides the headline."""
+- DO NOT include a <h1> tag — the page template provides the headline.
+{SOURCES_INSTRUCTION}"""
 
     user = f"""Write the {month_name} {year} city guide for {loc}.
 
@@ -325,18 +434,18 @@ Use this research to inform accurate, current details:
 
 {research_ctx}
 
-Insert the 4 image markers at exactly the positions shown in the structure."""
+Insert image markers and the Sources block at exactly the positions shown."""
 
-    print(f"    [4/4] Generating article...")
+    print(f"    [4/4] Generating article (variant {variant_num}: {variant['label']})...")
     content = call_openrouter(
         [{'role': 'system', 'content': system}, {'role': 'user', 'content': user}],
-        GENERATE_MODEL, api_key, max_tokens=2800,
+        GENERATE_MODEL, api_key, max_tokens=3200,
     )
 
     # Parse header
     lines = content.split('\n', 4)
     title = f"{name} in {month_name} {year} — Things To Do, Eat & See"
-    description = f"Your complete guide to {name} in {month_name} {year} — events, restaurants, neighborhoods, cost of living, and local tips."
+    description = f"Your complete guide to {name} in {month_name} {year} — events, restaurants, neighborhoods, and local tips."
     body = content
 
     if len(lines) >= 4 and lines[0].startswith('TITLE:'):
@@ -367,16 +476,17 @@ def sanitize_body(body):
 
 
 def inject_tz_tip(body, city_name, tz_name, utc_offset):
-    """Inject TZ tip callout before the 'Things To Do' section."""
+    """Inject TZ tip callout before the last content <h2> section."""
     tip = f"""
 <div class="tz-tip">
   <span class="tz-tip-label">&#9200; Time Zone Tip</span>
   <p>{city_name} runs on {tz_name} ({utc_offset}). Planning remote work or scheduling meetings from {city_name}? <a href="/" style="color:#f0a830;">The Time Sphere</a> tracks live local time for {city_name} and every city your team is in. <a href="/upgrade" style="color:#f0a830;">Time Sphere Pro</a> adds a Meeting Planner so you never need to do time zone math manually.</p>
 </div>
 """
-    match = re.search(r'<h2[^>]*>\s*Things To Do', body, re.IGNORECASE)
-    if match:
-        pos = match.start()
+    # Inject before the last h2 that is NOT the Sources heading
+    matches = list(re.finditer(r'<h2(?![^>]*sources-heading)[^>]*>', body, re.IGNORECASE))
+    if matches:
+        pos = matches[-1].start()
         return body[:pos] + tip + body[pos:]
     # Fallback: inject after the 3rd closing </p>
     closes = [m.end() for m in re.finditer(r'</p>', body)]
@@ -387,7 +497,7 @@ def inject_tz_tip(body, city_name, tz_name, utc_offset):
 
 
 def inject_images(body, images):
-    """Replace image markers with real img tags."""
+    """Replace image markers with real img tags; remove any unused markers."""
     replacements = {
         '<!-- IMG_NEIGHBORHOODS -->': f'<img class="article-inline-img" src="{images["neighborhood"]}" alt="neighborhood" loading="lazy" />',
         '<!-- IMG_EVENTS -->':        f'<img class="article-inline-img" src="{images["events"]}" alt="events" loading="lazy" />',
@@ -396,6 +506,8 @@ def inject_images(body, images):
     }
     for marker, tag in replacements.items():
         body = body.replace(marker, tag)
+    # Remove any markers the variant didn't use
+    body = re.sub(r'<!-- IMG_[A-Z_]+ -->', '', body)
     return body
 
 
@@ -424,6 +536,9 @@ def build_html(city, month_name, month_slug, year, title, description, body, ima
 
     ta_rest, ta_attr = ta_urls(city_id, city_name)
     rel1, rel2 = related_articles(city_id, city_name)
+
+    pub_date   = f"{year}-{MONTH_SLUGS.index(month_slug)+1:02d}-01"
+    variant_num = article_variant(city_id)
 
     title_enc = urllib.parse.quote(title)
     desc_enc  = urllib.parse.quote(description)
@@ -483,6 +598,43 @@ def build_html(city, month_name, month_slug, year, title, description, body, ima
   <meta name="twitter:image" content="{hero_url}" />
   <meta name="pinterest:description" content="{description}" />
   <meta name="pinterest:image" content="{hero_url}" />
+  <script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@graph": [
+      {{
+        "@type": "Article",
+        "@id": "{canonical}#article",
+        "headline": "{title}",
+        "description": "{description}",
+        "image": "{hero_url}",
+        "datePublished": "{pub_date}",
+        "dateModified": "{pub_date}",
+        "author": {{
+          "@type": "Organization",
+          "name": "The Time Sphere Editorial Team"
+        }},
+        "publisher": {{
+          "@type": "Organization",
+          "name": "The Time Sphere",
+          "logo": {{
+            "@type": "ImageObject",
+            "url": "https://www.thetimesphere.com/og-image.jpg"
+          }}
+        }},
+        "mainEntityOfPage": "{canonical}"
+      }},
+      {{
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.thetimesphere.com/"}},
+          {{"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://www.thetimesphere.com/blog"}},
+          {{"@type": "ListItem", "position": 3, "name": "{title}", "item": "{canonical}"}}
+        ]
+      }}
+    ]
+  }}
+  </script>
   <link rel="stylesheet" href="/style.css" />
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1746427124448734"
        crossorigin="anonymous"></script>
@@ -511,6 +663,12 @@ def build_html(city, month_name, month_slug, year, title, description, body, ima
     .share-btn{{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:7px 14px;font-size:.78rem;color:inherit;text-decoration:none;cursor:pointer;font-family:inherit;transition:background .15s}}
     .share-btn:hover{{background:rgba(255,255,255,.12)}}
     .share-btn svg{{width:15px;height:15px;fill:currentColor;vertical-align:middle}}
+    .sources-heading{{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:#f0a830;font-weight:700;margin:40px 0 10px;padding-top:28px;border-top:1px solid rgba(255,255,255,.08)}}
+    .sources-list{{font-size:.78rem;color:rgba(255,255,255,.45);line-height:1.9;padding-left:18px;margin:0}}
+    .sources-list a{{color:rgba(240,168,48,.7);text-decoration:none}}
+    .sources-list a:hover{{color:#f0a830;text-decoration:underline}}
+    .article-byline{{font-size:.75rem;color:rgba(255,255,255,.45);margin:28px 0 0;letter-spacing:.03em}}
+    .article-byline strong{{color:rgba(255,255,255,.72);font-weight:600}}
     @media(max-width:600px){{.article-hero{{height:280px}}.article-inline-img{{height:200px}}}}
   </style>
 </head>
@@ -559,8 +717,11 @@ def build_html(city, month_name, month_slug, year, title, description, body, ima
     <div class="content-block">
 
       <p><a href="/blog" style="color:var(--cyan,#0099cc);font-size:.85rem;">&larr; Back to Blog</a></p>
+      <p style="font-size:.72rem;color:rgba(255,255,255,.4);margin:4px 0 20px;line-height:1.5;font-style:italic;">The Time Sphere may earn a commission from bookings and purchases made through links on this page, at no additional cost to you.</p>
 
 {body}
+
+      <p class="article-byline">By <strong>The Time Sphere Editorial Team</strong> &nbsp;&middot;&nbsp; {hero_date} &nbsp;&middot;&nbsp; {read_time} min read</p>
 
       <div class="related-articles">
         <h3>Related Articles</h3>
@@ -581,6 +742,7 @@ def build_html(city, month_name, month_slug, year, title, description, body, ima
       </div>
 
       <p><a href="/blog" style="color:var(--cyan,#0099cc);font-size:.85rem;">&larr; Back to Blog</a></p>
+      <p style="font-size:.72rem;color:rgba(255,255,255,.4);margin:4px 0 0;line-height:1.5;font-style:italic;">The Time Sphere may earn a commission from bookings and purchases made through links on this page, at no additional cost to you.</p>
 
       <div class="share-row">
         <span class="share-label">Share:</span>
@@ -745,6 +907,97 @@ def run_batch(cities, month_name, month_slug, year, api_key):
     return stats
 
 
+SOURCES_CSS = """    .sources-heading{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:#f0a830;font-weight:700;margin:40px 0 10px;padding-top:28px;border-top:1px solid rgba(255,255,255,.08)}
+    .sources-list{font-size:.78rem;color:rgba(255,255,255,.45);line-height:1.9;padding-left:18px;margin:0}
+    .sources-list a{color:rgba(240,168,48,.7);text-decoration:none}
+    .sources-list a:hover{color:#f0a830;text-decoration:underline}"""
+
+
+def backfill_schema(html_path):
+    """Inject Article + BreadcrumbList JSON-LD into an existing blog article.
+    Returns (changed: bool, reason: str).
+    """
+    text = Path(html_path).read_text(encoding='utf-8')
+    if '"@type": "Article"' in text or '"Article"' in text:
+        return False, 'already has Article schema'
+
+    # Extract existing meta fields
+    def _meta(pattern):
+        m = re.search(pattern, text)
+        return m.group(1) if m else ''
+
+    raw_title   = _meta(r'<title>([^<]+)</title>')
+    title       = re.sub(r'\s*[—\-]+\s*The Time Sphere\s*$', '', raw_title).strip()
+    title       = title.replace('&mdash;', '—').replace('&amp;', '&')
+    description = _meta(r'<meta name="description" content="([^"]+)"')
+    canonical   = _meta(r'<link rel="canonical" href="([^"]+)"')
+    image       = _meta(r'<meta property="og:image" content="([^"]+)"') \
+                  or 'https://www.thetimesphere.com/og-image.jpg'
+
+    # Infer publish date from filename: {slug}-{month}-{year}.html
+    fname  = Path(html_path).stem
+    tokens = fname.rsplit('-', 1)
+    yr_str = tokens[1] if len(tokens) == 2 and tokens[1].isdigit() else '2026'
+    mo_str = tokens[0].rsplit('-', 1)[-1] if '-' in tokens[0] else 'july'
+    try:
+        mo_idx   = MONTH_SLUGS.index(mo_str)
+        pub_date = f"{yr_str}-{mo_idx+1:02d}-01"
+    except ValueError:
+        pub_date = '2026-07-01'
+
+    # Escape for JSON string
+    def _j(s):
+        return s.replace('\\', '\\\\').replace('"', '\\"')
+
+    schema = f"""  <script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@graph": [
+      {{
+        "@type": "Article",
+        "@id": "{_j(canonical)}#article",
+        "headline": "{_j(title)}",
+        "description": "{_j(description)}",
+        "image": "{_j(image)}",
+        "datePublished": "{pub_date}",
+        "dateModified": "{pub_date}",
+        "author": {{
+          "@type": "Organization",
+          "name": "The Time Sphere Editorial Team"
+        }},
+        "publisher": {{
+          "@type": "Organization",
+          "name": "The Time Sphere",
+          "logo": {{
+            "@type": "ImageObject",
+            "url": "https://www.thetimesphere.com/og-image.jpg"
+          }}
+        }},
+        "mainEntityOfPage": "{_j(canonical)}"
+      }},
+      {{
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.thetimesphere.com/"}},
+          {{"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://www.thetimesphere.com/blog"}},
+          {{"@type": "ListItem", "position": 3, "name": "{_j(title)}", "item": "{_j(canonical)}"}}
+        ]
+      }}
+    ]
+  }}
+  </script>"""
+
+    # Insert JSON-LD before </head>
+    text = text.replace('</head>', schema + '\n</head>', 1)
+
+    # Add sources CSS if <style> block present and not already there
+    if '<style>' in text and '.sources-heading' not in text:
+        text = text.replace('</style>', SOURCES_CSS + '\n  </style>', 1)
+
+    Path(html_path).write_text(text, encoding='utf-8')
+    return True, 'updated'
+
+
 # ─── Entry point ───────────────────────────────────────────────────────────────
 
 def main():
@@ -754,7 +1007,22 @@ def main():
     parser.add_argument('--all', action='store_true', help='Generate for all 188+ Time Sphere cities')
     parser.add_argument('--month', type=str, default=None, help='Month slug (e.g. july). Defaults to current month.')
     parser.add_argument('--year', type=int, default=None, help='Year (e.g. 2026). Defaults to current year.')
+    parser.add_argument('--backfill', action='store_true', help='Inject Article schema into all existing blog/*.html files')
     args = parser.parse_args()
+
+    # --backfill: inject schema into existing articles, no API key needed
+    if args.backfill:
+        updated = skipped = 0
+        for p in sorted(BLOG_DIR.glob('*.html')):
+            changed, reason = backfill_schema(p)
+            status = '  [UPDATED]' if changed else '  [SKIP]'
+            print(f"{status} {p.name} — {reason}")
+            if changed:
+                updated += 1
+            else:
+                skipped += 1
+        print(f"\nBackfill complete: {updated} updated, {skipped} skipped.")
+        return
 
     # Load API key
     env = load_env()
