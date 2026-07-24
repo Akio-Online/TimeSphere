@@ -571,14 +571,23 @@ function renderCityPage() {
     ? 'https://www.tripadvisor.com/Attractions-' + _bGeo + '-Activities-' + _bSlug + '.html'
     : 'https://www.tripadvisor.com/Search?q=attractions+' + encodeURIComponent(city.name);
   const _bStatic = CITY_ARTICLE_CARDS[city.id] || null;
+  const _monthKey = _bCm + '-' + _bCy;
+  const _hasGuide = (CITIES_WITH_GUIDES[_monthKey] || new Set()).has(city.id);
   const _bCards  = [
-    {
+    _hasGuide ? {
       category: 'CITY GUIDE',
       title:    city.name + ' in ' + _bCmName + ' ' + _bCy + ' — Things To Do, Eat & See',
       excerpt:  'Your monthly local\'s guide to ' + city.name + ' — current events, best restaurants, neighborhoods, and hidden gems for ' + _bCmName + '.',
       url:      '/blog/' + city.id + '-' + _bCm + '-' + _bCy + '.html',
       photo:    CITY_IMAGES[city.id] || REGION_DEFAULTS[city.region] || CITY_IMAGES['default'],
       label:    'Read ' + _bCmName + ' Guide →'
+    } : {
+      category: 'THINGS TO DO',
+      title:    'Top Attractions in ' + city.name + ' — ' + _bCmName + ' ' + _bCy,
+      excerpt:  'Explore the best things to do and local experiences in ' + city.name + ' this ' + _bCmName + '.',
+      url:      _bTaAttr,
+      photo:    CITY_IMAGES[city.id] || REGION_DEFAULTS[city.region] || CITY_IMAGES['default'],
+      label:    'Explore on TripAdvisor →'
     },
     _bStatic || {
       category: 'RESTAURANT GUIDE',
@@ -663,9 +672,15 @@ function renderCityPage() {
       : `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent(`https://www.expedia.com/carsearch?locn=${city.name}`)}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZ2Q47j9j0`;
   }
 
-  // Cruises (placeholder — CruiseDirect pending approval)
+  // Cruises — hidden until CruiseDirect approval; flip CRUISES_LIVE to re-enable
   const cruisesLink = document.getElementById('cruises-link');
-  if (cruisesLink) cruisesLink.href = '#';
+  if (cruisesLink) {
+    if (!CRUISES_LIVE) {
+      cruisesLink.style.display = 'none';
+    } else {
+      cruisesLink.href = '#'; // Replace with real CruiseDirect URL when approved
+    }
+  }
 
   // Packages
   const packagesLink = document.getElementById('packages-link');
@@ -675,9 +690,12 @@ function renderCityPage() {
       : `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent('https://www.expedia.com/Vacation-Packages')}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZFikPKL6y`;
   }
 
-  // Reserve a Table — regional logic
-  const reserveBtn = document.getElementById('reserve-table-btn');
-  if (reserveBtn) {
+  // Reserve a Table — hidden until affiliate approval; flip RESERVE_TABLE_LIVE to re-enable
+  const reserveBtn  = document.getElementById('reserve-table-btn');
+  const reserveWrap = reserveBtn ? reserveBtn.closest('.reserve-table-wrap') : null;
+  if (!RESERVE_TABLE_LIVE) {
+    if (reserveWrap) reserveWrap.style.display = 'none';
+  } else if (reserveBtn) {
     const r = city.region;
     if (r === 'americas') {
       reserveBtn.href = '#'; reserveBtn.textContent = 'Reserve a Table — OpenTable';
@@ -1043,6 +1061,19 @@ const CITY_ARTICLE_CARDS = {
     label: 'Read Guide →'
   }
 };
+
+// Cities with a published monthly guide — one-line add per batch when new guides are generated
+// Format: 'month-year': new Set(['city-id', ...])
+const CITIES_WITH_GUIDES = {
+  'july-2026': new Set([
+    'houston', 'chicago', 'new-york', 'los-angeles', 'miami',
+    'austin', 'denver', 'seattle', 'atlanta', 'nashville',
+  ]),
+};
+
+// Affiliate feature flags — flip to true when affiliate account is approved and URL is ready
+const RESERVE_TABLE_LIVE = false; // OpenTable/TheFork/Eatigo — approval pending
+const CRUISES_LIVE       = false; // CruiseDirect — approval pending
 
 // --- Weather (Open-Meteo — free, no API key needed) ---
 function weatherCodeToInfo(code) {

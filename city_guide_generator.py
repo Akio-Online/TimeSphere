@@ -7,7 +7,7 @@ OpenRouter's web search capability.
 Usage:
   python city_guide_generator.py --batch 10          # 10-city test batch (July 2026)
   python city_guide_generator.py --city houston      # single city
-  python city_guide_generator.py --all               # all 215+ cities
+  python city_guide_generator.py --all               # all 188+ cities
   python city_guide_generator.py --month july --year 2026  # specific month/year
 """
 
@@ -208,9 +208,13 @@ def build_images(city_id, city_name):
 
 def related_articles(city_id, city_name):
     if city_id in MOVING_TO_CITIES:
-        slug = city_id if city_id != 'new-york' else 'new-york'
-        r1 = {'url': f'/blog/moving-to-{slug}-guide', 'tag': 'Relocation Guide',
-              'title': f'The Complete Guide to Moving to {city_name}'}
+        if city_id == 'new-york':
+            # moving-to-new-york-guide does not exist; use the existing vacation guide instead
+            r1 = {'url': '/blog/best-time-to-visit-new-york.html', 'tag': 'Vacation Guide',
+                  'title': 'Best Time to Visit New York City: A Month-by-Month Guide'}
+        else:
+            r1 = {'url': f'/blog/moving-to-{city_id}-guide', 'tag': 'Relocation Guide',
+                  'title': f'The Complete Guide to Moving to {city_name}'}
         r2 = {'url': '/blog/best-cities-for-digital-nomads-2026', 'tag': 'Digital Nomad Guide',
               'title': 'The 10 Best Cities for Digital Nomads in 2026'}
     else:
@@ -747,7 +751,7 @@ def main():
     parser = argparse.ArgumentParser(description='Time Sphere Monthly City Guide Generator')
     parser.add_argument('--batch', type=int, metavar='N', help='Run first N cities of 10-city test batch')
     parser.add_argument('--city', type=str, help='Generate for a single city by ID (e.g. houston)')
-    parser.add_argument('--all', action='store_true', help='Generate for all 215+ Time Sphere cities')
+    parser.add_argument('--all', action='store_true', help='Generate for all 188+ Time Sphere cities')
     parser.add_argument('--month', type=str, default=None, help='Month slug (e.g. july). Defaults to current month.')
     parser.add_argument('--year', type=int, default=None, help='Year (e.g. 2026). Defaults to current year.')
     args = parser.parse_args()
