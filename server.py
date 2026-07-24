@@ -1,6 +1,6 @@
 import http.server, socketserver, os, re, urllib.parse, json, time
 import urllib.request
-from datetime import date
+from datetime import date, datetime
 
 try:
     import stripe as _stripe_module
@@ -57,6 +57,20 @@ def get_city_ids():
     except:
         return []
 
+# ── Blog articles — scanned from blog/*.html at request time ───────────────────
+def get_blog_articles():
+    try:
+        files = sorted(f for f in os.listdir('blog') if f.endswith('.html'))
+        result = []
+        for fname in files:
+            slug = fname[:-5]
+            mtime = os.path.getmtime(os.path.join('blog', fname))
+            lastmod = datetime.fromtimestamp(mtime).strftime('%Y-%m-%d')
+            result.append((slug, lastmod))
+        return result
+    except:
+        return []
+
 # ── Sitemap ────────────────────────────────────────────────────────────────────
 def generate_sitemap():
     base = 'https://www.thetimesphere.com'
@@ -72,22 +86,6 @@ def generate_sitemap():
         ('/contact', '0.5', 'monthly'),
         ('/privacy', '0.3', 'monthly'),
         ('/blog', '0.7', 'weekly'),
-        ('/blog/moving-to-houston-guide', '0.7', 'weekly'),
-        ('/blog/best-time-to-visit-new-york', '0.7', 'weekly'),
-        ('/blog/moving-to-austin-guide', '0.7', 'weekly'),
-        ('/blog/world-time-zones-for-remote-workers', '0.7', 'weekly'),
-        ('/blog/moving-to-miami-guide', '0.7', 'weekly'),
-        ('/blog/best-cities-for-digital-nomads-2026', '0.7', 'weekly'),
-        ('/blog/houston-july-2026', '0.7', 'weekly'),
-        ('/blog/chicago-july-2026', '0.7', 'weekly'),
-        ('/blog/new-york-july-2026', '0.7', 'weekly'),
-        ('/blog/los-angeles-july-2026', '0.7', 'weekly'),
-        ('/blog/miami-july-2026', '0.7', 'weekly'),
-        ('/blog/austin-july-2026', '0.7', 'weekly'),
-        ('/blog/denver-july-2026', '0.7', 'weekly'),
-        ('/blog/seattle-july-2026', '0.7', 'weekly'),
-        ('/blog/atlanta-july-2026', '0.7', 'weekly'),
-        ('/blog/nashville-july-2026', '0.7', 'weekly'),
     ]
     for path, priority, freq in static_pages:
         urls.append(f"""  <url>
@@ -95,6 +93,14 @@ def generate_sitemap():
     <lastmod>{today}</lastmod>
     <changefreq>{freq}</changefreq>
     <priority>{priority}</priority>
+  </url>""")
+
+    for slug, lastmod in get_blog_articles():
+        urls.append(f"""  <url>
+    <loc>{base}/blog/{slug}</loc>
+    <lastmod>{lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>""")
 
     for city_id in city_ids:
