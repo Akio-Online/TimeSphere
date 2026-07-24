@@ -582,12 +582,12 @@ function renderCityPage() {
       photo:    CITY_IMAGES[city.id] || REGION_DEFAULTS[city.region] || CITY_IMAGES['default'],
       label:    'Read ' + _bCmName + ' Guide →'
     } : {
-      category: 'THINGS TO DO',
-      title:    'Top Attractions in ' + city.name + ' — ' + _bCmName + ' ' + _bCy,
-      excerpt:  'Explore the best things to do and local experiences in ' + city.name + ' this ' + _bCmName + '.',
-      url:      _bTaAttr,
-      photo:    CITY_IMAGES[city.id] || REGION_DEFAULTS[city.region] || CITY_IMAGES['default'],
-      label:    'Explore on TripAdvisor →'
+      category: 'RELOCATION GUIDE',
+      title:    'Moving to ' + city.name,
+      excerpt:  'Neighborhoods, cost of living, and what to expect before you relocate to ' + city.name + '.',
+      url:      '/moving-to/' + city.id,
+      photo:    (CITY_IMAGES[city.id] || REGION_DEFAULTS[city.region] || '').replace(/\?.*$/, '?w=600&q=80'),
+      label:    'Read Guide →'
     },
     _bStatic || {
       category: 'RESTAURANT GUIDE',

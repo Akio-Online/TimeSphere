@@ -439,6 +439,12 @@
       </a>
 
     </div>
+
+    <div id="blog-empty-state" style="display:none;text-align:center;padding:56px 24px 40px;color:rgba(255,255,255,.5)">
+      <p style="font-size:1rem;font-weight:600;color:rgba(255,255,255,.75);margin:0 0 8px">This city guide is in production.</p>
+      <p style="font-size:.85rem;margin:0 0 20px;line-height:1.6">We haven't published an article for this city yet — new guides go live every month. Check back soon, or browse what's available now.</p>
+      <a href="/blog" style="font-size:.82rem;font-weight:700;color:#f0a830;text-decoration:none;letter-spacing:.04em">Browse All Articles &rarr;</a>
+    </div>
   </div>
 
   <div class="container">
@@ -470,6 +476,7 @@
     var searchInput = document.getElementById('blog-search');
     var clearBtn    = document.getElementById('blog-filter-clear');
     var countEl     = document.getElementById('blog-filter-count');
+    var emptyState  = document.getElementById('blog-empty-state');
     var cards       = document.querySelectorAll('.blog-index-card');
 
     function filterCards(query) {
@@ -485,6 +492,7 @@
       });
       clearBtn.style.display = q ? 'inline' : 'none';
       countEl.textContent    = q ? visible + ' article' + (visible !== 1 ? 's' : '') : '';
+      if (emptyState) emptyState.style.display = (q && visible === 0) ? 'block' : 'none';
     }
 
     if (cityParam) {
