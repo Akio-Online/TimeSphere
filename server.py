@@ -1,4 +1,4 @@
-import http.server, socketserver, os, re, urllib.parse, json, time
+import http.server, socketserver, os, re, urllib.parse, json, time, unicodedata
 import urllib.request
 from datetime import date, datetime
 
@@ -203,6 +203,266 @@ def _fetch_viator(city_name):
         return out
     except Exception:
         return []
+
+# ── Affiliate link router ──────────────────────────────────────────────────────
+
+_CITY_INDEX_CACHE = None
+
+def _get_city_index():
+    """Parse CITIES from app.js once; cached thereafter."""
+    global _CITY_INDEX_CACHE
+    if _CITY_INDEX_CACHE is not None:
+        return _CITY_INDEX_CACHE
+    idx = {}
+    try:
+        with open('app.js', 'r', encoding='utf-8') as f:
+            content = f.read()
+        for obj in re.findall(r'\{[^{}]+\}', content):
+            id_m = re.search(r"id:\s*'([^']+)'",      obj)
+            nm_m = re.search(r"name:\s*'([^']+)'",    obj)
+            co_m = re.search(r"country:\s*'([^']+)'", obj)
+            rg_m = re.search(r"region:\s*'([^']+)'",  obj)
+            tz_m = re.search(r"tz:\s*'([^']+)'",      obj)
+            if id_m and nm_m and co_m and rg_m and tz_m:
+                cid = id_m.group(1)
+                idx[cid] = {
+                    'id':      cid,
+                    'name':    nm_m.group(1),
+                    'country': co_m.group(1),
+                    'region':  rg_m.group(1),
+                }
+    except Exception:
+        pass
+    _CITY_INDEX_CACHE = idx
+    return idx
+
+_MIDDLE_EAST_CTRY = {
+    'UAE', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Oman',
+    'Jordan', 'Lebanon', 'Israel', 'Iraq', 'Iran', 'Turkey', 'Egypt',
+}
+
+_NUMBEO_SLUG_OVERRIDES = {
+    'ho-chi-minh': 'Ho-Chi-Minh-City',
+    'tel-aviv':    'Tel-Aviv-Yafo',
+    'san-jose-cr': 'San-Jose-Costa-Rica',
+}
+
+def _numbeo_slug(city_id):
+    return (_NUMBEO_SLUG_OVERRIDES.get(city_id) or
+            '-'.join(w.capitalize() for w in city_id.split('-')))
+
+def _strip_diacritics(s):
+    return ''.join(
+        c for c in unicodedata.normalize('NFD', s)
+        if unicodedata.category(c) != 'Mn'
+    )
+
+_EB_COUNTRY_ALIASES = {
+    'UAE': 'united-arab-emirates',
+    'Trinidad': 'trinidad-and-tobago',
+}
+
+# Canonical TripAdvisor geo IDs — extended set covering top international cities
+_TA_GEO_IDS = {
+    'houston':      'g56003',  'new-york':     'g60763',  'los-angeles':  'g32655',
+    'chicago':      'g35805',  'phoenix':      'g31310',  'philadelphia': 'g60795',
+    'san-antonio':  'g60956',  'san-diego':    'g60750',  'dallas':       'g55711',
+    'seattle':      'g60878',  'denver':       'g33388',  'boston':       'g60745',
+    'miami':        'g34438',  'atlanta':      'g60898',  'portland':     'g52024',
+    'austin':       'g30196',  'nashville':    'g55229',
+    'london':       'g186338', 'paris':        'g187147', 'tokyo':        'g298184',
+    'sydney':       'g255060', 'toronto':      'g155019', 'dubai':        'g295424',
+    'amsterdam':    'g188590', 'berlin':       'g187323', 'rome':         'g187791',
+    'madrid':       'g187514', 'singapore':    'g294265', 'hong-kong':    'g294217',
+    'seoul':        'g294197', 'bangkok':      'g293916', 'istanbul':     'g293974',
+    'cairo':        'g294201', 'barcelona':    'g187497', 'amsterdam':    'g188590',
+}
+
+AFFILIATE_CONFIG = {
+    # ── Direct programs ──────────────────────────────────────────────────────
+    'viator': {
+        'type': 'viator',
+        'pid': 'P00295924', 'mcid': '42383',
+    },
+    'trip-com-flights': {
+        'type': 'trip-com', 'product': 'flights',
+        'aid': '8058275', 'sid': '304813083', 'sub3': 'D15250377',
+    },
+    'trip-com-hotels': {
+        'type': 'trip-com', 'product': 'hotels',
+        'aid': '8058275', 'sid': '304813083', 'sub3': 'D15250377',
+    },
+    'trip-com-cars': {
+        'type': 'trip-com', 'product': 'cars',
+        'aid': '8058275', 'sid': '304813083', 'sub3': 'D15250377',
+    },
+    # ── TravelPayouts deeplinks ──────────────────────────────────────────────
+    'expedia-flights': {
+        'type': 'expedia', 'product': 'flights',
+        'camref': '1011l5FtnD', 'creativeref': '1100l68075', 'adref': 'PZsdtQ7jiB',
+    },
+    'expedia-hotels': {
+        'type': 'expedia', 'product': 'hotels',
+        'camref': '1011l5FtnD', 'creativeref': '1100l68075', 'adref': 'PZsdtQ7jiB',
+    },
+    'expedia-cars': {
+        'type': 'expedia', 'product': 'cars',
+        'camref': '1011l5FtnD', 'creativeref': '1100l68075', 'adref': 'PZ2Q47j9j0',
+    },
+    'expedia-packages': {
+        'type': 'expedia', 'product': 'packages',
+        'camref': '1011l5FtnD', 'creativeref': '1100l68075', 'adref': 'PZFikPKL6y',
+    },
+    'hotels-com': {
+        'type': 'hotels-com',
+        'camref': '1110lCi3P', 'creativeref': '1011l66481', 'adref': 'PZtELLwj2M',
+    },
+    # ── Auto-routing shorthands (region-aware) ────────────────────────────────
+    'flights':  {'type': 'auto', 'asia_africa': 'trip-com-flights',  'other': 'expedia-flights'},
+    'hotels':   {'type': 'auto', 'asia_africa': 'trip-com-hotels',   'other': 'hotels-com'},
+    'cars':     {'type': 'auto', 'asia_africa': 'trip-com-cars',     'other': 'expedia-cars'},
+    'packages': {'type': 'auto', 'asia_africa': 'trip-com-flights',  'other': 'expedia-packages'},
+    # ── Events ──────────────────────────────────────────────────────────────
+    'ticketmaster': {'type': 'ticketmaster'},
+    'eventbrite':   {'type': 'eventbrite'},
+    # ── TripAdvisor (attribution via TravelPayouts Drive overlay) ────────────
+    'tripadvisor-restaurants': {'type': 'tripadvisor', 'category': 'Restaurants'},
+    'tripadvisor-things':      {'type': 'tripadvisor', 'category': 'Attractions'},
+    # ── Accommodation without affiliate — Skimlinks hook (commented/inactive) ─
+    'booking-com': {'type': 'booking-com'},
+    'agoda':       {'type': 'agoda'},
+    # ── Resource/reference merchants ─────────────────────────────────────────
+    'zillow':         {'type': 'zillow'},
+    'apartments-com': {'type': 'apartments-com'},
+    'spotahome':      {'type': 'spotahome'},
+    'numbeo-qol':     {'type': 'numbeo', 'product': 'quality-of-life'},
+    'numbeo-col':     {'type': 'numbeo', 'product': 'cost-of-living'},
+    'nerdwallet':     {'type': 'nerdwallet'},
+}
+
+def _build_affiliate_url(merchant, city):
+    """Return destination URL for /go, or None if merchant doesn't serve this city/region."""
+    cfg = AFFILIATE_CONFIG.get(merchant)
+    if not cfg:
+        return None
+
+    cid   = city['id']
+    cname = city['name']
+    ctry  = city['country']
+    reg   = city['region']
+    enc   = urllib.parse.quote(cname, safe='')
+    is_aa = reg in ('asia', 'africa')
+    is_me = reg == 'africa' and ctry in _MIDDLE_EAST_CTRY
+    is_ss = reg == 'africa' and not is_me
+
+    t = cfg['type']
+
+    if t == 'auto':
+        target = cfg['asia_africa'] if is_aa else cfg['other']
+        return _build_affiliate_url(target, city)
+
+    if t == 'viator':
+        return (f"https://www.viator.com/search/{enc}"
+                f"?pid={cfg['pid']}&mcid={cfg['mcid']}&medium=link&medium_version=selector")
+
+    if t == 'trip-com':
+        base = (f"Allianceid={cfg['aid']}&SID={cfg['sid']}"
+                f"&trip_sub1=&trip_sub3={cfg['sub3']}")
+        p = cfg['product']
+        if p == 'flights': return f"https://www.trip.com/flights/welcome/?to={enc}&{base}"
+        if p == 'hotels':  return f"https://www.trip.com/hotels/?searchWord={enc}&{base}"
+        if p == 'cars':    return f"https://www.trip.com/carhire/?{base}"
+        return None
+
+    if t == 'expedia':
+        cam, cre, adr = cfg['camref'], cfg['creativeref'], cfg['adref']
+        p = cfg['product']
+        if p == 'flights':
+            lp = urllib.parse.quote(
+                f"https://www.expedia.com/Flights-Search?trip=roundtrip&leg1=from:{cname}", safe='')
+        elif p == 'hotels':
+            lp = urllib.parse.quote(
+                f"https://www.expedia.com/Hotel-Search?destination={cname}"
+                f"&startDate=&endDate=&rooms=1", safe='')
+        elif p == 'cars':
+            lp = urllib.parse.quote(
+                f"https://www.expedia.com/carsearch?locn={cname}", safe='')
+        elif p == 'packages':
+            lp = urllib.parse.quote("https://www.expedia.com/Vacation-Packages", safe='')
+        else:
+            return None
+        return (f"https://expedia.com/affiliate?siteid=1&landingPage={lp}"
+                f"&camref={cam}&creativeref={cre}&adref={adr}")
+
+    if t == 'hotels-com':
+        cam, cre, adr = cfg['camref'], cfg['creativeref'], cfg['adref']
+        lp = urllib.parse.quote(
+            f"https://www.hotels.com/search.do?destination={cname}", safe='')
+        return (f"https://www.hotels.com/affiliate?landingPage={lp}"
+                f"&camref={cam}&creativeref={cre}&adref={adr}")
+
+    if t == 'ticketmaster':
+        if ctry in ('USA', 'Canada'):
+            return f"https://www.ticketmaster.com/search?q={enc}"
+        if ctry in ('United Kingdom', 'Ireland'):
+            return f"https://www.ticketmaster.co.uk/search?q={enc}"
+        return None
+
+    if t == 'eventbrite':
+        if is_ss or (reg == 'asia' and not is_me):
+            return None
+        if ctry == 'USA':
+            return f"https://www.eventbrite.com/d/{enc}/events/"
+        eb_ctry = _EB_COUNTRY_ALIASES.get(
+            ctry, _strip_diacritics(ctry).lower().replace(' ', '-'))
+        eb_city = _strip_diacritics(cname).lower().replace(' ', '-')
+        return f"https://www.eventbrite.com/d/{eb_ctry}--{eb_city}/events/"
+
+    if t == 'tripadvisor':
+        geo  = _TA_GEO_IDS.get(cid)
+        cat  = cfg.get('category', 'Restaurants')
+        slug = cname.replace(' ', '_')
+        if geo:
+            if cat == 'Attractions':
+                return f"https://www.tripadvisor.com/Attractions-{geo}-Activities-{slug}.html"
+            return f"https://www.tripadvisor.com/Restaurants-{geo}-{slug}.html"
+        q = urllib.parse.quote_plus(cname)
+        if cat == 'Attractions':
+            return f"https://www.tripadvisor.com/Search?q=attractions+{q}"
+        return f"https://www.tripadvisor.com/Search?q=restaurants+{q}"
+
+    if t == 'booking-com':
+        # No affiliate — Skimlinks passthrough deferred until post-AdSense
+        # dest = f"https://go.skimlinks.com/?id=XXXXXX&url={urllib.parse.quote(dest_url)}"
+        return f"https://www.booking.com/searchresults.html?ss={enc}&checkin=&checkout=&group_adults=1"
+
+    if t == 'agoda':
+        # No affiliate — Skimlinks passthrough deferred
+        return f"https://www.agoda.com/search?city={enc}&checkIn=&checkOut=&rooms=1"
+
+    if t == 'zillow':
+        if ctry != 'USA': return None
+        return f"https://www.zillow.com/homes/{enc}_rb/"
+
+    if t == 'apartments-com':
+        if ctry != 'USA': return None
+        slug = _strip_diacritics(cname).lower().replace(' ', '-')
+        return f"https://www.apartments.com/{urllib.parse.quote(slug, safe='')}/"
+
+    if t == 'spotahome':
+        if reg != 'europe': return None
+        return f"https://www.spotahome.com/s/{enc}"
+
+    if t == 'numbeo':
+        if ctry == 'USA': return None
+        return f"https://www.numbeo.com/{cfg['product']}/in/{_numbeo_slug(cid)}"
+
+    if t == 'nerdwallet':
+        if ctry != 'USA': return None
+        slug = _strip_diacritics(cname).lower().replace(' ', '-')
+        return f"https://www.nerdwallet.com/cost-of-living-calculator/compare/{urllib.parse.quote(slug, safe='')}"
+
+    return None
 
 # ── Response helpers ───────────────────────────────────────────────────────────
 def _json_response(handler, data, cache_max_age=3600):
@@ -468,6 +728,25 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
                 _json_response(self, {'tier': tier, 'email': email}, cache_max_age=0)
             except Exception:
                 _json_response(self, {'tier': 'free', 'email': email}, cache_max_age=0)
+            return True
+
+        # ── GET /go — affiliate redirect router ──────────────────────────────────
+        if path == '/go':
+            merchant = qs.get('merchant', [''])[0]
+            city_id  = qs.get('city',     [''])[0]
+            if not merchant or not city_id:
+                self.send_error(400, 'Missing merchant or city')
+                return True
+            city = _get_city_index().get(city_id)
+            if not city:
+                self.send_error(404, 'City not found')
+                return True
+            dest = _build_affiliate_url(merchant, city)
+            loc  = dest if dest else '/'
+            self.send_response(302)
+            self.send_header('Location', loc)
+            self.send_header('Cache-Control', 'no-store')
+            self.end_headers()
             return True
 
         return False
