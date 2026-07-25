@@ -554,22 +554,8 @@ function renderCityPage() {
   const _bCm     = _bMonthSlugs[_bNow.getMonth()];
   const _bCmName = _bMonthLabels[_bNow.getMonth()];
   const _bCy     = _bNow.getFullYear();
-  const _bTaGeos = {
-    'houston':'g56003', 'new-york':'g60763', 'los-angeles':'g32655',
-    'chicago':'g35805', 'phoenix':'g31310',  'philadelphia':'g60795',
-    'san-antonio':'g60956', 'san-diego':'g60750', 'dallas':'g55711',
-    'seattle':'g60878', 'denver':'g33388',   'boston':'g60745',
-    'miami':'g34438',   'atlanta':'g60898',  'portland':'g52024',
-    'austin':'g30196',  'nashville':'g55229'
-  };
-  const _bGeo  = _bTaGeos[city.id];
-  const _bSlug = city.name.replace(/\s+/g, '_');
-  const _bTaRest = _bGeo
-    ? 'https://www.tripadvisor.com/Restaurants-' + _bGeo + '-' + _bSlug + '.html'
-    : 'https://www.tripadvisor.com/Search?q=restaurants+' + encodeURIComponent(city.name);
-  const _bTaAttr = _bGeo
-    ? 'https://www.tripadvisor.com/Attractions-' + _bGeo + '-Activities-' + _bSlug + '.html'
-    : 'https://www.tripadvisor.com/Search?q=attractions+' + encodeURIComponent(city.name);
+  const _bTaRest = `/go?merchant=tripadvisor-restaurants&city=${city.id}`;
+  const _bTaAttr = `/go?merchant=tripadvisor-things&city=${city.id}`;
   const _bStatic = CITY_ARTICLE_CARDS[city.id] || null;
   const _monthKey = _bCm + '-' + _bCy;
   const _hasGuide = (CITIES_WITH_GUIDES[_monthKey] || new Set()).has(city.id);
@@ -636,41 +622,20 @@ function renderCityPage() {
   const travelHeading = document.getElementById('travel-heading');
   if (travelHeading) travelHeading.textContent = `Explore ${city.name}`;
 
-  // Dynamic city-specific affiliate links
-  const aid = '8058275';
-  const sid = '304813083';
-  const sub3 = 'D15250377';
+  // Dynamic city-specific affiliate links — all routed through /go
   const cityEncoded = encodeURIComponent(city.name);
-  const baseParams = `Allianceid=${aid}&SID=${sid}&trip_sub1=&trip_sub3=${sub3}`;
-  const isAsiaAfrica = city.region === 'asia' || city.region === 'africa';
 
-  // Flights
   const flightsLink = document.getElementById('flights-link');
-  if (flightsLink) {
-    flightsLink.href = isAsiaAfrica
-      ? `https://www.trip.com/flights/welcome/?to=${cityEncoded}&${baseParams}`
-      : `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent(`https://www.expedia.com/Flights-Search?trip=roundtrip&leg1=from:${city.name}`)}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZsdtQ7jiB`;
-  }
+  if (flightsLink) flightsLink.href = `/go?merchant=flights&city=${city.id}`;
 
-  // Hotels — Trip.com for Asia/Africa, Hotels.com for Americas/Europe
   const hotelsLink = document.getElementById('hotels-link');
-  if (hotelsLink) {
-    hotelsLink.href = isAsiaAfrica
-      ? `https://www.trip.com/hotels/?searchWord=${cityEncoded}&${baseParams}`
-      : `https://www.hotels.com/affiliate?landingPage=${encodeURIComponent(`https://www.hotels.com/search.do?destination=${city.name}`)}&camref=1110lCi3P&creativeref=1011l66481&adref=PZtELLwj2M`;
-  }
+  if (hotelsLink) hotelsLink.href = `/go?merchant=hotels&city=${city.id}`;
 
-  // Tours (Viator — all regions)
   const toursLink = document.getElementById('tours-link');
-  if (toursLink) toursLink.href = `https://www.viator.com/search/${cityEncoded}?pid=P00295924&mcid=42383&medium=link&medium_version=selector`;
+  if (toursLink) toursLink.href = `/go?merchant=viator&city=${city.id}`;
 
-  // Cars
   const carsLink = document.getElementById('cars-link');
-  if (carsLink) {
-    carsLink.href = isAsiaAfrica
-      ? `https://www.trip.com/carhire/?${baseParams}`
-      : `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent(`https://www.expedia.com/carsearch?locn=${city.name}`)}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZ2Q47j9j0`;
-  }
+  if (carsLink) carsLink.href = `/go?merchant=cars&city=${city.id}`;
 
   // Cruises — hidden until CruiseDirect approval; flip CRUISES_LIVE to re-enable
   const cruisesLink = document.getElementById('cruises-link');
@@ -682,13 +647,8 @@ function renderCityPage() {
     }
   }
 
-  // Packages
   const packagesLink = document.getElementById('packages-link');
-  if (packagesLink) {
-    packagesLink.href = isAsiaAfrica
-      ? `https://www.trip.com/flights/welcome/?to=${cityEncoded}&${baseParams}`
-      : `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent('https://www.expedia.com/Vacation-Packages')}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZFikPKL6y`;
-  }
+  if (packagesLink) packagesLink.href = `/go?merchant=packages&city=${city.id}`;
 
   // Reserve a Table — hidden until affiliate approval; flip RESERVE_TABLE_LIVE to re-enable
   const reserveBtn  = document.getElementById('reserve-table-btn');
@@ -1142,8 +1102,7 @@ async function loadWeather(city) {
 // --- API Keys ---
 const TICKETMASTER_KEY = 'oU45aN6HSWpgHLNGHJNJe7tz0870uGGj';
 const EVENTBRITE_KEY   = 'SBQORL5REUVO342LNKQ5';
-const VIATOR_PID       = 'P00295924';
-const VIATOR_MCID      = '42383';
+// Viator tracking IDs now centralised in server.py AFFILIATE_CONFIG['viator']
 
 function renderEventItems(events, containerId, linkBase) {
   const el = document.getElementById(containerId);
@@ -1222,7 +1181,7 @@ async function loadDiscoverContent(city) {
   if (subEl)   subEl.textContent   = `Things to do, places to eat, and upcoming events in ${city.name}`;
 
   // ── Viator affiliate link ──
-  const viatorUrl  = `https://www.viator.com/search/${encodeURIComponent(city.name)}?pid=${VIATOR_PID}&mcid=${VIATOR_MCID}&medium=link&medium_version=selector`;
+  const viatorUrl  = `/go?merchant=viator&city=${city.id}`;
   const viatorWrap = document.getElementById('viator-widget');
   if (viatorWrap) {
     viatorWrap.innerHTML = `
@@ -1241,17 +1200,17 @@ async function loadDiscoverContent(city) {
   if (tmEl) tmEl.innerHTML = `<div class="discover-loading"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>`;
   const tmEvents = await loadTicketmasterEvents(city);
   renderEventItems(
-    tmEvents.length ? tmEvents : [{name:`Live events in ${city.name}`,date:'See all dates',venue:city.name,url:`https://www.ticketmaster.com/search?q=${encodeURIComponent(city.name)}`}],
+    tmEvents.length ? tmEvents : [{name:`Live events in ${city.name}`,date:'See all dates',venue:city.name,url:`/go?merchant=ticketmaster&city=${city.id}`}],
     'ticketmaster-body',
-    `https://www.ticketmaster.com/search?q=${encodeURIComponent(city.name)}`
+    `/go?merchant=ticketmaster&city=${city.id}`
   );
 
   // ── Eventbrite branded cards ──
   const ebEl = document.getElementById('eventbrite-body');
   if (ebEl) {
-    const enc = encodeURIComponent(city.name);
+    const ebGoUrl = `/go?merchant=eventbrite&city=${city.id}`;
     ebEl.innerHTML = `
-      <a href="https://www.eventbrite.com/d/${enc}/events/" target="_blank" rel="noopener" class="event-item event-item-has-image">
+      <a href="${ebGoUrl}" target="_blank" rel="noopener" class="event-item event-item-has-image">
         <div class="event-item-img" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
           <div style="font-size:2.5rem;">📅</div>
           <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;font-weight:700;text-align:center;padding:0 20px;">Local Events in ${city.name}</div>
@@ -1265,7 +1224,7 @@ async function loadDiscoverContent(city) {
           </div>
         </div>
       </a>
-      <a href="https://www.eventbrite.com/d/${enc}/food-and-drink--events/" target="_blank" rel="noopener" class="event-item event-item-has-image">
+      <a href="${ebGoUrl}" target="_blank" rel="noopener" class="event-item event-item-has-image">
         <div class="event-item-img" style="background:linear-gradient(135deg,#1a0a00,#6b2f00);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
           <div style="font-size:2.5rem;">🍽️</div>
           <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;font-weight:700;text-align:center;padding:0 20px;">Food &amp; Drink Events</div>
@@ -1472,17 +1431,11 @@ async function renderMovingPage() {
   const nSlug = (c) => NUMBEO_SLUG_MAP[c.id] || c.id.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('-');
 
   // ── Phase 3: neighborhood links ───────────────────────────────────────────
-  if (isUSA) {
-    const zillowCity = encodeURIComponent(`${cityName}, ${city.state || city.country}`);
+  {
+    const _nbMerchant = isUSA ? 'zillow' : 'numbeo-qol';
     for (let ni = 0; ni < 5; ni++) {
       const nbhdEl = document.getElementById(`nbhd-${ni}`);
-      if (nbhdEl) nbhdEl.href = `https://www.zillow.com/homes/${zillowCity}_rb/?searchQueryState=%7B%22pagination%22%3A%7B%7D%7D`;
-    }
-  } else {
-    const numbeoQoL = `https://www.numbeo.com/quality-of-life/in/${nSlug(city)}`;
-    for (let ni = 0; ni < 5; ni++) {
-      const nbhdEl = document.getElementById(`nbhd-${ni}`);
-      if (nbhdEl) nbhdEl.href = numbeoQoL;
+      if (nbhdEl) nbhdEl.href = `/go?merchant=${_nbMerchant}&city=${city.id}`;
     }
   }
 
@@ -1493,34 +1446,34 @@ async function renderMovingPage() {
 
   // Neighborhoods card
   if (isUSA) {
-    setAttr('explore-neighborhoods-link', 'href', `https://www.zillow.com/homes/${encodeURIComponent(cityName + ', ' + stateStr)}_rb/`);
+    setAttr('explore-neighborhoods-link', 'href', `/go?merchant=zillow&city=${city.id}`);
     setText('explore-neighborhoods-title', `Best Neighborhoods in ${cityName}`);
   } else {
-    setAttr('explore-neighborhoods-link', 'href', `https://www.numbeo.com/quality-of-life/in/${nSlug(city)}`);
+    setAttr('explore-neighborhoods-link', 'href', `/go?merchant=numbeo-qol&city=${city.id}`);
     setText('explore-neighborhoods-title', `Quality of Life in ${cityName}`);
   }
 
   // Cost of Living card
   if (isUSA) {
-    setAttr('explore-costliving-link', 'href', `https://www.nerdwallet.com/cost-of-living-calculator/compare/${encodeURIComponent(citySlug)}`);
+    setAttr('explore-costliving-link', 'href', `/go?merchant=nerdwallet&city=${city.id}`);
   } else {
-    setAttr('explore-costliving-link', 'href', `https://www.numbeo.com/cost-of-living/in/${nSlug(city)}`);
+    setAttr('explore-costliving-link', 'href', `/go?merchant=numbeo-col&city=${city.id}`);
   }
   setText('explore-costliving-title', `Cost of Living in ${cityName}`);
 
   // Apartments card: US → apartments.com, Europe → Spotahome, elsewhere → hide
   if (isUSA) {
-    setAttr('explore-apartments-link', 'href', `https://www.apartments.com/${encodeURIComponent(citySlug)}/`);
+    setAttr('explore-apartments-link', 'href', `/go?merchant=apartments-com&city=${city.id}`);
     setText('explore-apartments-title', `Apartments in ${cityName}`);
   } else if (isEurope) {
-    setAttr('explore-apartments-link', 'href', `https://www.spotahome.com/s/${encodeURIComponent(city.name)}`);
+    setAttr('explore-apartments-link', 'href', `/go?merchant=spotahome&city=${city.id}`);
     setText('explore-apartments-title', `Rentals in ${cityName}`);
   } else {
     const aptsEl = document.getElementById('explore-apartments-link');
     if (aptsEl) aptsEl.style.display = 'none';
   }
 
-  setAttr('explore-things-link', 'href', `https://www.viator.com/search/${cityEncoded}?pid=P00295924&mcid=42383&medium=link`);
+  setAttr('explore-things-link', 'href', `/go?merchant=viator&city=${city.id}`);
   setText('explore-things-title', `Things To Do in ${cityName}`);
 
   // ── Back link & explore links ─────────────────────────────────────────────
@@ -1538,59 +1491,28 @@ async function renderMovingPage() {
     }
   });
 
-  // ── Affiliate URL construction (mirrors renderCityPage logic) ─────────────
-  const aid          = '8058275';
-  const sid          = '304813083';
-  const sub3         = 'D15250377';
-  const baseParams   = `Allianceid=${aid}&SID=${sid}&trip_sub1=&trip_sub3=${sub3}`;
-  const isAsiaAfrica = city.region === 'asia' || city.region === 'africa';
-
-  // Trip.com
-  setAttr('moving-trip-btn', 'href',
-    `https://www.trip.com/hotels/?searchWord=${cityEncoded}&${baseParams}`);
-
-  // Expedia
-  setAttr('moving-expedia-btn', 'href',
-    isAsiaAfrica
-      ? `https://www.trip.com/hotels/?searchWord=${cityEncoded}&${baseParams}`
-      : `https://expedia.com/affiliate?siteid=1&landingPage=${encodeURIComponent(`https://www.expedia.com/Hotel-Search?destination=${city.name}&startDate=&endDate=&rooms=1`)}&camref=1011l5FtnD&creativeref=1100l68075&adref=PZsdtQ7jiB`);
-
-  // Hotels.com
-  setAttr('moving-hotels-btn', 'href',
-    isAsiaAfrica
-      ? `https://www.trip.com/hotels/?searchWord=${cityEncoded}&${baseParams}`
-      : `https://www.hotels.com/affiliate?landingPage=${encodeURIComponent(`https://www.hotels.com/search.do?destination=${city.name}`)}&camref=1110lCi3P&creativeref=1011l66481&adref=PZtELLwj2M`);
-
-  // Booking.com (no existing affiliate — using functional search URL)
-  setAttr('moving-booking-btn', 'href',
-    `https://www.booking.com/searchresults.html?ss=${cityEncoded}&checkin=&checkout=&group_adults=1`);
-
-  // Agoda (no existing affiliate — using functional search URL)
-  setAttr('moving-agoda-btn', 'href',
-    `https://www.agoda.com/search?city=${cityEncoded}&checkIn=&checkOut=&rooms=1`);
+  // ── Hotel comparison buttons — all routed through /go ─────────────────────
+  setAttr('moving-trip-btn',    'href', `/go?merchant=trip-com-hotels&city=${city.id}`);
+  setAttr('moving-expedia-btn', 'href', `/go?merchant=hotels&city=${city.id}`);
+  setAttr('moving-hotels-btn',  'href', `/go?merchant=hotels&city=${city.id}`);
+  setAttr('moving-booking-btn', 'href', `/go?merchant=booking-com&city=${city.id}`);
+  setAttr('moving-agoda-btn',   'href', `/go?merchant=agoda&city=${city.id}`);
 
   // Eventbrite: Americas + Europe + Middle East → show; Asia + Sub-Saharan Africa → hide
   const ebEl = document.getElementById('moving-eventbrite-link');
   if (ebEl) {
     if (isAsia || isSubSaharan) {
       ebEl.style.display = 'none';
-    } else if (isUSA) {
-      ebEl.href = `https://www.eventbrite.com/d/${cityEncoded}/events/`;
     } else {
-      const EB_CTRY_ALIAS = { 'UAE': 'united-arab-emirates', 'Trinidad': 'trinidad-and-tobago' };
-      const ebCountry = EB_CTRY_ALIAS[city.country] || city.country.toLowerCase().replace(/\s+/g, '-');
-      const ebCity    = city.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '-');
-      ebEl.href = `https://www.eventbrite.com/d/${ebCountry}--${ebCity}/events/`;
+      ebEl.href = `/go?merchant=eventbrite&city=${city.id}`;
     }
   }
 
   // Ticketmaster: US + Canada → ticketmaster.com, UK/Ireland → ticketmaster.co.uk, elsewhere → hide
   const tmEl = document.getElementById('moving-ticketmaster-link');
   if (tmEl) {
-    if (isUSA || isCanada) {
-      tmEl.href = `https://www.ticketmaster.com/search?q=${cityEncoded}`;
-    } else if (isUK || isIreland) {
-      tmEl.href = `https://www.ticketmaster.co.uk/search?q=${cityEncoded}`;
+    if (isUSA || isCanada || isUK || isIreland) {
+      tmEl.href = `/go?merchant=ticketmaster&city=${city.id}`;
     } else {
       tmEl.style.display = 'none';
     }
@@ -1610,7 +1532,7 @@ async function renderMovingPage() {
   }
 
   // Viator
-  const viatorUrl = `https://www.viator.com/search/${cityEncoded}?pid=${VIATOR_PID}&mcid=${VIATOR_MCID}&medium=link&medium_version=selector`;
+  const viatorUrl = `/go?merchant=viator&city=${city.id}`;
   const viatorBody = document.getElementById('moving-viator-body');
   if (viatorBody) {
     viatorBody.innerHTML = `
@@ -1751,7 +1673,7 @@ async function renderMovingPage() {
   const snapPriceEl = document.getElementById('snap-price');
   if (snapPriceEl) {
     if (isUSA) {
-      snapPriceEl.innerHTML = `<a href="https://www.zillow.com/homes/${citySlug}-homes/" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;font-size:0.85rem;">Research on Zillow →</a>`;
+      snapPriceEl.innerHTML = `<a href="/go?merchant=zillow&city=${city.id}" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;font-size:0.85rem;">Research on Zillow →</a>`;
     } else {
       snapPriceEl.textContent = snapMedianHome(city);
     }
@@ -1857,22 +1779,12 @@ async function renderMovingPage() {
   ];
   renderItems(todoEl, (cityData && cityData.todo && cityData.todo.length) ? cityData.todo : genericTodo);
 
-  // ── Top Restaurants (TripAdvisor affiliate via TravelPayouts Drive) ───────
-  const TA_GEO_IDS = {
-    'houston': 'g56003', 'new-york': 'g60763', 'los-angeles': 'g32655',
-    'chicago': 'g35805', 'phoenix': 'g31310', 'philadelphia': 'g60795',
-    'san-antonio': 'g60956', 'san-diego': 'g60750', 'dallas': 'g55711',
-    'seattle': 'g60878', 'denver': 'g33388', 'boston': 'g60745',
-    'miami': 'g34438', 'atlanta': 'g60898', 'portland': 'g52024'
-  };
+  // ── Top Restaurants (TripAdvisor) ────────────────────────────────────────
   const restCityNameEl = document.getElementById('moving-rest-city-name');
   if (restCityNameEl) restCityNameEl.textContent = cityName;
   const restGrid = document.getElementById('moving-rest-grid');
   if (restGrid) {
-    const geoId = TA_GEO_IDS[city.id];
-    const taUrl = geoId
-      ? `https://www.tripadvisor.com/Restaurants-${geoId}-${cityName.replace(/\s+/g, '_')}.html`
-      : `https://www.tripadvisor.com/Search?q=restaurants+${encodeURIComponent(cityName)}`;
+    const taUrl = `/go?merchant=tripadvisor-restaurants&city=${city.id}`;
     const REST_PHOTOS = [
       'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80',
       'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=80',
