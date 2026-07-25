@@ -7,11 +7,18 @@ Phase 1 — resolver assertions: confirms every /go request resolves to a real U
            and never to "/" or an unexpected UNAVAILABLE sentinel.
 Phase 2 — HTTP reachability: sends real HTTP requests to verify resolved URLs
            actually respond. Classifies results as:
-             REACHABLE   200-399 final status (after redirects)     PASS
-             BOT_BLOCKED 403/405/429/999 — host is up, rejects bots WARN (no fail)
-             BROKEN      404/410/5xx/DNS/timeout                    FAIL
-             SKIPPED     google.com/search fallbacks (always valid)  -
-             SKIPPED     _UNAVAILABLE rows                           -
+             REACHABLE   200-399 final status (after redirects)       PASS
+             BOT_BLOCKED 403/405/429/999 — host is up, rejects bots   WARN (no fail)
+             BROKEN      404/410/5xx/DNS/timeout                       FAIL
+             SKIPPED     google.com/search fallbacks (structurally valid, always up)
+             SKIPPED     _UNAVAILABLE sentinel rows (button suppressed in app.js)
+
+SKIPPED is permitted ONLY for the two categories above. Any other 404/5xx/DNS
+error is always classified BROKEN — no per-host exceptions or geo allowlists.
+
+HEAD→GET retry policy: HEAD is tried first; if the server returns 404, 405, or
+501 (servers that don't implement HEAD correctly return 404 rather than 405), the
+request is retried with GET. A genuine 404 will still 404 on GET and be BROKEN.
 
 NOTE (Phase 2 limitation): This catches HARD failures — dead host, wrong path,
 HTTP 404. It does NOT catch SOFT failures: a 200 response that shows "no results"
@@ -30,13 +37,6 @@ from requests.exceptions import (
 )
 
 # ── Shared constants ──────────────────────────────────────────────────────────
-
-# URL substrings that are geo-restricted and will return 404 from a US IP even
-# though they serve real content in the target region. Skip HTTP check for these;
-# verify manually from the target region after deploy.
-_GEO_RESTRICTED = [
-    'trip.com/flights',  # Trip.com flights is geo-gated outside Asia; /hotels/ and /carhire/ on the same domain return 200
-]
 
 _UA = (
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
@@ -134,15 +134,15 @@ def _is_generic_fallback(url):
     """Google search fallbacks are structurally valid — skip HTTP check."""
     return url and 'google.com/search' in url
 
-def _is_geo_restricted(url):
-    """True if this URL is known-good in its target region but geo-blocks US IPs."""
-    return url and any(p in url for p in _GEO_RESTRICTED)
-
 
 def _http_check(url):
     """
     Returns (final_status, verdict, detail).
     verdict: REACHABLE | BOT_BLOCKED | BROKEN
+
+    HEAD is tried first. Retried with GET on 404/405/501: some servers return 404
+    (not 405) for HEAD on endpoints they only support via GET. A genuine 404 will
+    still be 404 on GET and correctly classify as BROKEN.
     """
     try:
         resp = requests.head(
@@ -150,8 +150,8 @@ def _http_check(url):
         )
         status = resp.status_code
 
-        # Some servers reject HEAD — retry with GET
-        if status in (405, 501):
+        # Retry with GET if server doesn't implement HEAD (returns 404/405/501)
+        if status in (404, 405, 501):
             resp = requests.get(
                 url, headers=_HEADERS, allow_redirects=True,
                 timeout=_TIMEOUT, stream=True
@@ -178,7 +178,7 @@ def _http_check(url):
         return (status, 'BOT_BLOCKED', '')
     if status in (404, 410) or status >= 500:
         return (status, 'BROKEN', f'HTTP {status}')
-    # Anything else (e.g. 401, 407) treat as BOT_BLOCKED (host is up)
+    # Anything else (e.g. 401, 407) — host is up
     return (status, 'BOT_BLOCKED', f'HTTP {status}')
 
 
@@ -190,8 +190,7 @@ def phase2(phase1_results):
 
     print('\n── Phase 2: HTTP Reachability ─────────────────────────────────────────')
     print('   NOTE: SOFT failures (200 with empty results) are not caught here.')
-    print('   Spot-check: agoda ?city=, spotahome /s/, booking ?ss=, TA /Search?q=')
-    print('   GEO: trip.com/flights is geo-restricted outside Asia — verify from target region.')
+    print('   Spot-check after deploy: agoda ?city=, spotahome /s/, booking ?ss=, TA /Search?q=')
     print()
     print(fmt.format(*header))
     print(sep)
@@ -206,9 +205,6 @@ def phase2(phase1_results):
             continue
         if _is_generic_fallback(url):
             print(fmt.format(merchant, city_id, tier, '-', 'SKIPPED', 'google fallback'))
-            continue
-        if _is_geo_restricted(url):
-            print(fmt.format(merchant, city_id, tier, '-', 'SKIPPED', 'geo-restricted'))
             continue
 
         status, verdict, detail = _http_check(url)

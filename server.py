@@ -415,7 +415,7 @@ def _resolve_go(merchant, city):
         base = (f"Allianceid={cfg['aid']}&SID={cfg['sid']}"
                 f"&trip_sub1=&trip_sub3={cfg['sub3']}")
         p = cfg['product']
-        if p == 'flights': url = f"https://www.trip.com/flights/?{base}"
+        if p == 'flights': url = f"https://www.trip.com/flights/flights-to-{cid}/?{base}"
         elif p == 'hotels': url = f"https://www.trip.com/hotels/?searchWord={enc}&{base}"
         elif p == 'cars':   url = f"https://www.trip.com/carhire/?{base}"
         else:               return (_UNAVAILABLE, 'unavailable')
