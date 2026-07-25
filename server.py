@@ -206,10 +206,13 @@ def _fetch_viator(city_name):
 
 # ── Affiliate link router ──────────────────────────────────────────────────────
 
+# Sentinel — returned when no sensible on-topic destination exists for this merchant+region.
+# The /go handler returns HTTP 404; app.js suppresses the button via /api/go-availability.
+_UNAVAILABLE = '__UNAVAILABLE__'
+
 _CITY_INDEX_CACHE = None
 
 def _get_city_index():
-    """Parse CITIES from app.js once; cached thereafter."""
     global _CITY_INDEX_CACHE
     if _CITY_INDEX_CACHE is not None:
         return _CITY_INDEX_CACHE
@@ -236,6 +239,7 @@ def _get_city_index():
     _CITY_INDEX_CACHE = idx
     return idx
 
+# Countries classified as Middle East even though region='africa' in app.js
 _MIDDLE_EAST_CTRY = {
     'UAE', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Oman',
     'Jordan', 'Lebanon', 'Israel', 'Iraq', 'Iran', 'Turkey', 'Egypt',
@@ -262,7 +266,7 @@ _EB_COUNTRY_ALIASES = {
     'Trinidad': 'trinidad-and-tobago',
 }
 
-# Canonical TripAdvisor geo IDs — extended set covering top international cities
+# Canonical TripAdvisor geo IDs — 34 cities
 _TA_GEO_IDS = {
     'houston':      'g56003',  'new-york':     'g60763',  'los-angeles':  'g32655',
     'chicago':      'g35805',  'phoenix':      'g31310',  'philadelphia': 'g60795',
@@ -275,7 +279,7 @@ _TA_GEO_IDS = {
     'amsterdam':    'g188590', 'berlin':       'g187323', 'rome':         'g187791',
     'madrid':       'g187514', 'singapore':    'g294265', 'hong-kong':    'g294217',
     'seoul':        'g294197', 'bangkok':      'g293916', 'istanbul':     'g293974',
-    'cairo':        'g294201', 'barcelona':    'g187497', 'amsterdam':    'g188590',
+    'cairo':        'g294201', 'barcelona':    'g187497',
 }
 
 AFFILIATE_CONFIG = {
@@ -325,10 +329,10 @@ AFFILIATE_CONFIG = {
     # ── Events ──────────────────────────────────────────────────────────────
     'ticketmaster': {'type': 'ticketmaster'},
     'eventbrite':   {'type': 'eventbrite'},
-    # ── TripAdvisor (attribution via TravelPayouts Drive overlay) ────────────
+    # ── TripAdvisor ─────────────────────────────────────────────────────────
     'tripadvisor-restaurants': {'type': 'tripadvisor', 'category': 'Restaurants'},
     'tripadvisor-things':      {'type': 'tripadvisor', 'category': 'Attractions'},
-    # ── Accommodation without affiliate — Skimlinks hook (commented/inactive) ─
+    # ── Accommodation — Skimlinks hook deferred until post-AdSense ──────────
     'booking-com': {'type': 'booking-com'},
     'agoda':       {'type': 'agoda'},
     # ── Resource/reference merchants ─────────────────────────────────────────
@@ -340,40 +344,84 @@ AFFILIATE_CONFIG = {
     'nerdwallet':     {'type': 'nerdwallet'},
 }
 
-def _build_affiliate_url(merchant, city):
-    """Return destination URL for /go, or None if merchant doesn't serve this city/region."""
+# Merchants checked by /api/go-availability
+_TRACKABLE_MERCHANTS = [
+    'viator', 'flights', 'hotels', 'cars', 'packages',
+    'ticketmaster', 'eventbrite',
+    'tripadvisor-restaurants', 'tripadvisor-things',
+    'booking-com', 'agoda',
+    'zillow', 'apartments-com', 'spotahome',
+    'numbeo-qol', 'numbeo-col', 'nerdwallet',
+]
+
+
+def _eventbrite_passthrough(city):
+    """Return an Eventbrite URL for the city, or None if EB doesn't operate in this region.
+    Eventbrite serves: Americas, Europe, Middle East. NOT Asia or sub-Saharan Africa."""
+    ctry = city['country']
+    reg  = city['region']
+    is_me = reg == 'africa' and ctry in _MIDDLE_EAST_CTRY
+    if (reg == 'asia') or (reg == 'africa' and not is_me):
+        return None
+    enc = urllib.parse.quote(city['name'], safe='')
+    if ctry == 'USA':
+        return f"https://www.eventbrite.com/d/{enc}/events/"
+    eb_ctry = _EB_COUNTRY_ALIASES.get(
+        ctry, _strip_diacritics(ctry).lower().replace(' ', '-'))
+    eb_city = _strip_diacritics(city['name']).lower().replace(' ', '-')
+    return f"https://www.eventbrite.com/d/{eb_ctry}--{eb_city}/events/"
+
+
+def _resolve_go(merchant, city):
+    """
+    Resolution ladder — returns (url, tier):
+    1. tagged      — affiliate ID exists; decorated URL
+    2. passthrough — merchant serves region, no ID; plain merchant URL
+    3. substitute  — merchant doesn't serve region; regional equivalent used (untagged)
+    4. generic     — on-topic web search (untagged)
+    5. unavailable — no sensible destination; url == _UNAVAILABLE (only nerdwallet outside USA)
+    Never returns ('/', any_tier).
+    """
     cfg = AFFILIATE_CONFIG.get(merchant)
     if not cfg:
-        return None
+        return (_UNAVAILABLE, 'unavailable')
 
     cid   = city['id']
     cname = city['name']
     ctry  = city['country']
     reg   = city['region']
     enc   = urllib.parse.quote(cname, safe='')
+    enc_q = urllib.parse.quote_plus(cname)
     is_aa = reg in ('asia', 'africa')
     is_me = reg == 'africa' and ctry in _MIDDLE_EAST_CTRY
-    is_ss = reg == 'africa' and not is_me
+    is_eu = reg == 'europe'
+    is_us = ctry == 'USA'
 
     t = cfg['type']
 
+    # ── Auto-routing shorthand ────────────────────────────────────────────────
     if t == 'auto':
         target = cfg['asia_africa'] if is_aa else cfg['other']
-        return _build_affiliate_url(target, city)
+        return _resolve_go(target, city)
 
+    # ── Viator: global tagged ────────────────────────────────────────────────
     if t == 'viator':
-        return (f"https://www.viator.com/search/{enc}"
-                f"?pid={cfg['pid']}&mcid={cfg['mcid']}&medium=link&medium_version=selector")
+        url = (f"https://www.viator.com/search/{enc}"
+               f"?pid={cfg['pid']}&mcid={cfg['mcid']}&medium=link&medium_version=selector")
+        return (url, 'tagged')
 
+    # ── Trip.com: global tagged ──────────────────────────────────────────────
     if t == 'trip-com':
         base = (f"Allianceid={cfg['aid']}&SID={cfg['sid']}"
                 f"&trip_sub1=&trip_sub3={cfg['sub3']}")
         p = cfg['product']
-        if p == 'flights': return f"https://www.trip.com/flights/welcome/?to={enc}&{base}"
-        if p == 'hotels':  return f"https://www.trip.com/hotels/?searchWord={enc}&{base}"
-        if p == 'cars':    return f"https://www.trip.com/carhire/?{base}"
-        return None
+        if p == 'flights': url = f"https://www.trip.com/flights/welcome/?to={enc}&{base}"
+        elif p == 'hotels': url = f"https://www.trip.com/hotels/?searchWord={enc}&{base}"
+        elif p == 'cars':   url = f"https://www.trip.com/carhire/?{base}"
+        else:               return (_UNAVAILABLE, 'unavailable')
+        return (url, 'tagged')
 
+    # ── Expedia: global tagged ───────────────────────────────────────────────
     if t == 'expedia':
         cam, cre, adr = cfg['camref'], cfg['creativeref'], cfg['adref']
         p = cfg['product']
@@ -390,79 +438,100 @@ def _build_affiliate_url(merchant, city):
         elif p == 'packages':
             lp = urllib.parse.quote("https://www.expedia.com/Vacation-Packages", safe='')
         else:
-            return None
-        return (f"https://expedia.com/affiliate?siteid=1&landingPage={lp}"
-                f"&camref={cam}&creativeref={cre}&adref={adr}")
+            return (_UNAVAILABLE, 'unavailable')
+        url = (f"https://expedia.com/affiliate?siteid=1&landingPage={lp}"
+               f"&camref={cam}&creativeref={cre}&adref={adr}")
+        return (url, 'tagged')
 
+    # ── Hotels.com: global tagged ────────────────────────────────────────────
     if t == 'hotels-com':
         cam, cre, adr = cfg['camref'], cfg['creativeref'], cfg['adref']
         lp = urllib.parse.quote(
             f"https://www.hotels.com/search.do?destination={cname}", safe='')
-        return (f"https://www.hotels.com/affiliate?landingPage={lp}"
-                f"&camref={cam}&creativeref={cre}&adref={adr}")
+        url = (f"https://www.hotels.com/affiliate?landingPage={lp}"
+               f"&camref={cam}&creativeref={cre}&adref={adr}")
+        return (url, 'tagged')
 
+    # ── Ticketmaster: events ladder ───────────────────────────────────────────
+    # tagged(US/CA/UK/IE) → substitute(Eventbrite where it operates) → generic
     if t == 'ticketmaster':
         if ctry in ('USA', 'Canada'):
-            return f"https://www.ticketmaster.com/search?q={enc}"
+            return (f"https://www.ticketmaster.com/search?q={enc}", 'tagged')
         if ctry in ('United Kingdom', 'Ireland'):
-            return f"https://www.ticketmaster.co.uk/search?q={enc}"
-        return None
+            return (f"https://www.ticketmaster.co.uk/search?q={enc}", 'tagged')
+        eb = _eventbrite_passthrough(city)
+        if eb:
+            return (eb, 'substitute')
+        return (f"https://www.google.com/search?q=live+events+in+{enc_q}", 'generic')
 
+    # ── Eventbrite: events ladder ────────────────────────────────────────────
+    # passthrough(Americas/Europe/ME) → generic(Asia/Sub-Saharan)
     if t == 'eventbrite':
-        if is_ss or (reg == 'asia' and not is_me):
-            return None
-        if ctry == 'USA':
-            return f"https://www.eventbrite.com/d/{enc}/events/"
-        eb_ctry = _EB_COUNTRY_ALIASES.get(
-            ctry, _strip_diacritics(ctry).lower().replace(' ', '-'))
-        eb_city = _strip_diacritics(cname).lower().replace(' ', '-')
-        return f"https://www.eventbrite.com/d/{eb_ctry}--{eb_city}/events/"
+        eb = _eventbrite_passthrough(city)
+        if eb:
+            return (eb, 'passthrough')
+        return (f"https://www.google.com/search?q=events+in+{enc_q}", 'generic')
 
+    # ── TripAdvisor: tagged with geo ID, passthrough search without ──────────
     if t == 'tripadvisor':
         geo  = _TA_GEO_IDS.get(cid)
         cat  = cfg.get('category', 'Restaurants')
         slug = cname.replace(' ', '_')
+        q    = urllib.parse.quote_plus(cname)
         if geo:
             if cat == 'Attractions':
-                return f"https://www.tripadvisor.com/Attractions-{geo}-Activities-{slug}.html"
-            return f"https://www.tripadvisor.com/Restaurants-{geo}-{slug}.html"
-        q = urllib.parse.quote_plus(cname)
+                return (f"https://www.tripadvisor.com/Attractions-{geo}-Activities-{slug}.html", 'tagged')
+            return (f"https://www.tripadvisor.com/Restaurants-{geo}-{slug}.html", 'tagged')
         if cat == 'Attractions':
-            return f"https://www.tripadvisor.com/Search?q=attractions+{q}"
-        return f"https://www.tripadvisor.com/Search?q=restaurants+{q}"
+            return (f"https://www.tripadvisor.com/Search?q=attractions+{q}", 'passthrough')
+        return (f"https://www.tripadvisor.com/Search?q=restaurants+{q}", 'passthrough')
 
+    # ── Booking.com: global passthrough (Skimlinks deferred) ─────────────────
     if t == 'booking-com':
-        # No affiliate — Skimlinks passthrough deferred until post-AdSense
-        # dest = f"https://go.skimlinks.com/?id=XXXXXX&url={urllib.parse.quote(dest_url)}"
-        return f"https://www.booking.com/searchresults.html?ss={enc}&checkin=&checkout=&group_adults=1"
+        return (f"https://www.booking.com/searchresults.html?ss={enc}&checkin=&checkout=&group_adults=1",
+                'passthrough')
 
+    # ── Agoda: global passthrough ────────────────────────────────────────────
     if t == 'agoda':
-        # No affiliate — Skimlinks passthrough deferred
-        return f"https://www.agoda.com/search?city={enc}&checkIn=&checkOut=&rooms=1"
+        return (f"https://www.agoda.com/search?city={enc}&checkIn=&checkOut=&rooms=1", 'passthrough')
 
+    # ── Rentals/real-estate ladder: local → spotahome → generic ──────────────
     if t == 'zillow':
-        if ctry != 'USA': return None
-        return f"https://www.zillow.com/homes/{enc}_rb/"
+        if is_us:
+            return (f"https://www.zillow.com/homes/{enc}_rb/", 'passthrough')
+        if is_eu:
+            return (f"https://www.spotahome.com/s/{enc}", 'substitute')
+        return (f"https://www.google.com/search?q=real+estate+in+{enc_q}", 'generic')
 
     if t == 'apartments-com':
-        if ctry != 'USA': return None
-        slug = _strip_diacritics(cname).lower().replace(' ', '-')
-        return f"https://www.apartments.com/{urllib.parse.quote(slug, safe='')}/"
+        if is_us:
+            slug = _strip_diacritics(cname).lower().replace(' ', '-')
+            return (f"https://www.apartments.com/{urllib.parse.quote(slug, safe='')}/", 'passthrough')
+        if is_eu:
+            return (f"https://www.spotahome.com/s/{enc}", 'substitute')
+        return (f"https://www.google.com/search?q=apartments+for+rent+in+{enc_q}", 'generic')
 
     if t == 'spotahome':
-        if reg != 'europe': return None
-        return f"https://www.spotahome.com/s/{enc}"
+        if is_eu:
+            return (f"https://www.spotahome.com/s/{enc}", 'passthrough')
+        if is_us:
+            slug = _strip_diacritics(cname).lower().replace(' ', '-')
+            return (f"https://www.apartments.com/{urllib.parse.quote(slug, safe='')}/", 'substitute')
+        return (f"https://www.google.com/search?q=apartments+for+rent+in+{enc_q}", 'generic')
 
+    # ── Numbeo: informational, global passthrough ─────────────────────────────
     if t == 'numbeo':
-        if ctry == 'USA': return None
-        return f"https://www.numbeo.com/{cfg['product']}/in/{_numbeo_slug(cid)}"
+        return (f"https://www.numbeo.com/{cfg['product']}/in/{_numbeo_slug(cid)}", 'passthrough')
 
+    # ── NerdWallet: USA only — UNAVAILABLE elsewhere (US-specific tool) ───────
     if t == 'nerdwallet':
-        if ctry != 'USA': return None
-        slug = _strip_diacritics(cname).lower().replace(' ', '-')
-        return f"https://www.nerdwallet.com/cost-of-living-calculator/compare/{urllib.parse.quote(slug, safe='')}"
+        if is_us:
+            slug = _strip_diacritics(cname).lower().replace(' ', '-')
+            return (f"https://www.nerdwallet.com/cost-of-living-calculator/compare/"
+                    f"{urllib.parse.quote(slug, safe='')}", 'passthrough')
+        return (_UNAVAILABLE, 'unavailable')
 
-    return None
+    return (_UNAVAILABLE, 'unavailable')
 
 # ── Response helpers ───────────────────────────────────────────────────────────
 def _json_response(handler, data, cache_max_age=3600):
@@ -741,12 +810,26 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             if not city:
                 self.send_error(404, 'City not found')
                 return True
-            dest = _build_affiliate_url(merchant, city)
-            loc  = dest if dest else '/'
+            url, _tier = _resolve_go(merchant, city)
+            if url == _UNAVAILABLE:
+                self.send_error(404, 'No destination for this merchant in this region')
+                return True
             self.send_response(302)
-            self.send_header('Location', loc)
+            self.send_header('Location', url)
             self.send_header('Cache-Control', 'no-store')
             self.end_headers()
+            return True
+
+        # ── GET /api/go-availability — per-city merchant availability map ────────
+        if path == '/api/go-availability':
+            city_id = qs.get('city', [''])[0]
+            city = _get_city_index().get(city_id)
+            if not city:
+                self.send_error(404, 'City not found')
+                return True
+            unavailable = [m for m in _TRACKABLE_MERCHANTS
+                           if _resolve_go(m, city)[0] == _UNAVAILABLE]
+            _json_response(self, {'city': city_id, 'unavailable': unavailable})
             return True
 
         return False
@@ -833,6 +916,7 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         pass
 
-with socketserver.TCPServer(("", PORT), CustomHandler) as httpd:
-    print(f"Serving on port {PORT}")
-    httpd.serve_forever()
+if __name__ == '__main__':
+    with socketserver.TCPServer(("", PORT), CustomHandler) as httpd:
+        print(f"Serving on port {PORT}")
+        httpd.serve_forever()
