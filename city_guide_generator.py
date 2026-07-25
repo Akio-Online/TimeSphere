@@ -60,21 +60,6 @@ MONTH_NAMES = ['January','February','March','April','May','June',
 MONTH_SLUGS = ['january','february','march','april','may','june',
                'july','august','september','october','november','december']
 
-# ─── TripAdvisor geo IDs ───────────────────────────────────────────────────────
-TA_GEO = {
-    'houston':'g56003',     'new-york':'g60763',    'los-angeles':'g32655',
-    'chicago':'g35805',     'phoenix':'g31310',     'philadelphia':'g60795',
-    'san-antonio':'g60956', 'san-diego':'g60750',   'dallas':'g55711',
-    'seattle':'g60878',     'denver':'g33388',      'boston':'g60745',
-    'miami':'g34438',       'atlanta':'g60898',     'portland':'g52024',
-    'austin':'g30196',      'nashville':'g55229',   'london':'g186338',
-    'paris':'g187147',      'tokyo':'g298184',      'sydney':'g255060',
-    'toronto':'g155019',    'dubai':'g295424',      'amsterdam':'g188590',
-    'berlin':'g187323',     'rome':'g187791',       'madrid':'g187514',
-    'singapore':'g294265',  'hong-kong':'g294217',  'seoul':'g294197',
-    'bangkok':'g293916',    'istanbul':'g293974',   'cairo':'g294201',
-}
-
 # Cities with dedicated Moving To pages
 MOVING_TO_CITIES = {'houston', 'austin', 'miami', 'new-york'}
 
@@ -197,19 +182,6 @@ def get_tz_display(tz_name):
         'Africa/Johannesburg': 'SAST',
     }
     return abbrevs.get(tz_name, tz_name.split('/')[-1].replace('_', ' '))
-
-
-def ta_urls(city_id, city_name):
-    geo = TA_GEO.get(city_id)
-    slug = city_name.replace(' ', '_')
-    if geo:
-        rest = f"https://www.tripadvisor.com/Restaurants-{geo}-{slug}.html"
-        attr = f"https://www.tripadvisor.com/Attractions-{geo}-Activities-{slug}.html"
-    else:
-        q = urllib.parse.quote_plus(city_name)
-        rest = f"https://www.tripadvisor.com/Search?q=restaurants+{q}"
-        attr = f"https://www.tripadvisor.com/Search?q=attractions+{q}"
-    return rest, attr
 
 
 def build_images(city_id, city_name):
@@ -534,7 +506,6 @@ def build_html(city, month_name, month_slug, year, title, description, body, ima
     hero_url_safe = hero_url.replace("'", "%27")
     read_time = max(5, len(re.findall(r'\w+', body)) // 200)
 
-    ta_rest, ta_attr = ta_urls(city_id, city_name)
     rel1, rel2 = related_articles(city_id, city_name)
 
     pub_date   = f"{year}-{MONTH_SLUGS.index(month_slug)+1:02d}-01"
@@ -571,16 +542,6 @@ def build_html(city, month_name, month_slug, year, title, description, body, ima
       }})(window, document, "clarity", "script", "xo8c0uxerk");
   </script>
   <!-- End Microsoft Clarity -->
-  <!-- TravelPayouts Drive -->
-  <script nowprocket data-noptimize="1" data-cfasync="false" data-no-defer="1">
-    (function () {{
-        var script = document.createElement("script");
-        script.async = 1;
-        script.src = 'https://emrldtp.cc/NTUyNDAw.js?t=552400';
-        document.head.appendChild(script);
-    }})();
-  </script>
-  <!-- End TravelPayouts Drive -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title} &mdash; The Time Sphere</title>
   <meta name="description" content="{description}" />
