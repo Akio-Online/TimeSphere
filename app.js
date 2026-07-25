@@ -1416,15 +1416,8 @@ async function renderMovingPage() {
   setText('agent-modal-city', `Reach active relocation leads in ${cityName}. 4 spots available · $200/month · Cancel anytime.`);
 
   // ── Region flags ──────────────────────────────────────────────────────────
-  const isUSA        = city.country === 'USA';
-  const isCanada     = city.country === 'Canada';
-  const isUK         = city.country === 'United Kingdom';
-  const isIreland    = city.country === 'Ireland';
-  const isEurope     = city.region  === 'europe';
-  const isAsia       = city.region  === 'asia';
-  const MIDDLE_EAST_CTRY = { 'UAE':1,'Saudi Arabia':1,'Qatar':1,'Kuwait':1,'Oman':1,'Jordan':1,'Lebanon':1,'Israel':1,'Iraq':1,'Iran':1,'Turkey':1,'Egypt':1 };
-  const isMiddleEast = city.region  === 'africa' && !!MIDDLE_EAST_CTRY[city.country];
-  const isSubSaharan = city.region  === 'africa' && !isMiddleEast;
+  const isUSA    = city.country === 'USA';
+  const isEurope = city.region  === 'europe';
 
   // Numbeo city slug (title-case city.id; three cities need an override)
   const NUMBEO_SLUG_MAP = { 'ho-chi-minh':'Ho-Chi-Minh-City', 'tel-aviv':'Tel-Aviv-Yafo', 'san-jose-cr':'San-Jose-Costa-Rica' };
@@ -1498,38 +1491,24 @@ async function renderMovingPage() {
   setAttr('moving-booking-btn', 'href', `/go?merchant=booking-com&city=${city.id}`);
   setAttr('moving-agoda-btn',   'href', `/go?merchant=agoda&city=${city.id}`);
 
-  // Eventbrite: Americas + Europe + Middle East → show; Asia + Sub-Saharan Africa → hide
+  // Events — server ladder guarantees both always resolve to a real destination
   const ebEl = document.getElementById('moving-eventbrite-link');
-  if (ebEl) {
-    if (isAsia || isSubSaharan) {
-      ebEl.style.display = 'none';
-    } else {
-      ebEl.href = `/go?merchant=eventbrite&city=${city.id}`;
-    }
-  }
-
-  // Ticketmaster: US + Canada → ticketmaster.com, UK/Ireland → ticketmaster.co.uk, elsewhere → hide
+  if (ebEl) ebEl.href = `/go?merchant=eventbrite&city=${city.id}`;
   const tmEl = document.getElementById('moving-ticketmaster-link');
-  if (tmEl) {
-    if (isUSA || isCanada || isUK || isIreland) {
-      tmEl.href = `/go?merchant=ticketmaster&city=${city.id}`;
-    } else {
-      tmEl.style.display = 'none';
-    }
-  }
+  if (tmEl) tmEl.href = `/go?merchant=ticketmaster&city=${city.id}`;
 
-  // Collapse events grid when one or both cards hidden
-  const evGrid = document.getElementById('events-cards-grid');
-  if (evGrid) {
-    const ebHidden = ebEl && ebEl.style.display === 'none';
-    const tmHidden = tmEl && tmEl.style.display === 'none';
-    if (ebHidden && tmHidden) {
-      const evSection = evGrid.closest('section');
-      if (evSection) evSection.style.display = 'none';
-    } else if (ebHidden || tmHidden) {
-      evGrid.style.gridTemplateColumns = '1fr';
-    }
-  }
+  // Suppress any UNAVAILABLE-sentinel merchants (fire-and-forget; fails silently)
+  fetch(`/api/go-availability?city=${city.id}`)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      (data.unavailable || []).forEach(function(m) {
+        var goHref = '/go?merchant=' + m + '&city=' + city.id;
+        document.querySelectorAll('a[href="' + goHref + '"]').forEach(function(el) {
+          el.style.display = 'none';
+        });
+      });
+    })
+    .catch(function() {});
 
   // Viator
   const viatorUrl = `/go?merchant=viator&city=${city.id}`;
